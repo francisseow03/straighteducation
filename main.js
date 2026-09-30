@@ -176,20 +176,21 @@
     renderCamps();
     renderContact(d.settings || {});
   }
-  let applied = false;
-  try {
-    const cached = JSON.parse(localStorage.getItem("se_cache") || "null");
-    if (cached) { apply(cached); applied = true; }
-  } catch {}
+  // No browser-side copy of old data: paint the shipped snapshot right away (same site, fast),
+  // then replace it with live data as soon as the API answers. Never show a stale remembered list.
+  try { localStorage.removeItem("se_cache"); } catch {}
+  let live = false, painted = false;
   const withTimeout = (url, ms) => {
     const ctl = "AbortController" in window ? new AbortController() : null;
     const t = setTimeout(() => ctl && ctl.abort(), ms);
-    return fetch(url, ctl ? { signal: ctl.signal } : {}).then((r) => { clearTimeout(t); if (!r.ok) throw new Error(r.status); return r.json(); });
+    return fetch(url, ctl ? { signal: ctl.signal, cache: "no-store" } : { cache: "no-store" }).then((r) => { clearTimeout(t); if (!r.ok) throw new Error(r.status); return r.json(); });
   };
-  withTimeout(API, 6000)
-    .then((d) => { if (d.error) throw d.error; apply(d); try { localStorage.setItem("se_cache", JSON.stringify(d)); } catch {} })
-    .catch(() => (applied ? null : withTimeout("data.json", 6000).then(apply)))
-    .catch(() => { if (!applied) apply({ camps: [], settings: {} }); });
+  withTimeout("data.json?t=" + Math.floor(Date.now() / 60000), 8000)
+    .then((d) => { if (!live) { apply(d); painted = true; } })
+    .catch(() => {});
+  withTimeout(API, 10000)
+    .then((d) => { if (d.error) throw d.error; live = true; painted = true; apply(d); })
+    .catch(() => setTimeout(() => { if (!painted) apply({ camps: [], settings: {} }); }, 1500));
 
   // ---------- copy WeChat ID (works in WeChat/RedNote in-app browsers too) ----------
   function copyText(text) {
