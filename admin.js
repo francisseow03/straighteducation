@@ -234,6 +234,7 @@
     $("#sWx").value = s.wechat || "";
     $("#sIg").value = s.instagram || "";
     $("#sFb").value = s.facebook || "";
+    $("#sEmail").value = s.email || "";
     setQr(s.wechat_qr);
   }
   $("#qrFile").onchange = async (e) => {
@@ -250,7 +251,7 @@
       ...state.settings,
       rednote_id: $("#sRn").value, rednote_url: $("#sRnUrl").value,
       wechat: $("#sWx").value, wechat_qr: qrUrl,
-      instagram: $("#sIg").value, facebook: $("#sFb").value,
+      instagram: $("#sIg").value, facebook: $("#sFb").value, email: $("#sEmail").value,
     };
     msg(m, "保存中…", true);
     try { const d = await call("save_settings", { settings }); state.settings = d.settings; msg(m, "已保存，网站会在约 30 秒内更新。", true); } catch (err) { msg(m, err.message); }

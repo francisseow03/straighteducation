@@ -114,8 +114,9 @@
     }
   }
 
-  const ICON = { rednote: "i-rednote", wechat: "i-wechat", instagram: "i-ig", facebook: "i-fb" };
+  const ICON = { rednote: "i-rednote", wechat: "i-wechat", instagram: "i-ig", facebook: "i-fb", email: "i-mail" };
   function socialUrl(kind, v, s) {
+    if (kind === "email") return "mailto:" + v;
     if (kind === "rednote") return safeUrl(s.rednote_url) || "https://www.xiaohongshu.com/search_result?keyword=" + encodeURIComponent(v);
     if (kind === "instagram") return safeUrl(v) || "https://www.instagram.com/" + encodeURIComponent(v.replace(/^@/, "")) + "/";
     if (kind === "facebook") return safeUrl(v) || "https://www.facebook.com/" + encodeURIComponent(v.replace(/^@/, ""));
@@ -126,7 +127,7 @@
     try {
       const u = new URL(v);
       const seg = u.pathname.split("/").filter(Boolean);
-      if (kind === "facebook" && u.searchParams.get("id")) return "Facebook";
+      if (kind === "facebook" && u.searchParams.get("id")) return "Straight Education";
       return seg.length ? (kind === "instagram" ? "@" : "") + decodeURIComponent(seg[seg.length - 1]) : u.hostname;
     } catch { return v; }
   }
@@ -136,12 +137,15 @@
       ["wechat", "微信 WeChat", s.wechat],
       ["instagram", "Instagram", s.instagram],
       ["facebook", "Facebook", s.facebook],
+      ["email", "电子邮箱 Email", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email || "") ? s.email : ""],
     ].filter((x) => x[2]);
     $("#socials").innerHTML = items.map(([k, name, v], i) => {
       const url = socialUrl(k, v, s);
       const shown = k === "rednote" ? v : handleOf(k, v);
       const actions = k === "wechat"
         ? `<button class="chip gold" data-copy="${esc(v)}" style="cursor:pointer">复制微信号</button><span class="copy-ok">已复制</span>`
+        : k === "email"
+        ? `<a class="chip gold" href="${esc(url)}">发邮件</a><button class="chip" data-copy="${esc(v)}" style="cursor:pointer">复制</button><span class="copy-ok">已复制</span>`
         : `<a class="chip gold" href="${esc(url)}" target="_blank" rel="noopener">${k === "rednote" ? "去小红书关注" : "打开主页"} ↗</a>`;
       const qr = k === "wechat" && safeUrl(s.wechat_qr) ? `<img class="qr" src="${esc(s.wechat_qr)}" alt="微信二维码" loading="lazy">` : "";
       return `
