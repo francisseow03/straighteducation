@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <!-- CJK web fonts load without blocking; phones fall back to PingFang / YaHei instantly (Google may be slow or blocked in mainland China) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=202609302108">
+<link rel="stylesheet" href="styles.css?v=202609302115">
 <style>
   :root { --body: rgba(47, 43, 40, .8); }
   .dark { --body: rgba(250, 241, 228, .78); }
@@ -62,59 +62,79 @@
   .copied { background: var(--ink) !important; border-color: var(--ink) !important; color: var(--gold) !important; }
   .dark .copied { background: var(--cream) !important; border-color: var(--cream) !important; color: var(--ink) !important; }
 
-  /* ---------- hero: the book (dark ground) ---------- */
+  /* ---------- hero: a book whose pages turn as you scroll (dark ground) ---------- */
   .hero { position: relative; }
-  .book-scroll { position: relative; height: 300vh; }
-  .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; perspective: 2400px; perspective-origin: 50% 40%; --open: 0; --l: 0; --r: 0; --g: 0; --hint: 1;
-    --W: min(44vw, 430px, calc((100svh - 330px) / 1.32)); display: flex; flex-direction: column; align-items: center; padding-top: 88px; }
-  .stage-head { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter); }
-  .stage-head .kicker { margin: 0 0 12px; font-size: 14px; color: var(--cream); display: inline-flex; align-items: center; gap: 10px; }
-  .stage-head .kicker .star { width: 18px; height: 18px; color: var(--gold); }
-  .stage-head .kicker .en { font-size: 11px; font-weight: 700; color: var(--cream-60); }
-  .stage-head h1 { font-size: clamp(30px, 5vw, 68px); font-weight: 900; line-height: 1.15; color: var(--cream); letter-spacing: -.005em; word-break: keep-all; white-space: nowrap; }
-  .stage-head h1 .gold { color: var(--gold); }
-  .glow { position: absolute; left: 50%; top: 58%; width: calc(var(--W) * 4.2); height: calc(var(--W) * 3); transform: translate(-50%, -50%) scale(calc(.55 + var(--g) * .55)); opacity: calc(.18 + var(--g) * .82);
-    background: radial-gradient(closest-side, rgba(217, 160, 55, .34), rgba(217, 160, 55, .12) 55%, rgba(217, 160, 55, 0) 100%); pointer-events: none; z-index: 1; }
-  .book-wrap { position: relative; z-index: 2; flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 8px; }
-  .book { position: relative; width: var(--W); height: calc(var(--W) * var(--R, 1.32)); transform-style: preserve-3d;
-    transform: translateX(calc(var(--W) * .5 * var(--open))) rotateX(calc((1 - var(--open)) * 9deg)) rotateY(calc((1 - var(--open)) * -10deg)); font-size: calc(var(--W) / 17); }
-  .pg, .face { --body: rgba(47, 43, 40, .8); --fg: var(--ink); --fg-2: var(--ink-60); --line: var(--ink-14); --stroke: var(--ink); --accent: var(--deep-gold); }
-  .pg { position: absolute; inset: 0; background: var(--card); color: var(--ink); border: 1.5px solid var(--ink); }
+  .book-scroll { position: relative; height: 480vh; }
+  .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; perspective: 2600px; perspective-origin: 50% 35%;
+    --o0: 0; --o1: 0; --o2: 0; --g: 0; --hint: 1; --R: 1.32; --W: min(40vw, 440px, calc((100svh - 350px) / 1.32));
+    display: flex; flex-direction: column; align-items: center; padding-top: 80px; }
+  .stage-top { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter); }
+  .stage-top .kicker { margin: 0; font-size: 14px; color: var(--cream); display: inline-flex; align-items: center; gap: 10px; }
+  .stage-top .kicker .star { width: 18px; height: 18px; color: var(--gold); }
+  .stage-top .kicker .en { font-size: 11px; font-weight: 700; color: var(--cream-60); }
+  .stage-foot { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter) 68px; }
+  .stage-foot h1 { font-size: clamp(30px, 4.6vw, 62px); font-weight: 900; line-height: 1.15; color: var(--cream); letter-spacing: -.005em; word-break: keep-all; white-space: nowrap; }
+  .stage-foot h1 .gold { color: var(--gold); }
+  .stage-foot .ln { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; }
+  .stage-foot .ln > span { display: inline-block; transform: translateY(105%); transition: transform 1s var(--ease); }
+  .stage-foot .ln:nth-child(2) > span { transition-delay: .15s; }
+  .hero.ready .stage-foot .ln > span { transform: none; }
+  .glow { position: absolute; left: 50%; top: 46%; width: calc(var(--W) * 4.4); height: calc(var(--W) * 3.2); transform: translate(-50%, -50%) scale(calc(.55 + var(--g) * .55)); opacity: calc(.18 + var(--g) * .82);
+    background: radial-gradient(closest-side, rgba(217, 160, 55, .36), rgba(217, 160, 55, .12) 55%, rgba(217, 160, 55, 0) 100%); pointer-events: none; z-index: 1; }
+  .book-wrap { position: relative; z-index: 2; flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; margin: 6px 0 4px; }
+  .book { position: relative; width: var(--W); height: calc(var(--W) * var(--R)); transform-style: preserve-3d; font-size: calc(var(--W) / 17);
+    transform: translateX(calc(var(--W) * .5 * var(--o0))) rotateX(calc((1 - var(--o0)) * 8deg)) rotateY(calc((1 - var(--o0)) * -9deg)); }
+  .pg, .face { --body: rgba(47, 43, 40, .8); --fg: var(--ink); --fg-2: var(--ink-60); --line: var(--ink-14); --stroke: var(--ink); --accent: var(--deep-gold); color: var(--ink); }
+  .pg { position: absolute; inset: 0; background: var(--card); border: 1.5px solid var(--ink); }
   .pg.under1 { transform: translate(4px, 3px); background: var(--sand); }
   .pg.under2 { transform: translate(8px, 6px); background: var(--card); }
-  .pg.right { padding: 8% 9%; display: flex; flex-direction: column; justify-content: center; gap: .5em; }
-  .pg.right > * { opacity: var(--r); transform: translateY(calc((1 - var(--r)) * 10px)); }
-  .pg .lbl { font-size: .95em; color: var(--ink-60); display: flex; align-items: center; gap: .6em; flex-wrap: wrap; }
-  .pg .lbl .chip { height: 1.9em; font-size: .85em; padding: 0 .8em; }
-  .pg h2 { font-size: 1.7em; line-height: 1.25; font-weight: 900; }
-  .pg .sub { font-size: 1em; color: var(--body); margin: 0; line-height: 1.7; }
-  .pg .btns { display: flex; gap: .6em; flex-wrap: wrap; margin-top: .6em; }
-  .pg .btn { min-height: 2.9em; padding: 0 1.1em; font-size: 1em; }
-  .cover { position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d; transform: rotateY(calc(var(--open) * -180deg)); z-index: 5; }
-  .stage.idle .cover { animation: peek 3.6s ease-in-out infinite; }
-  @keyframes peek { 0%, 100% { transform: rotateY(0); } 45% { transform: rotateY(-11deg); } }
-  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1.5px solid var(--ink); }
-  .front { background: var(--sand); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.1em; padding: 12% 10% 10% 14%; }
+  .leaf { position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d; }
+  .leaf.l0 { transform: translateZ(calc(6px * (1 - var(--o0)))) rotateY(calc(var(--o0) * -180deg)); }
+  .leaf.l1 { transform: translateZ(calc(4px - 2px * var(--o1))) rotateY(calc(var(--o1) * -180deg)); }
+  .leaf.l2 { transform: translateZ(calc(2px + 2px * var(--o2))) rotateY(calc(var(--o2) * -180deg)); }
+  .stage.idle .leaf.l0 { animation: peek 3.6s ease-in-out infinite; }
+  @keyframes peek { 0%, 100% { transform: translateZ(6px) rotateY(0); } 45% { transform: translateZ(6px) rotateY(-11deg); } }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1.5px solid var(--ink); background: var(--card); }
+  .face.b { transform: rotateY(180deg); }
+  .pgc { padding: 8% 9%; display: flex; flex-direction: column; justify-content: center; gap: .55em; }
+  .pg.base { display: flex; flex-direction: column; justify-content: center; gap: .55em; padding: 8% 9%; }
+  .pgc h2, .pgc h3 { font-size: 1.55em; line-height: 1.3; font-weight: 900; }
+  .pgc h3 .gold { color: var(--deep-gold); }
+  .pgc .sub { font-size: 1em; color: var(--body); margin: 0; line-height: 1.65; }
+  .pgc .lbl { font-size: .95em; color: var(--ink-60); display: flex; align-items: center; gap: .6em; flex-wrap: wrap; margin: 0; }
+  .pgc .lbl .chip { height: 1.9em; font-size: .85em; padding: 0 .8em; }
+  .pgc .kk { display: flex; align-items: center; gap: .6em; font-size: .95em; margin: 0; }
+  .pgc .kk .star { width: 1.3em; height: 1.3em; color: var(--gold); flex: none; }
+  .pgc .kk .en { font-size: .8em; font-weight: 700; color: var(--ink-60); }
+  .pgc .btns { display: flex; gap: .6em; flex-wrap: wrap; margin-top: .5em; }
+  .pgc .btn { min-height: 2.9em; padding: 0 1.1em; font-size: 1em; white-space: nowrap; }
+  .pgc .regions { margin-top: .3em; font-size: .95em; gap: .3em 1em; }
+  .city { margin: 0 0 .25em; display: flex; align-items: baseline; gap: .6em; flex-wrap: wrap; }
+  .city b { font-size: 1.25em; font-weight: 900; }
+  .city .en { font-size: .78em; font-weight: 700; color: var(--ink-60); letter-spacing: .1em; }
+  .city .n { margin-left: auto; font-family: var(--en); font-weight: 700; color: var(--deep-gold); font-size: .95em; }
+  .cl { list-style: none; margin: 0 0 .9em; padding: 0; display: grid; gap: .15em; font-size: .95em; }
+  .cl li { position: relative; padding-left: 1.3em; line-height: 1.6; }
+  .cl li::before { content: ""; position: absolute; left: .15em; top: .78em; width: .45em; height: .45em; background: var(--gold); transform: translateY(-50%) rotate(45deg); }
+  .steps-b { list-style: none; margin: 0; padding: 0; display: grid; gap: .7em; counter-reset: sb; }
+  .steps-b li { counter-increment: sb; position: relative; padding-left: 2.3em; line-height: 1.5; }
+  .steps-b li::before { content: counter(sb); position: absolute; left: 0; top: -.05em; width: 1.6em; height: 1.6em; display: grid; place-items: center; background: var(--gold); color: var(--ink); font-family: var(--en); font-weight: 700; font-size: .85em; }
+  .steps-b b { display: block; font-weight: 700; }
+  .steps-b span { font-size: .9em; color: var(--body); }
+  .wx-id { font-family: var(--en); font-weight: 700; font-size: 1.35em; margin: 0; word-break: break-all; }
+  .front { background: var(--sand); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.1em; padding: 12% 10% 10% 14%; }
   .front::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 7%; background: var(--gold); }
   .front::after { content: ""; position: absolute; inset: 5% 5% 5% 10%; border: 1px solid rgba(47, 43, 40, .4); pointer-events: none; }
   .front img { width: 78%; height: auto; position: relative; z-index: 1; }
-  .front .cv-line { font-size: .85em; font-weight: 500; letter-spacing: .06em; white-space: nowrap; position: relative; z-index: 1; }
+  .front .cv-line { font-size: .9em; font-weight: 500; letter-spacing: .06em; white-space: nowrap; position: relative; z-index: 1; }
   .front .cv-star { position: absolute; right: 9%; top: 7%; width: 1.6em; height: 1.6em; color: var(--gold); z-index: 1; }
-  .back { transform: rotateY(180deg); background: var(--card); color: var(--ink); padding: 8% 9%; display: flex; flex-direction: column; justify-content: center; gap: .7em; }
-  .back > * { opacity: var(--l); transform: translateY(calc((1 - var(--l)) * 10px)); }
-  .back .kk { display: flex; align-items: center; gap: .6em; font-size: .95em; margin: 0; }
-  .back .kk .star { width: 1.3em; height: 1.3em; color: var(--gold); }
-  .back .kk .en { font-size: .8em; font-weight: 700; color: var(--ink-60); }
-  .back h3 { font-size: 1.55em; line-height: 1.3; font-weight: 900; }
-  .back h3 .gold { color: var(--deep-gold); }
-  .back .sub { font-size: 1em; color: var(--body); margin: 0; line-height: 1.7; }
-  .back .regions { margin-top: .4em; font-size: .95em; gap: .4em 1em; }
-  .gutter { position: absolute; left: 0; top: 2%; bottom: 2%; width: 2px; margin-left: -1px; background: var(--gold); opacity: var(--g); z-index: 4; }
+  .ribbon { position: absolute; right: 14%; bottom: -7%; width: 7%; height: 14%; background: var(--gold); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%); z-index: 0; }
+  .gutter { position: absolute; left: 0; top: 2%; bottom: 2%; width: 2px; margin-left: -1px; background: var(--gold); opacity: var(--g); z-index: 9; pointer-events: none; }
   .spark { position: absolute; z-index: 3; width: 14px; height: 14px; color: var(--gold); opacity: 0; pointer-events: none; }
   .stage.lit .spark { animation: rise 5s ease-in-out infinite; animation-delay: var(--d); }
   @keyframes rise { 0% { opacity: 0; transform: translateY(24px) scale(.4) rotate(0); } 25% { opacity: .95; } 100% { opacity: 0; transform: translateY(-90px) scale(1.1) rotate(80deg); } }
-  .hint { position: absolute; left: 0; right: 0; bottom: 26px; z-index: 3; text-align: center; font-size: 13px; color: var(--cream-60); letter-spacing: .14em; opacity: var(--hint); pointer-events: none; margin: 0; }
-  .hint i { display: block; width: 1.5px; height: 30px; background: var(--gold); margin: 10px auto 0; transform-origin: top; animation: cue 2.4s var(--ease) infinite; }
+  .hint { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 3; text-align: center; font-size: 13px; color: var(--cream-60); letter-spacing: .14em; opacity: var(--hint); pointer-events: none; margin: 0; }
+  .hint i { display: block; width: 1.5px; height: 16px; background: var(--gold); margin: 6px auto 0; transform-origin: top; animation: cue 2.4s var(--ease) infinite; }
   @keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
   .next-bar { position: relative; z-index: 2; display: block; text-decoration: none; color: var(--cream); border-top: 1px solid rgba(250, 241, 228, .16); background: rgba(250, 241, 228, .04); transition: background .35s; }
   .next-bar .wrap { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 32px); min-height: 72px; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
@@ -129,9 +149,10 @@
   .stagger > * { opacity: 0; transform: translateY(12px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: calc(var(--k, 0) * .07s + .35s); }
   .hero.ready .stagger > * { opacity: 1; transform: none; }
   .no-motion .book-scroll { height: auto; }
-  .no-motion .stage { position: relative; height: auto; min-height: 100svh; padding-bottom: 70px; }
+  .no-motion .stage { position: relative; height: auto; min-height: 100svh; padding-bottom: 20px; }
   .no-motion .hint { display: none; }
-  .no-motion .stage.idle .cover { animation: none; }
+  .no-motion .stage.idle .leaf.l0 { animation: none; }
+  .no-motion .stage-foot .ln > span { transform: none; }
 
   /* ---------- latest camp (section 2, cream) ---------- */
   .camp-head { margin-bottom: clamp(36px, 5vw, 60px); }
@@ -280,15 +301,16 @@
     .nav-links a { color: var(--ink) !important; padding: 15px 0; border-bottom: 1px solid var(--ink-14); font-size: 17px; }
     .nav-links a::after { display: none; }
     .nav-links .chip { margin-top: 16px; justify-content: center; height: 48px; }
-    .book-scroll { height: 260vh; }
-    .stage { --R: 1.6; --W: min(46vw, 210px, calc((100svh - 300px) / 1.6)); padding-top: 84px; }
-    .stage-head h1 { font-size: clamp(28px, 8.4vw, 40px); }
-    .book { font-size: calc(var(--W) / 12); transform: translateX(calc(var(--W) * .5 * var(--open))) scale(calc(1 + (1 - var(--open)) * .38)) rotateX(calc((1 - var(--open)) * 9deg)) rotateY(calc((1 - var(--open)) * -10deg)); }
-    .back .sub, .back .regions, .back .kk .en, .pg.right [data-copy-wechat] { display: none; }
-    .pg .btn { white-space: nowrap; padding: 0 .5em; font-size: .95em; }
-    .back h3 { font-size: 1.45em; }
-    .pg h2 { font-size: 1.6em; }
-    .pg .btn { width: 100%; justify-content: center; }
+    .book-scroll { height: 440vh; }
+    .stage { --R: 1.62; --W: min(46vw, 210px, calc((100svh - 330px) / 1.62)); padding-top: 76px; }
+    .stage-foot { padding-bottom: 64px; }
+    .stage-foot h1 { font-size: clamp(27px, 8vw, 38px); }
+    .book { font-size: calc(var(--W) / 12.5); transform: translateX(calc(var(--W) * .5 * var(--o0))) scale(calc(1 + (1 - var(--o0)) * .36)) rotateX(calc((1 - var(--o0)) * 8deg)) rotateY(calc((1 - var(--o0)) * -9deg)); }
+    .pgc .sub, .pgc .regions, .pgc .kk .en, .pgc [data-copy-wechat], .city .en, .steps-b span { display: none; }
+    .pgc h2, .pgc h3 { font-size: 1.4em; }
+    .pgc .btn { width: 100%; justify-content: center; padding: 0 .4em; font-size: .95em; }
+    .cl { font-size: .9em; }
+    .wx-id { font-size: 1.05em; }
     .next-bar .wrap { gap: 4px 12px; }
     .nb-label { width: 100%; }
     .nb-meta { width: 100%; order: 3; }
@@ -343,41 +365,76 @@
 </header>
 
 <main id="top">
-  <!-- 1 · HERO: a book that opens as you scroll -->
+  <!-- 1 · HERO: a book whose pages turn as you scroll -->
   <section class="hero dark" id="hero">
     <div class="book-scroll" id="bookScroll">
       <div class="stage idle" id="stage">
         <div class="glow" aria-hidden="true"></div>
-        <div class="stage-head">
+        <div class="stage-top">
           <p class="kicker"><svg class="star" aria-hidden="true"><use href="#star"/></svg>达成教育 <span class="en">Straight Education</span></p>
-          <h1 id="hTitle">一条直路，<span class="gold">直达名校。</span></h1>
         </div>
         <div class="book-wrap">
           <div class="book" id="book">
             <div class="pg under2" aria-hidden="true"></div>
             <div class="pg under1" aria-hidden="true"></div>
-            <div class="pg right">
-              <div class="lbl">最新营期 <span class="chip gold" id="hStatus">报名中</span></div>
-              <h2 id="bkTitle">2027 寒假营期</h2>
-              <p class="sub" id="bkMeta">泰国清迈 · 普吉岛 · 曼谷</p>
+
+            <!-- last right-hand page: the call to action -->
+            <div class="pg base pgc">
+              <p class="kk"><svg class="star" aria-hidden="true"><use href="#star"/></svg><b>先聊聊，再决定</b></p>
+              <p class="sub">微信咨询最直接。告诉我们孩子的年龄和想去的营期，我们把具体安排与费用发给你。</p>
+              <p class="lbl">微信 WeChat</p>
+              <p class="wx-id" id="bkWx">Straight_Education</p>
               <div class="btns">
-                <a class="btn" href="#camp">查看最新营期 <span class="arrow">↓</span></a>
-                <button class="btn ghost" data-copy-wechat>复制微信号</button>
+                <button class="btn" data-copy-wechat>复制微信号</button>
+                <a class="btn ghost" href="#camp">查看全部营期 <span class="arrow">↓</span></a>
+              </div>
+              <span class="ribbon" aria-hidden="true"></span>
+            </div>
+
+            <!-- leaf 2: front = right page of spread 2, back = left page of spread 3 -->
+            <div class="leaf l2">
+              <div class="face pgc" id="pgRight2">
+                <div id="bkPhuket"></div>
+                <div id="bkBangkok"></div>
+              </div>
+              <div class="face b pgc">
+                <p class="kk"><svg class="star" aria-hidden="true"><use href="#star"/></svg><b>怎么开始</b> <span class="en">How it works</span></p>
+                <ol class="steps-b">
+                  <li><b>先看信息</b><span>营期、费用、包含项目，先看清楚</span></li>
+                  <li><b>微信提问</b><span>我们直接回答具体问题</span></li>
+                  <li><b>报名协调</b><span>对接营地代为报名，提供住宿推荐</span></li>
+                </ol>
               </div>
             </div>
-            <div class="cover">
+
+            <!-- leaf 1: front = right page of spread 1, back = left page of spread 2 -->
+            <div class="leaf l1">
+              <div class="face pgc">
+                <p class="lbl">最新营期 <span class="chip gold" id="hStatus">报名中</span></p>
+                <h2 id="bkTitle">2027 寒假营期</h2>
+                <p class="sub" id="bkMeta">泰国清迈 · 普吉岛 · 曼谷</p>
+                <div class="btns">
+                  <a class="btn" href="#camp">查看最新营期 <span class="arrow">↓</span></a>
+                </div>
+              </div>
+              <div class="face b pgc" id="bkChiangMai"></div>
+            </div>
+
+            <!-- leaf 0: the cover; its back is the left page of spread 1 -->
+            <div class="leaf l0">
               <div class="face front">
                 <svg class="cv-star" aria-hidden="true"><use href="#star"/></svg>
                 <img src="assets/logo-cn-light.png" alt="达成教育 Straight Education">
                 <span class="cv-line">一条直路 · 直达名校</span>
               </div>
-              <div class="face back">
+              <div class="face b pgc">
                 <p class="kk"><svg class="star" aria-hidden="true"><use href="#star"/></svg><b>先信息，后服务</b> <span class="en">Information first</span></p>
                 <h3>营期、费用、<br><span class="gold">包含项目全部列清</span></h3>
                 <p class="sub">为中国家庭整理马来西亚与泰国的游学营与择校信息，注明来源与核实日期。</p>
                 <div class="regions"><span class="r">泰国</span><span class="r">马来西亚</span><span class="r soon">逐步拓展中</span></div>
               </div>
             </div>
+
             <div class="gutter" aria-hidden="true"></div>
             <svg class="spark" style="left:-8%;top:8%;--d:0s" aria-hidden="true"><use href="#star"/></svg>
             <svg class="spark" style="left:14%;top:-6%;--d:.9s" aria-hidden="true"><use href="#star"/></svg>
@@ -388,7 +445,10 @@
             <svg class="spark" style="left:112%;top:64%;--d:2.2s" aria-hidden="true"><use href="#star"/></svg>
           </div>
         </div>
-        <p class="hint" id="hint">向下滚动，翻开这一页<i></i></p>
+        <div class="stage-foot">
+          <h1 id="hTitle"><span class="ln"><span>一条直路，</span></span><span class="ln"><span class="gold">直达名校。</span></span></h1>
+        </div>
+        <p class="hint" id="hint">向下滚动，一页一页翻开<i></i></p>
       </div>
     </div>
     <a class="next-bar stagger" href="#camp" id="hNext">
@@ -505,7 +565,7 @@
   <div id="dlgBody"></div>
 </dialog>
 
-<script src="config.js?v=202609302108"></script>
-<script src="main.js?v=202609302108"></script>
+<script src="config.js?v=202609302115"></script>
+<script src="main.js?v=202609302115"></script>
 </body>
 </html>
