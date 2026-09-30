@@ -29,6 +29,7 @@
   .nav .brand { display: block; height: 38px; width: 100px; position: relative; }
   .nav .brand img { height: 38px; width: auto; position: absolute; left: 0; top: 0; transition: opacity .35s; }
   .nav .brand .on-light { opacity: 0; }
+  .nav.scrolled:not(.solid):not(.open) { background: rgba(47, 43, 40, .97); }
   .nav.solid { background: rgba(250, 241, 228, .96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
   .nav.solid .brand .on-dark { opacity: 0; }
   .nav.solid .brand .on-light { opacity: 1; }
@@ -99,6 +100,7 @@
   .detail .src { font-size: 13px; color: var(--ink-60); margin-top: 16px; }
   .detail .dtable { font-size: 15px; }
   .detail .dtable td:first-child { width: 26%; font-weight: 500; white-space: nowrap; }
+  .dtable .dt { white-space: nowrap; }
   .detail .dtable tbody tr { opacity: 0; transform: translateY(8px); transition: opacity .6s var(--ease), transform .6s var(--ease); transition-delay: calc(var(--k, 0) * .07s + .1s); }
   .detail .in .dtable tbody tr, .no-motion .detail .dtable tbody tr { opacity: 1; transform: none; }
   .camp-photo { grid-column: 1 / -1; aspect-ratio: 21 / 9; overflow: hidden; background: var(--ink); }
@@ -206,8 +208,20 @@
     .nav-links a { color: var(--ink) !important; padding: 15px 0; border-bottom: 1px solid var(--ink-14); font-size: 17px; }
     .nav-links a::after { display: none; }
     .nav-links .chip { margin-top: 16px; justify-content: center; height: 48px; }
-    .hero { min-height: 0; padding: 104px 0 56px; }
-    .tagline { margin-bottom: 36px; }
+    .hero { min-height: 0; padding: 96px 0 48px; }
+    .tagline { display: none; }
+    .spec { margin-top: 26px; }
+    .spec > div { grid-template-columns: 72px 1fr; padding: 11px 0; }
+    .hero .actions { margin-top: 26px; }
+    .dtable .th { display: block; }
+    .dtable .dt { display: block; font-family: var(--en); font-size: 13px; color: var(--ink-60); margin-top: 2px; }
+    .dtable .sep { display: none; }
+    .others a { display: grid; grid-template-columns: 18px 1fr auto; column-gap: 12px; row-gap: 4px; align-items: center; }
+    .others .p { width: auto; grid-column: 2; grid-row: 1; }
+    .others .go { grid-column: 3; grid-row: 1; }
+    .others .h { grid-column: 2 / 4; grid-row: 2; overflow-wrap: normal; word-break: normal; }
+    .others svg { grid-row: 1; }
+    .quote { font-size: 22px; }
     .hero .actions .btn { flex: 1 1 100%; }
     .steps { grid-template-columns: 1fr; }
     .crow { grid-template-columns: 1fr auto; gap: 4px 12px; }
@@ -292,7 +306,7 @@
         <div>
           <p class="eyebrow reveal">关于我们</p>
           <h2 class="split"><span class="ln"><span>信息先于服务。</span></span></h2>
-          <blockquote class="quote reveal" style="--d:.1s">「学校我们都去过，才敢推荐。」</blockquote>
+          <blockquote class="quote reveal" style="--d:.1s">「学校我们都去过，<br>才敢推荐。」</blockquote>
         </div>
         <div class="copy reveal" style="--d:.12s">
           <p><strong>达成教育 Straight Education</strong> 帮助中国家庭把孩子送进马来西亚与泰国的游学营，并为之后的择校做准备。大多数家长都是第一次做这件事，需要的是清楚、具体的信息，而不是销售话术。</p>

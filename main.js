@@ -35,6 +35,12 @@
     return [parts.join("\n"), src];
   }
 
+  // "主题 · 1月4日–8日": keep the date part unbroken (and on its own line on phones)
+  function cell(b) {
+    const i = b.lastIndexOf(" · ");
+    return i > 0 ? `<span class="th">${esc(b.slice(0, i))}</span><span class="sep"> · </span><span class="dt">${esc(b.slice(i + 3))}</span>` : esc(b);
+  }
+
   // ---------- camp detail (section 2 + dialog) ----------
   function detail(c, inDialog) {
     const [label, tone] = statusOf(c);
@@ -51,7 +57,7 @@
     const table = rows.length || c.price ? `
       <table class="dtable">
         <thead><tr><th colspan="2">营期安排</th></tr></thead>
-        <tbody>${rows.map(([a, b], k) => `<tr style="--k:${k}">${a ? `<td>${esc(a)}</td><td>${esc(b)}</td>` : `<td colspan="2">${esc(b)}</td>`}</tr>`).join("")}</tbody>
+        <tbody>${rows.map(([a, b], k) => `<tr style="--k:${k}">${a ? `<td>${esc(a)}</td><td>${cell(b)}</td>` : `<td colspan="2">${cell(b)}</td>`}</tr>`).join("")}</tbody>
         ${c.price ? `<tfoot><tr><td>营地费</td><td class="num" style="text-align:left">${esc(c.price)}</td></tr></tfoot>` : ""}
       </table>` : "";
     const photo = c.image_url && safeUrl(c.image_url) ? `<div class="camp-photo"><img src="${esc(c.image_url)}" alt="${esc(c.title)}" loading="lazy"></div>` : "";
@@ -227,6 +233,7 @@
   observe();
 
   const hero = $("#hero"), bar = $("#progress"), dock = $("#dock"), contact = $("#contact");
+  const heroBtn = hero.querySelector("[data-copy-wechat]");
   const steps = $("#steps"), stepLine = steps.querySelector(".steps-line i"), stepEls = [...steps.querySelectorAll(".step")];
   const sections = ["camp", "about", "process", "contact"].map((id) => document.getElementById(id));
   const links = [...document.querySelectorAll(".nav-links a")];
@@ -234,11 +241,14 @@
   function onScroll() {
     const y = scrollY, vh = innerHeight, max = document.documentElement.scrollHeight - vh;
     nav.classList.toggle("solid", y > hero.offsetHeight - 72);
+    nav.classList.toggle("scrolled", y > 8);
     if (!nav.classList.contains("open")) nav.classList.toggle("hide", y > lastY + 4 && y > vh * 0.9);
     if (y < lastY - 2) nav.classList.remove("hide");
     lastY = y;
     bar.style.setProperty("--p", max > 0 ? y / max : 0);
-    dock.classList.toggle("show", y > hero.offsetHeight * 0.6 && contact.getBoundingClientRect().top > vh * 0.6);
+    // show the quick-contact bar whenever the hero's own WeChat button is off screen, until the contact section arrives
+    const hb = heroBtn.getBoundingClientRect();
+    dock.classList.toggle("show", y > 60 && (hb.bottom < 72 || hb.top > vh) && contact.getBoundingClientRect().top > vh * 0.6);
 
     const sr = steps.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, (vh * 0.75 - sr.top) / (sr.height + vh * 0.2)));
