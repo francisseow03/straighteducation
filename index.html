@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <!-- CJK web fonts load without blocking; phones fall back to PingFang / YaHei instantly (Google may be slow or blocked in mainland China) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=202609302131">
+<link rel="stylesheet" href="styles.css?v=202609302141">
 <style>
   :root { --body: rgba(47, 43, 40, .8); }
   .dark { --body: rgba(250, 241, 228, .78); }
@@ -65,7 +65,7 @@
   /* ---------- hero: a book whose pages turn as you scroll (dark ground) ---------- */
   .hero { position: relative; }
   .book-scroll { position: relative; height: 300vh; }
-  .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; perspective: 2600px; perspective-origin: 50% 35%;
+  .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; -webkit-perspective: 2600px; perspective: 2600px; perspective-origin: 50% 35%;
     --o0: 0; --g: 0; --hint: 1; --R: 1.32; --W: min(44vw, 430px, calc((100svh - 330px) / 1.32));
     display: flex; flex-direction: column; align-items: center; padding-top: 88px; }
   .stage-top { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter); }
@@ -84,18 +84,21 @@
   .glow { position: absolute; left: 50%; top: 46%; width: calc(var(--W) * 4.4); height: calc(var(--W) * 3.2); transform: translate(-50%, -50%) scale(calc(.55 + var(--g) * .55)); opacity: calc(.18 + var(--g) * .82);
     background: radial-gradient(closest-side, rgba(217, 160, 55, .36), rgba(217, 160, 55, .12) 55%, rgba(217, 160, 55, 0) 100%); pointer-events: none; z-index: 1; }
   .book-wrap { transform-style: preserve-3d; position: relative; z-index: 2; flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; margin: 6px 0 4px; }
-  .book { position: relative; width: var(--W); height: calc(var(--W) * var(--R)); transform-style: preserve-3d; font-size: calc(var(--W) / 17);
+  .book { position: relative; width: var(--W); height: calc(var(--W) * var(--R)); transform-style: preserve-3d; -webkit-transform-style: preserve-3d; font-size: calc(var(--W) / 17);
     transform: translateX(calc(var(--W) * .5 * var(--o0))) rotateX(calc((1 - var(--o0)) * 9deg)) rotateY(calc((1 - var(--o0)) * -10deg)); }
   .pg, .face { --body: rgba(47, 43, 40, .8); --fg: var(--ink); --fg-2: var(--ink-60); --line: var(--ink-14); --stroke: var(--ink); --accent: var(--deep-gold); color: var(--ink); }
   .pg { position: absolute; inset: 0; background: var(--card); border: 1.5px solid var(--ink); }
   .pg.under1 { transform: translate(4px, 3px); background: var(--sand); }
   .pg.under2 { transform: translate(8px, 6px); background: var(--card); }
-  .leaf { position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d; }
+  .leaf { position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; will-change: transform; }
   .leaf.l0 { transform: translateZ(2px) rotateY(calc(var(--o0) * -180deg)); }
   .stage.idle .leaf.l0 { animation: peek 3.6s ease-in-out infinite; }
   @keyframes peek { 0%, 100% { transform: translateZ(2px) rotateY(0); } 45% { transform: translateZ(2px) rotateY(-11deg); } }
-  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1.5px solid var(--ink); background: var(--card); }
-  .face.b { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(0deg) translateZ(1px); -webkit-transform: rotateY(0deg) translateZ(1px); border: 1.5px solid var(--ink); background: var(--card); }
+  .face.b { transform: rotateY(180deg) translateZ(1px); -webkit-transform: rotateY(180deg) translateZ(1px); }
+  /* belt and braces: never rely only on backface-visibility (Safari) — hide whichever side faces away */
+  .stage.flipped .leaf .front { visibility: hidden; }
+  .stage:not(.flipped) .leaf .face.b { visibility: hidden; }
   .pgc { padding: 8% 9%; display: flex; flex-direction: column; justify-content: center; gap: .55em; }
   .pg.base { display: flex; flex-direction: column; justify-content: center; gap: .55em; padding: 8% 9%; }
   .pgc h2, .pgc h3 { font-size: 1.55em; line-height: 1.3; font-weight: 900; }
@@ -533,7 +536,7 @@
   <div id="dlgBody"></div>
 </dialog>
 
-<script src="config.js?v=202609302131"></script>
-<script src="main.js?v=202609302131"></script>
+<script src="config.js?v=202609302141"></script>
+<script src="main.js?v=202609302141"></script>
 </body>
 </html>

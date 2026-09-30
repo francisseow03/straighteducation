@@ -273,6 +273,7 @@
     st.setProperty("--hint", (1 - smooth(p / 0.12)).toFixed(3));
     stage.classList.toggle("idle", p < 0.02 && !reduce);
     stage.classList.toggle("lit", open > 0.35 && !reduce);
+    stage.classList.toggle("flipped", open > 0.5);
   }
   const steps = $("#steps"), stepLine = steps.querySelector(".steps-line i"), stepEls = [...steps.querySelectorAll(".step")];
   const sections = ["camp", "about", "process", "contact"].map((id) => document.getElementById(id));
