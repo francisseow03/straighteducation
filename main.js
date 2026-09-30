@@ -124,14 +124,16 @@
     const c = upcoming[0];
     if (c) {
       const cs = CITIES.filter((k) => upcoming.some((x) => cityOf(x) === k));
-      $("#hStatus").textContent = statusOf(c)[0];
-      $("#hStatus").className = "chip " + statusOf(c)[1];
+      for (const id of ["#hStatus", "#hStatus2"]) { $(id).textContent = statusOf(c)[0]; $(id).className = "chip " + statusOf(c)[1]; }
+      const since = c.start_date ? `最早 ${fmtDate(c.start_date)} 开营` : "";
       $("#hNextTitle").textContent = `2027 寒假营期 · 共 ${upcoming.length} 个`;
-      $("#hNextMeta").textContent = [cs.join(" / "), c.start_date ? `最早 ${fmtDate(c.start_date)} 开营` : ""].filter(Boolean).join(" · ");
+      $("#hNextMeta").textContent = [cs.join(" / "), since].filter(Boolean).join(" · ");
+      $("#bkTitle").textContent = "2027 寒假营期";
+      $("#bkMeta").textContent = [`共 ${upcoming.length} 个营`, cs.join(" · "), since].filter(Boolean).join(" · ");
     } else {
-      $("#hStatus").textContent = "筹备中";
-      $("#hNextTitle").textContent = "下一期营期正在筹备中";
-      $("#hNextMeta").textContent = "关注小红书或添加微信，第一时间获取";
+      $("#hStatus").textContent = $("#hStatus2").textContent = "筹备中";
+      $("#hNextTitle").textContent = $("#bkTitle").textContent = "下一期营期正在筹备中";
+      $("#hNextMeta").textContent = $("#bkMeta").textContent = "关注小红书或添加微信，第一时间获取";
     }
   }
 
@@ -254,7 +256,26 @@
   observe();
 
   const hero = $("#hero"), bar = $("#progress"), dock = $("#dock"), contact = $("#contact");
-  const heroBtn = hero.querySelector("[data-copy-wechat]");
+  const bookScroll = $("#bookScroll"), stage = $("#stage");
+  const clamp01 = (x) => Math.min(1, Math.max(0, x));
+  const smooth = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
+  let bookP = 0;
+  // scroll position -> how far the book is open (0 closed, 1 open)
+  function updateBook() {
+    const r = bookScroll.getBoundingClientRect();
+    const total = r.height - innerHeight;
+    const p = reduce || total <= 0 ? 1 : clamp01(-r.top / total);
+    bookP = p;
+    const open = smooth((p - 0.08) / 0.5);
+    const st = stage.style;
+    st.setProperty("--open", open.toFixed(4));
+    st.setProperty("--l", smooth((p - 0.42) / 0.2).toFixed(3));
+    st.setProperty("--r", smooth((p - 0.52) / 0.2).toFixed(3));
+    st.setProperty("--g", smooth((p - 0.05) / 0.55).toFixed(3));
+    st.setProperty("--hint", (1 - smooth(p / 0.12)).toFixed(3));
+    stage.classList.toggle("idle", p < 0.02 && !reduce);
+    stage.classList.toggle("lit", open > 0.35 && !reduce);
+  }
   const steps = $("#steps"), stepLine = steps.querySelector(".steps-line i"), stepEls = [...steps.querySelectorAll(".step")];
   const sections = ["camp", "about", "process", "contact"].map((id) => document.getElementById(id));
   const links = [...document.querySelectorAll(".nav-links a")];
@@ -268,8 +289,8 @@
     lastY = y;
     bar.style.setProperty("--p", max > 0 ? y / max : 0);
     // show the quick-contact bar whenever the hero's own WeChat button is off screen, until the contact section arrives
-    const hb = heroBtn.getBoundingClientRect();
-    dock.classList.toggle("show", y > 60 && (hb.bottom < 72 || hb.top > vh) && contact.getBoundingClientRect().top > vh * 0.6);
+    updateBook();
+    dock.classList.toggle("show", bookP > 0.85 && y > 60 && contact.getBoundingClientRect().top > vh * 0.6);
 
     const sr = steps.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, (vh * 0.75 - sr.top) / (sr.height + vh * 0.2)));
@@ -285,5 +306,5 @@
   addEventListener("resize", onScroll);
   onScroll();
 
-  requestAnimationFrame(() => setTimeout(() => { hero.classList.add("ready"); $("#hTitle").classList.add("in"); }, 60));
+  requestAnimationFrame(() => setTimeout(() => hero.classList.add("ready"), 60));
 })();
