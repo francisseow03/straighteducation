@@ -97,24 +97,6 @@
       <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span></button>`;
   }
 
-  // short label for a camp inside the little book: "曼谷德威国际学校冬令营" -> "德威"
-  function shortName(c) {
-    const k = cityOf(c);
-    let n = splitTitle(c.title)[0].replace(/(国际学校)?(英语冬令营|冬季英语营|冬令营|寒假插班)$/, "").trim();
-    if (k && n.startsWith(k) && n.length > k.length) n = n.slice(k.length).trim();
-    return n || c.title;
-  }
-  function cityBlock(k, en, list) {
-    if (!list.length) return "";
-    return `<p class="city"><b>${k}</b><span class="en">${en}</span><span class="n">${list.length}</span></p><ul class="cl">${list.map((c) => `<li>${esc(shortName(c))}</li>`).join("")}</ul>`;
-  }
-  function renderBookPages(upcoming) {
-    const by = (k) => upcoming.filter((c) => cityOf(c) === k);
-    $("#bkChiangMai").innerHTML = by("清迈").length ? cityBlock("清迈", "CHIANG MAI", by("清迈")) : `<p class="sub">营期更新中，关注小红书获取最新消息。</p>`;
-    $("#bkPhuket").innerHTML = cityBlock("普吉岛", "PHUKET", by("普吉岛"));
-    $("#bkBangkok").innerHTML = cityBlock("曼谷", "BANGKOK", by("曼谷"));
-  }
-
   let camps = [], city = "";
   function drawList() {
     const list = $("#campList");
@@ -137,8 +119,6 @@
       drawList();
     }
     observe(root);
-
-    renderBookPages(upcoming);
 
     // hero bar = summary of what is open, pointing at the list
     const c = upcoming[0];
@@ -172,7 +152,6 @@
   function renderContact(s) {
     wechat = s.wechat || "";
     $("#wxId").textContent = wechat || "—";
-    $("#bkWx").textContent = wechat || "—";
     const qr = $("#wxQr");
     if (safeUrl(s.wechat_qr)) { qr.src = s.wechat_qr; qr.hidden = false; } else qr.hidden = true;
     document.querySelectorAll("[data-copy-wechat]").forEach((b) => (b.hidden = !wechat));
@@ -281,20 +260,19 @@
   const clamp01 = (x) => Math.min(1, Math.max(0, x));
   const smooth = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
   let bookP = 0;
-  // scroll position -> which pages have turned (0 = lying on the right, 1 = turned to the left)
+  // scroll position -> the book flies in and turns to face you (--f), then the cover opens once (--o0)
   function updateBook() {
     const r = bookScroll.getBoundingClientRect();
     const total = r.height - innerHeight;
     const p = reduce || total <= 0 ? 1 : clamp01(-r.top / total);
     bookP = p;
     const st = stage.style;
-    st.setProperty("--o0", smooth((p - 0.06) / 0.22).toFixed(4));
-    st.setProperty("--o1", smooth((p - 0.36) / 0.2).toFixed(4));
-    st.setProperty("--o2", smooth((p - 0.66) / 0.2).toFixed(4));
-    st.setProperty("--g", smooth((p - 0.04) / 0.5).toFixed(3));
+    st.setProperty("--f", smooth((p - 0.02) / 0.4).toFixed(4));
+    st.setProperty("--o0", smooth((p - 0.46) / 0.3).toFixed(4));
+    st.setProperty("--g", smooth((p - 0.02) / 0.6).toFixed(3));
     st.setProperty("--hint", (1 - smooth(p / 0.1)).toFixed(3));
-    stage.classList.toggle("idle", p < 0.02 && !reduce);
-    stage.classList.toggle("lit", p > 0.14 && !reduce);
+    stage.classList.toggle("idle", p > 0.42 && p < 0.47 && !reduce);
+    stage.classList.toggle("lit", p > 0.08 && !reduce);
   }
   const steps = $("#steps"), stepLine = steps.querySelector(".steps-line i"), stepEls = [...steps.querySelectorAll(".step")];
   const sections = ["camp", "about", "process", "contact"].map((id) => document.getElementById(id));
