@@ -146,6 +146,9 @@
     $("#fPrice").value = editing.price || "";
     $("#fStatus").value = editing.status || "open";
     $("#fSummary").value = editing.summary || "";
+    $("#fFormat").value = editing.format || "";
+    $("#fIncludes").value = editing.includes || "";
+    $("#fService").value = editing.service_fee || "";
     $("#fHl").value = (editing.highlights || []).join("\n");
     $("#fSort").value = editing.sort ?? 0;
     $("#fPub").checked = editing.published !== false;
@@ -169,6 +172,9 @@
       price: $("#fPrice").value.trim(),
       status: $("#fStatus").value,
       summary: $("#fSummary").value.trim(),
+      format: $("#fFormat").value.trim(),
+      includes: $("#fIncludes").value.trim(),
+      service_fee: $("#fService").value.trim(),
       highlights: $("#fHl").value.split("\n"),
       sort: parseInt($("#fSort").value, 10) || 0,
       published: $("#fPub").checked,

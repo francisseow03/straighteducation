@@ -8,9 +8,8 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : "");
   const STATUS = { open: ["报名中", "gold"], soon: ["即将开放", "jade"], full: ["已满额", "clay"], past: ["已结束", "ink"] };
-  const star = '<svg class="star" aria-hidden="true" style="width:24px;height:24px;color:var(--gold)"><use href="#star"/></svg>';
 
-  function fmtDate(d) { return d ? d.replaceAll("-", ".") : ""; }
+  const fmtDate = (d) => (d ? d.replaceAll("-", ".") : "");
   function fmtRange(a, b) {
     if (!a && !b) return "";
     if (!b || a === b) return fmtDate(a || b);
@@ -24,205 +23,223 @@
   }
   const statusOf = (c) => STATUS[isPast(c) ? "past" : c.status] || STATUS.open;
 
-  // one camp, laid out as an editorial spread (no card chrome)
-  function feature(c, inDialog) {
-    const [label, tone] = statusOf(c);
-    const rows = [["日期", fmtRange(c.start_date, c.end_date), true], ["地点", c.location], ["适合年龄", c.ages]].filter((r) => r[1]);
-    const table = rows.length || c.price ? `
-      <table class="dtable">
-        <thead><tr><th colspan="2">营期信息</th></tr></thead>
-        <tbody>${rows.map(([k, v, en]) => `<tr><td>${k}</td><td${en ? ' style="font-family:var(--en);font-weight:500;letter-spacing:.04em"' : ""}>${esc(v)}</td></tr>`).join("")}</tbody>
-        ${c.price ? `<tfoot><tr><td>费用</td><td class="num" style="text-align:left">${esc(c.price)}</td></tr></tfoot>` : ""}
-      </table>` : "";
-    // a trailing "信息来源/来源/Source" paragraph in the summary is set as a small source note
-    const parts = String(c.summary || "").split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  // "Name · place" titles: the part after the last " · " is shown in gold on its own line
+  function splitTitle(t) {
+    const i = String(t).lastIndexOf(" · ");
+    return i > 0 ? [t.slice(0, i), t.slice(i + 3)] : [t, ""];
+  }
+  // trailing "信息来源…" paragraph becomes a small source note
+  function splitSummary(s) {
+    const parts = String(s || "").split(/\n+/).map((x) => x.trim()).filter(Boolean);
     const src = parts.length && /^(信息来源|来源|source)/i.test(parts[parts.length - 1]) ? parts.pop() : "";
-    const summary = parts.join("\n");
-    const hl = (c.highlights || []).length ? `<ul class="diamonds">${c.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>` : "";
-    const photo = c.image_url && safeUrl(c.image_url) ? `<div class="camp-photo${inDialog ? "" : " reveal"}"><img src="${esc(c.image_url)}" alt="${esc(c.title)}" loading="lazy"></div>` : "";
-    const gal = inDialog && (c.gallery || []).length ? `<div class="gallery">${c.gallery.filter(safeUrl).map((u) => `<img src="${esc(u)}" alt="" loading="lazy">`).join("")}</div>` : "";
-    const r = inDialog ? "" : " reveal";
-    return `
-      <article class="camp">
-        ${photo}
-        <div class="${r}">
-          <div class="status"><span class="chip ${tone}">${label}</span></div>
-          <h3>${esc(c.title)}</h3>
-          ${c.title_en ? `<div class="title-en">${esc(c.title_en)}</div>` : ""}
-          ${summary ? `<p class="summary">${esc(summary).replace(/\n/g, "<br>")}</p>` : ""}
-          <div class="actions">${isPast(c) ? "" : `<a class="btn" href="#contact" data-close>咨询这期营 <span class="arrow">→</span></a>`}</div>
-          ${src ? `<p class="src">${esc(src)}</p>` : ""}
-        </div>
-        <div class="${r}" style="--d:.12s">${table}${hl}</div>
-        ${gal}
-      </article>`;
+    return [parts.join("\n"), src];
   }
 
+  // ---------- camp detail (section 2 + dialog) ----------
+  function detail(c, inDialog) {
+    const [label, tone] = statusOf(c);
+    const [summary, src] = splitSummary(c.summary);
+    // on the page the hero already shows dates/place/age; the dialog repeats them since it stands alone
+    const kv = [
+      ...(inDialog ? [["日期", fmtRange(c.start_date, c.end_date)], ["地点", c.location], ["适合年龄", c.ages]] : []),
+      ["形式", c.format], ["费用包含", c.includes], ["服务费", c.service_fee],
+    ].filter((r) => r[1]);
+    const rows = (c.highlights || []).map((h) => {
+      const i = h.indexOf(" · ");
+      return i > 0 ? [h.slice(0, i), h.slice(i + 3)] : ["", h];
+    });
+    const table = rows.length || c.price ? `
+      <table class="dtable">
+        <thead><tr><th colspan="2">营期安排</th></tr></thead>
+        <tbody>${rows.map(([a, b], k) => `<tr style="--k:${k}">${a ? `<td>${esc(a)}</td><td>${esc(b)}</td>` : `<td colspan="2">${esc(b)}</td>`}</tr>`).join("")}</tbody>
+        ${c.price ? `<tfoot><tr><td>营地费</td><td class="num" style="text-align:left">${esc(c.price)}</td></tr></tfoot>` : ""}
+      </table>` : "";
+    const photo = c.image_url && safeUrl(c.image_url) ? `<div class="camp-photo"><img src="${esc(c.image_url)}" alt="${esc(c.title)}" loading="lazy"></div>` : "";
+    const gal = inDialog && (c.gallery || []).length ? `<div class="gallery">${c.gallery.filter(safeUrl).map((u) => `<img src="${esc(u)}" alt="" loading="lazy">`).join("")}</div>` : "";
+    const rv = inDialog ? "in" : "reveal";
+    return `
+      <div class="detail">
+        ${photo}
+        <div class="${rv}">
+          <p class="eyebrow" style="display:flex;gap:12px;align-items:center">营期详情 <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span></p>
+          <h2>${inDialog ? esc(c.title) : "营期安排与费用"}</h2>
+          ${summary ? `<p class="summary">${esc(summary).replace(/\n/g, "<br>")}</p>` : ""}
+          ${kv.length ? `<dl class="kv">${kv.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
+          <div class="actions">${isPast(c) ? "" : `<button class="btn" data-copy-wechat>复制微信号咨询这期</button>`}</div>
+        </div>
+        <div class="${rv}" style="--d:.1s">${table}${src ? `<p class="src">${esc(src)}</p>` : ""}</div>
+        ${gal}
+      </div>`;
+  }
   function row(c) {
     const [label, tone] = statusOf(c);
-    return `
-      <button class="crow${isPast(c) ? " past" : ""}" data-id="${esc(c.id)}">
-        <span class="when">${esc(fmtRange(c.start_date, c.end_date) || c.location || "")}</span>
-        <span class="t">${esc(c.title)}</span>
-        <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span>
-      </button>`;
+    return `<button class="crow${isPast(c) ? " past" : ""}" data-id="${esc(c.id)}">
+      <span class="when">${esc(fmtRange(c.start_date, c.end_date) || c.location || "")}</span>
+      <span class="t">${esc(c.title)}</span>
+      <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span></button>`;
   }
 
   let camps = [];
   function renderCamps() {
-    const root = $("#campsRoot");
     const upcoming = camps.filter((c) => !isPast(c));
     const ordered = [...upcoming, ...camps.filter(isPast)];
+    const root = $("#campRoot");
     if (!ordered.length) {
-      root.innerHTML = `
-        <div class="camp-empty reveal">
-          ${star}
-          <h3>下一期营期正在筹备中</h3>
-          <p>关注我们的小红书，新营期一公布就能第一时间看到。</p>
-          <a class="btn" href="#contact">关注与咨询 <span class="arrow">→</span></a>
-        </div>`;
+      root.innerHTML = `<div class="reveal"><p class="eyebrow">营期详情</p><h2 class="h1">下一期营期正在筹备中</h2><p class="lede" style="margin-bottom:28px">关注小红书或添加微信，新营期公布时第一时间告诉你。</p><button class="btn" data-copy-wechat>复制微信号</button></div>`;
     } else {
       const [first, ...rest] = ordered;
-      root.innerHTML = feature(first) + (rest.length ? `<div class="more-camps reveal"><h4>更多营期 · MORE</h4>${rest.map(row).join("")}</div>` : "");
+      root.innerHTML = detail(first) + (rest.length ? `<div class="more-camps reveal"><h3>更多营期</h3>${rest.map(row).join("")}</div>` : "");
     }
     observe(root);
-    bindParallax();
 
-    const hc = $("#heroCamp");
-    const next = upcoming[0];
-    hc.querySelector("h3").textContent = next ? next.title : "下一期营期筹备中";
-    hc.querySelector(".meta").textContent = next ? [fmtRange(next.start_date, next.end_date), next.location].filter(Boolean).join(" · ") : "关注小红书获取第一手消息";
-    hc.querySelector(".lbl b").textContent = next ? statusOf(next)[0] : "SOON";
-    hc.setAttribute("href", next ? "#camps" : "#contact");
+    // hero = the next upcoming camp
+    const c = upcoming[0];
+    const hero = $("#hero");
+    if (c) {
+      const [name, loc] = splitTitle(c.title);
+      $("#hTitle").innerHTML = `<span class="ln"><span>${esc(name)}</span></span>${loc ? `<span class="ln" style="--i:1"><span class="loc">${esc(loc)}</span></span>` : ""}`;
+      $("#hTitleEn").textContent = c.title_en || "";
+      $("#hStatus").textContent = statusOf(c)[0];
+      $("#hStatus").className = "chip " + statusOf(c)[1];
+      const facts = [["日期", fmtRange(c.start_date, c.end_date)], ["地点", c.location], ["适合年龄", c.ages], ["营地费", c.price, "price"], ["形式", c.format, "zh"]].filter((f) => f[1]);
+      $("#hFacts").innerHTML = facts.map(([k, v, cls], i) => `<div style="--k:${i}"><dt>${k}</dt><dd${cls ? ` class="${cls}"` : ""}>${esc(v)}</dd></div>`).join("");
+    } else {
+      $("#hTitle").innerHTML = `<span class="ln"><span>下一期营期</span></span><span class="ln" style="--i:1"><span class="loc">筹备中</span></span>`;
+      $("#hTitleEn").textContent = "";
+      $("#hStatus").textContent = "即将公布";
+      $("#hFacts").innerHTML = `<div><dt>关注</dt><dd class="zh">新营期公布时，小红书与微信会第一时间更新。</dd></div>`;
+    }
+    if (hero.classList.contains("ready")) $("#hTitle").classList.add("in");
   }
 
-  const ICON = { rednote: "i-rednote", wechat: "i-wechat", instagram: "i-ig", facebook: "i-fb", email: "i-mail" };
-  function socialUrl(kind, v, s) {
-    if (kind === "email") return "mailto:" + v;
-    if (kind === "rednote") return safeUrl(s.rednote_url) || "https://www.xiaohongshu.com/search_result?keyword=" + encodeURIComponent(v);
-    if (kind === "instagram") return safeUrl(v) || "https://www.instagram.com/" + encodeURIComponent(v.replace(/^@/, "")) + "/";
-    if (kind === "facebook") return safeUrl(v) || "https://www.facebook.com/" + encodeURIComponent(v.replace(/^@/, ""));
-    return "";
-  }
+  // ---------- contact ----------
+  let wechat = ($("#wxId").textContent || "").trim(); // static fallback until data arrives
+  const ICON = { rednote: "i-rednote", instagram: "i-ig", facebook: "i-fb", email: "i-mail" };
   function handleOf(kind, v) {
     if (!/^https?:\/\//i.test(v)) return v;
     try {
       const u = new URL(v);
-      const seg = u.pathname.split("/").filter(Boolean);
       if (kind === "facebook" && u.searchParams.get("id")) return "Straight Education";
+      const seg = u.pathname.split("/").filter(Boolean);
       return seg.length ? (kind === "instagram" ? "@" : "") + decodeURIComponent(seg[seg.length - 1]) : u.hostname;
     } catch { return v; }
   }
-  function renderSocials(s) {
+  function renderContact(s) {
+    wechat = s.wechat || "";
+    $("#wxId").textContent = wechat || "—";
+    const qr = $("#wxQr");
+    if (safeUrl(s.wechat_qr)) { qr.src = s.wechat_qr; qr.hidden = false; } else qr.hidden = true;
+    document.querySelectorAll("[data-copy-wechat]").forEach((b) => (b.hidden = !wechat));
+
+    const rnUrl = safeUrl(s.rednote_url) || (s.rednote_id ? "https://www.xiaohongshu.com/search_result?keyword=" + encodeURIComponent(s.rednote_id) : "");
     const items = [
-      ["rednote", "小红书 RedNote", s.rednote_id],
-      ["wechat", "微信 WeChat", s.wechat],
-      ["instagram", "Instagram", s.instagram],
-      ["facebook", "Facebook", s.facebook],
-      ["email", "邮箱 Email", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email || "") ? s.email : ""],
+      ["rednote", "小红书", s.rednote_id, rnUrl, "去关注 ↗"],
+      ["email", "邮箱", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email || "") ? s.email : "", "mailto:" + (s.email || ""), "发邮件 ↗"],
+      ["instagram", "Instagram", s.instagram, safeUrl(s.instagram) || "https://www.instagram.com/" + encodeURIComponent(String(s.instagram || "").replace(/^@/, "")) + "/", "打开 ↗"],
+      ["facebook", "Facebook", s.facebook, safeUrl(s.facebook) || "https://www.facebook.com/" + encodeURIComponent(String(s.facebook || "").replace(/^@/, "")), "打开 ↗"],
     ].filter((x) => x[2]);
-    $("#socials").innerHTML = items.map(([k, name, v], i) => {
-      const url = socialUrl(k, v, s);
-      const shown = k === "rednote" ? v : handleOf(k, v);
-      const act = k === "wechat"
-        ? `<span class="copy-ok">已复制</span><button class="link-btn" data-copy="${esc(v)}">复制微信号</button>`
-        : k === "email"
-        ? `<span class="copy-ok">已复制</span><button class="link-btn" data-copy="${esc(v)}">复制</button><a class="link-btn" href="${esc(url)}">发邮件 <span class="arrow">↗</span></a>`
-        : `<a class="link-btn" href="${esc(url)}" target="_blank" rel="noopener">${k === "rednote" ? "去关注" : "打开主页"} <span class="arrow">↗</span></a>`;
-      const qr = k === "wechat" && safeUrl(s.wechat_qr) ? `<img class="qr" src="${esc(s.wechat_qr)}" alt="微信二维码" loading="lazy">` : "";
-      return `
-        <div class="social reveal" style="--d:${i * 0.06}s">
-          <div class="hair" style="--d:${i * 0.06}s"></div>
-          <span class="platform"><svg aria-hidden="true"><use href="#${ICON[k]}"/></svg>${name}</span>
-          <span class="handle">${esc(shown)}</span>
-          <span class="act">${act}</span>
-          ${qr}
-        </div>`;
-    }).join("");
-    if (s.rednote_id) $("#footRn").textContent = "小红书号 " + s.rednote_id;
-    observe($("#socials"));
+    $("#others").innerHTML = items.map(([k, name, v, url, go]) =>
+      `<a href="${esc(url)}"${k === "email" ? "" : ' target="_blank" rel="noopener"'}><svg aria-hidden="true"><use href="#${ICON[k]}"/></svg><span class="p">${name}</span><span class="h">${esc(k === "rednote" ? v : handleOf(k, v))}</span><span class="go">${go}</span></a>`).join("");
+
+    if (s.rednote_id) {
+      $("#footRn").textContent = "小红书号 " + s.rednote_id;
+      $("#hRn").textContent = s.rednote_id;
+    }
+    $("#hOr").hidden = !s.rednote_id;
+    const dockRn = $("#dockRn");
+    dockRn.href = rnUrl || "#contact";
+    dockRn.hidden = !rnUrl;
   }
 
-  // ---------- data ----------
+  // ---------- data: live API, then built-in snapshot if the API is slow/blocked ----------
   function apply(d) {
     camps = d.camps || [];
     renderCamps();
-    renderSocials(d.settings || {});
+    renderContact(d.settings || {});
   }
+  let applied = false;
   try {
     const cached = JSON.parse(localStorage.getItem("se_cache") || "null");
-    if (cached) apply(cached);
+    if (cached) { apply(cached); applied = true; }
   } catch {}
-  fetch(API).then((r) => r.json()).then((d) => {
-    if (d.error) throw d.error;
-    apply(d);
-    try { localStorage.setItem("se_cache", JSON.stringify(d)); } catch {}
-  }).catch(() => { if (!camps.length) renderCamps(); });
+  const withTimeout = (url, ms) => {
+    const ctl = "AbortController" in window ? new AbortController() : null;
+    const t = setTimeout(() => ctl && ctl.abort(), ms);
+    return fetch(url, ctl ? { signal: ctl.signal } : {}).then((r) => { clearTimeout(t); if (!r.ok) throw new Error(r.status); return r.json(); });
+  };
+  withTimeout(API, 6000)
+    .then((d) => { if (d.error) throw d.error; apply(d); try { localStorage.setItem("se_cache", JSON.stringify(d)); } catch {} })
+    .catch(() => (applied ? null : withTimeout("data.json", 6000).then(apply)))
+    .catch(() => { if (!applied) apply({ camps: [], settings: {} }); });
 
-  // ---------- interactions ----------
+  // ---------- copy WeChat ID (works in WeChat/RedNote in-app browsers too) ----------
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+    return legacyCopy(text);
+  }
+  function legacyCopy(text) {
+    return new Promise((res, rej) => {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:-100px;opacity:0";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      const ok = document.execCommand && document.execCommand("copy");
+      ta.remove(); ok ? res() : rej();
+    });
+  }
   document.addEventListener("click", (e) => {
-    const copy = e.target.closest("[data-copy]");
-    if (copy) {
-      const ok = copy.parentElement.querySelector(".copy-ok");
-      navigator.clipboard?.writeText(copy.dataset.copy).then(() => {
-        ok.classList.add("show"); setTimeout(() => ok.classList.remove("show"), 1800);
-      }, () => prompt("复制", copy.dataset.copy));
+    const b = e.target.closest("[data-copy-wechat]");
+    if (b) {
+      if (!wechat) return;
+      const html = b.innerHTML;
+      copyText(wechat).then(() => {
+        b.classList.add("copied");
+        b.innerHTML = `已复制 ${esc(wechat)}`;
+        setTimeout(() => { b.classList.remove("copied"); b.innerHTML = html; }, 2200);
+      }, () => prompt("微信号（长按复制）", wechat));
       return;
     }
     const r = e.target.closest(".crow");
     if (r) {
       const c = camps.find((x) => String(x.id) === r.dataset.id);
-      if (c) { $("#dlgBody").innerHTML = feature(c, true); $("#campDlg").showModal(); }
-      return;
+      if (c) { $("#dlgBody").innerHTML = detail(c, true); $("#campDlg").showModal(); }
     }
-    if (e.target.closest("[data-close]") && $("#campDlg").open) $("#campDlg").close();
   });
   $("#dlgClose").onclick = () => $("#campDlg").close();
   $("#campDlg").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 
+  // ---------- nav ----------
   const nav = $("#nav"), menuBtn = $("#menuBtn");
   const setMenu = (open) => { nav.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", open); };
   menuBtn.onclick = () => setMenu(!nav.classList.contains("open"));
   $("#navLinks").addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
 
-  // ---------- scroll motion ----------
-  const io = new IntersectionObserver((entries) => {
-    for (const en of entries) if (en.isIntersecting) { en.target.classList.add("in"); en.target.querySelectorAll(".hair").forEach((h) => h.classList.add("in")); io.unobserve(en.target); }
-  }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+  // ---------- scroll reveal (information only; nothing loops) ----------
+  const io = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
+    for (const en of entries) if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+  }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }) : null;
   function observe(root = document) {
-    root.querySelectorAll(".reveal, .reveal-rule, .split").forEach((el) => {
-      if (el.id === "heroTitle") return;
-      if (reduce) { el.classList.add("in"); el.querySelectorAll(".hair").forEach((h) => h.classList.add("in")); } else io.observe(el);
+    root.querySelectorAll(".reveal, .split").forEach((el) => {
+      if (el.id === "hTitle") return;
+      if (reduce || !io) el.classList.add("in"); else io.observe(el);
     });
   }
   observe();
 
-  const heroStar = $("#heroStar"), hero = $("#hero"), bar = $("#progress");
+  const hero = $("#hero"), bar = $("#progress"), dock = $("#dock"), contact = $("#contact");
   const steps = $("#steps"), stepLine = steps.querySelector(".steps-line i"), stepEls = [...steps.querySelectorAll(".step")];
-  let parallaxImgs = [];
-  function bindParallax() { parallaxImgs = [...document.querySelectorAll(".camp .camp-photo img")]; }
-  const sections = ["about", "services", "camps", "process", "contact"].map((id) => document.getElementById(id));
+  const sections = ["camp", "about", "process", "contact"].map((id) => document.getElementById(id));
   const links = [...document.querySelectorAll(".nav-links a")];
-
   let lastY = scrollY, ticking = false;
   function onScroll() {
     const y = scrollY, vh = innerHeight, max = document.documentElement.scrollHeight - vh;
-    nav.classList.toggle("solid", y > hero.offsetHeight - 80);
+    nav.classList.toggle("solid", y > hero.offsetHeight - 72);
     if (!nav.classList.contains("open")) nav.classList.toggle("hide", y > lastY + 4 && y > vh * 0.9);
-    else if (y < lastY) nav.classList.remove("hide");
-    if (y < lastY) nav.classList.remove("hide");
+    if (y < lastY - 2) nav.classList.remove("hide");
     lastY = y;
     bar.style.setProperty("--p", max > 0 ? y / max : 0);
+    dock.classList.toggle("show", y > hero.offsetHeight * 0.6 && contact.getBoundingClientRect().top > vh * 0.6);
 
-    if (!reduce) {
-      if (y < vh * 1.2) heroStar.style.transform = `translateY(calc(-50% + ${y * 0.18}px)) rotate(${y * 0.04}deg)`;
-      for (const img of parallaxImgs) {
-        const r = img.parentElement.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > vh) continue;
-        img.style.transform = `translateY(${((r.top + r.height / 2 - vh / 2) / vh) * -8 - 8}%)`;
-      }
-    }
     const sr = steps.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, (vh * 0.75 - sr.top) / (sr.height + vh * 0.2)));
     stepLine.style.setProperty("--p", reduce ? 1 : p);
@@ -237,5 +254,5 @@
   addEventListener("resize", onScroll);
   onScroll();
 
-  requestAnimationFrame(() => setTimeout(() => { hero.classList.add("ready"); $("#heroTitle").classList.add("in"); }, 80));
+  requestAnimationFrame(() => setTimeout(() => { hero.classList.add("ready"); $("#hTitle").classList.add("in"); }, 60));
 })();
