@@ -120,12 +120,19 @@
   .camp-photo img { width: 100%; height: 100%; object-fit: cover; }
   .more-camps { margin-top: clamp(56px, 7vw, 88px); }
   .more-camps h3 { font-size: 15px; margin: 0 0 6px; }
-  .crow { width: 100%; display: grid; grid-template-columns: 190px 1fr auto; gap: 24px; align-items: center; padding: 20px 0; background: none; border: 0; border-top: 1px solid var(--ink-14); text-align: left; cursor: pointer; font: inherit; color: var(--ink); }
-  .crow:last-child { border-bottom: 1px solid var(--ink-14); }
-  .crow .when { font-family: var(--en); font-weight: 500; font-size: 14px; color: var(--ink-60); }
-  .crow .t { font-size: 17px; font-weight: 500; transition: transform .4s var(--ease), color .3s; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+  .filters .chip { cursor: pointer; background: none; font-family: inherit; }
+  .filters .chip:hover { border-color: var(--deep-gold); }
+  .filters .chip.on { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .clist { border-bottom: 1px solid var(--ink-14); }
+  .crow { width: 100%; display: grid; grid-template-columns: 180px 1fr 180px auto; gap: 24px; align-items: center; padding: 22px 0; background: none; border: 0; border-top: 1px solid var(--ink-14); text-align: left; cursor: pointer; font: inherit; color: var(--ink); }
+  .crow .when { font-family: var(--en); font-weight: 600; font-size: 15px; color: var(--ink); letter-spacing: .02em; }
+  .crow .t { font-size: 18px; font-weight: 700; line-height: 1.4; transition: transform .4s var(--ease), color .3s; }
+  .crow .t small { display: block; font-size: 14px; font-weight: 400; color: var(--ink-60); margin-top: 3px; }
+  .crow .pr { font-family: var(--en); font-weight: 600; font-size: 15px; color: var(--deep-gold); text-align: right; }
   .crow:hover .t { transform: translateX(6px); color: var(--deep-gold); }
   .crow.past { opacity: .55; }
+  .clist-note { font-size: 13px; color: var(--ink-60); margin: 18px 0 0; }
 
   dialog.camp-dlg { border: 0; border-top: 6px solid var(--gold); padding: clamp(28px, 4vw, 48px); max-width: min(1000px, calc(100vw - 32px)); width: 100%; background: var(--cream); color: var(--ink); max-height: calc(100vh - 40px); }
   dialog.camp-dlg::backdrop { background: rgba(47, 43, 40, .6); }
@@ -146,6 +153,12 @@
   .does { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 3vw, 40px); margin-top: clamp(48px, 6vw, 72px); }
   .does h3 { font-size: 18px; margin: 16px 0 8px; }
   .does p { font-size: 15px; margin: 0; }
+  .proof { margin-top: clamp(40px, 5vw, 60px); padding-top: 24px; border-top: 2px solid var(--gold); max-width: 52em; }
+  .proof-h { font-size: 14px; font-weight: 700; color: var(--deep-gold); margin: 0 0 14px; letter-spacing: .06em; }
+  .proof .diamonds { gap: 12px; font-size: 16px; }
+  .proof li { color: var(--body); }
+  .proof li b { color: var(--ink); font-weight: 700; }
+  .proof .en { letter-spacing: .04em; font-weight: 600; color: var(--ink); }
   .nopromise { margin-top: clamp(32px, 4vw, 44px); display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; font-size: 15px; }
   .nopromise b { font-weight: 700; }
   .nopromise span { color: var(--body); }
@@ -240,8 +253,10 @@
     .quote { font-size: 22px; }
     .hero .actions .btn { flex: 1 1 100%; }
     .steps { grid-template-columns: 1fr; }
-    .crow { grid-template-columns: 1fr auto; gap: 4px 12px; }
-    .crow .when { grid-column: 1 / -1; }
+    .crow { grid-template-columns: 1fr auto; gap: 6px 12px; padding: 18px 0; }
+    .crow .when { grid-column: 1 / -1; font-size: 14px; color: var(--ink-60); }
+    .crow .pr { text-align: left; grid-row: 3; grid-column: 1; }
+    .crow .chip { grid-row: 2; grid-column: 2; }
     .dock { display: grid; }
     body { padding-bottom: 56px; }
     .kv > div { grid-template-columns: 80px 1fr; }
@@ -301,10 +316,15 @@
     </a>
   </section>
 
-  <!-- 2 · LATEST CAMP -->
+  <!-- 2 · CAMPS -->
   <section class="block" id="camp">
-    <div class="wrap" id="campRoot">
-      <p class="muted">正在载入营期…</p>
+    <div class="wrap">
+      <div class="camp-head">
+        <p class="eyebrow reveal">最新营期</p>
+        <h2 class="split"><span class="ln"><span>2027 寒假营期</span></span></h2>
+        <p class="lede reveal" style="--d:.1s">泰国清迈、普吉岛、曼谷的冬令营，日期、费用、包含项目全部列清，注明来源。</p>
+      </div>
+      <div id="campRoot"><p class="muted">正在载入营期…</p></div>
     </div>
   </section>
 
@@ -318,17 +338,25 @@
           <blockquote class="quote reveal" style="--d:.1s">「学校我们都去过，<br>才敢推荐。」</blockquote>
         </div>
         <div class="copy reveal" style="--d:.12s">
-          <p><strong>达成教育 Straight Education</strong> 帮助中国家庭把孩子送进马来西亚与泰国的游学营，并为之后的择校做准备。大多数家长都是第一次做这件事，需要的是清楚、具体的信息，而不是销售话术。</p>
-          <p>所以我们先把信息摆出来：营地是谁办的、在哪里、哪几天、多少钱、包含什么，并注明出处与核实日期。看完之后要不要找我们协助，由你决定。</p>
+          <p><strong>达成教育 Straight Education</strong> 帮中国家庭把马来西亚、泰国这些正在起势的学校和营地讲清楚。现阶段我们专注安排冬令营、夏令营和短期插班，覆盖多个城市、多种类型和年龄段。每个孩子情况不同，我们按孩子情况匹配，而不是只推一个“标准答案”。</p>
+          <p>大多数家长都是第一次做这件事，需要的是清楚、具体的信息，而不是销售话术。所以我们先把信息摆出来，并注明出处；看完之后要不要找我们协助，由你决定。</p>
           <div class="regions">
-            <span class="r">马来西亚</span><span class="r">泰国</span><span class="r soon">更多地区逐步拓展中</span>
+            <span class="r">泰国</span><span class="r">马来西亚</span><span class="r soon">更多地区逐步拓展中</span>
           </div>
         </div>
       </div>
       <div class="does">
-        <div class="reveal"><span class="hair"></span><h3>营地报名</h3><p>与营地方直接对接，营期、费用、包含项目一次列清，营地收费与我们的服务费分开标注。</p></div>
-        <div class="reveal" style="--d:.08s"><span class="hair" style="--d:.08s"></span><h3>接送与住宿协调</h3><p>代为处理报名材料，协调当地接送与住宿，出发前再确认一次行程。</p></div>
-        <div class="reveal" style="--d:.16s"><span class="hair" style="--d:.16s"></span><h3>择校信息</h3><p>在马来西亚与泰国逐校收集学校资料，核实后才发布，并附来源与更新日期。</p></div>
+        <div class="reveal"><span class="hair"></span><h3>营地报名</h3><p>需求评估、按孩子年龄与基础匹配，并直接对接营地代报名额。营期、费用、包含项目一次列清，营地收费与我们的服务费分开标注。</p></div>
+        <div class="reveal" style="--d:.08s"><span class="hair" style="--d:.08s"></span><h3>签证与落地协助</h3><p>协助准备陪读签或旅游签材料，提供住宿推荐与生活辅助。走读营需要家长在当地陪同，我们会提前说明。</p></div>
+        <div class="reveal" style="--d:.16s"><span class="hair" style="--d:.16s"></span><h3>择校信息</h3><p>学校我们去过，人我们认识：实拍校园环境，客观披露华人学生比例，费用来自校方公布并注明来源。</p></div>
+      </div>
+      <div class="proof reveal">
+        <p class="proof-h">可以查验的事实</p>
+        <ul class="diamonds">
+          <li><b>正规注册。</b>马来西亚 SSM 注册公司 <span class="en">STRAIGHT EDUCATION SERVICES</span>，注册号 <span class="en num">202603229335</span>。可在 SSM 官方系统 EZBIZ 输入注册号或公司名查验注册状态。</li>
+          <li><b>我们是各营地的授权代理，不是营地本身。</b>最终名额与安排，以营地官方确认为准。</li>
+          <li><b>学费直接支付给学校官方账户，</b>我们不代收学费。</li>
+        </ul>
       </div>
       <p class="nopromise reveal"><b>我们不承诺：</b><span>录取结果 · 签证结果 · 名额紧张。升学与签证取决于学校与相关机构的审核。</span></p>
     </div>
@@ -345,7 +373,7 @@
         <div class="steps-line"><i></i></div>
         <div class="step reveal"><span class="n">第一步</span><h3>先看信息</h3><p>营期、费用与包含项目都在这一页，先看清楚再决定。</p></div>
         <div class="step reveal" style="--d:.08s"><span class="n">第二步</span><h3>微信提问</h3><p>添加微信或在小红书留言，我们直接回答具体问题。</p></div>
-        <div class="step reveal" style="--d:.16s"><span class="n">第三步</span><h3>报名协调</h3><p>确定营期后，我们处理报名，并协调接送与住宿。</p></div>
+        <div class="step reveal" style="--d:.16s"><span class="n">第三步</span><h3>报名协调</h3><p>确定营期后，我们直接对接营地代为报名，并提供住宿推荐。</p></div>
         <div class="step reveal" style="--d:.24s"><span class="n">第四步</span><h3>出发</h3><p>出发前再确认一次行程，孩子按时入营。</p></div>
       </div>
     </div>
@@ -379,7 +407,7 @@
       <span class="rn" id="footRn">小红书号 95964122071</span>
     </div>
   </div>
-  <div class="site-foot"><div class="wrap"><span>© <span id="yr">2026</span> 达成教育 Straight Education</span><span>马来西亚 · 泰国</span></div></div>
+  <div class="site-foot"><div class="wrap"><span>© <span id="yr">2026</span> 达成教育 Straight Education · SSM 202603229335</span><span>马来西亚 · 泰国</span></div></div>
 </footer>
 
 <div class="dock" id="dock" aria-label="快捷联系">

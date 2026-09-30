@@ -149,6 +149,7 @@
     $("#fFormat").value = editing.format || "";
     $("#fIncludes").value = editing.includes || "";
     $("#fService").value = editing.service_fee || "";
+    $("#fExcludes").value = editing.excludes || "";
     $("#fHl").value = (editing.highlights || []).join("\n");
     $("#fSort").value = editing.sort ?? 0;
     $("#fPub").checked = editing.published !== false;
@@ -175,6 +176,7 @@
       format: $("#fFormat").value.trim(),
       includes: $("#fIncludes").value.trim(),
       service_fee: $("#fService").value.trim(),
+      excludes: $("#fExcludes").value.trim(),
       highlights: $("#fHl").value.split("\n"),
       sort: parseInt($("#fSort").value, 10) || 0,
       published: $("#fPub").checked,

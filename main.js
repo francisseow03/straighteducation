@@ -46,7 +46,7 @@
     const [label, tone] = statusOf(c);
     const [summary, src] = splitSummary(c.summary);
     const spec = [["日期", fmtRange(c.start_date, c.end_date)], ["地点", c.location], ["适合年龄", c.ages], ["营地费", c.price, "price"], ["形式", c.format, "zh"]].filter((r) => r[1]);
-    const kv = [["费用包含", c.includes], ["服务费", c.service_fee]].filter((r) => r[1]);
+    const kv = [["费用包含", c.includes], ["费用不含", c.excludes], ["服务费", c.service_fee]].filter((r) => r[1]);
     const [name, loc] = splitTitle(c.title);
     const rows = (c.highlights || []).map((h) => {
       const i = h.indexOf(" · ");
@@ -82,35 +82,52 @@
         ${gal}
       </div>`;
   }
+  // city = first known place name found in the location text
+  const CITIES = ["清迈", "普吉岛", "曼谷", "吉隆坡", "新山", "槟城"];
+  const cityOf = (c) => CITIES.find((k) => (c.location || "").includes(k) || (c.title || "").includes(k)) || "";
+  const shortPrice = (p) => String(p || "").split("（")[0].trim();
   function row(c) {
     const [label, tone] = statusOf(c);
-    return `<button class="crow${isPast(c) ? " past" : ""}" data-id="${esc(c.id)}">
-      <span class="when">${esc(fmtRange(c.start_date, c.end_date) || c.location || "")}</span>
-      <span class="t">${esc(c.title)}</span>
+    const [name, loc] = splitTitle(c.title);
+    const sub = [cityOf(c) || c.location, shortPrice(c.ages)].filter(Boolean).join(" · ");
+    return `<button class="crow${isPast(c) ? " past" : ""}" data-id="${esc(c.id)}" data-city="${esc(cityOf(c))}">
+      <span class="when">${esc(fmtRange(c.start_date, c.end_date) || "2027 寒假")}</span>
+      <span class="t">${esc(name)}<small>${esc(sub)}</small></span>
+      <span class="pr">${esc(shortPrice(c.price))}</span>
       <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span></button>`;
   }
 
-  let camps = [];
+  let camps = [], city = "";
+  function drawList() {
+    const list = $("#campList");
+    if (!list) return;
+    const ordered = [...camps.filter((c) => !isPast(c)), ...camps.filter(isPast)];
+    const shown = ordered.filter((c) => !city || cityOf(c) === city);
+    list.innerHTML = shown.length ? shown.map(row).join("") : `<p class="muted" style="padding:24px 0">这个城市暂时没有营期。</p>`;
+  }
   function renderCamps() {
     const upcoming = camps.filter((c) => !isPast(c));
-    const ordered = [...upcoming, ...camps.filter(isPast)];
     const root = $("#campRoot");
-    if (!ordered.length) {
-      root.innerHTML = `<div class="reveal"><p class="eyebrow">营期详情</p><h2 class="h1">下一期营期正在筹备中</h2><p class="lede" style="margin-bottom:28px">关注小红书或添加微信，新营期公布时第一时间告诉你。</p><button class="btn" data-copy-wechat>复制微信号</button></div>`;
+    if (!camps.length) {
+      root.innerHTML = `<div class="reveal"><h3 class="h2" style="margin-bottom:12px">下一期营期正在筹备中</h3><p class="lede" style="margin-bottom:28px">关注小红书或添加微信，新营期公布时第一时间告诉你。</p><button class="btn" data-copy-wechat>复制微信号</button></div>`;
     } else {
-      const [first, ...rest] = ordered;
-      root.innerHTML = detail(first) + (rest.length ? `<div class="more-camps reveal"><h3>更多营期</h3>${rest.map(row).join("")}</div>` : "");
+      const cities = CITIES.filter((k) => camps.some((c) => cityOf(c) === k));
+      root.innerHTML = `
+        ${cities.length > 1 ? `<div class="filters reveal" role="group" aria-label="按城市筛选"><button class="chip on" data-city="">全部 ${camps.length}</button>${cities.map((k) => `<button class="chip" data-city="${k}">${k}</button>`).join("")}</div>` : ""}
+        <div class="clist reveal" id="campList"></div>
+        <p class="clist-note reveal">点击任一营期，查看日期、费用、包含项目与信息来源。费用以营地官方最新公布为准。</p>`;
+      drawList();
     }
     observe(root);
 
-    // hero bar = a pointer to the next upcoming camp
+    // hero bar = summary of what is open, pointing at the list
     const c = upcoming[0];
     if (c) {
-      const [label, tone] = statusOf(c);
-      $("#hStatus").textContent = label;
-      $("#hStatus").className = "chip " + tone;
-      $("#hNextTitle").textContent = c.title;
-      $("#hNextMeta").textContent = [fmtRange(c.start_date, c.end_date), c.ages].filter(Boolean).join(" · ");
+      const cs = CITIES.filter((k) => upcoming.some((x) => cityOf(x) === k));
+      $("#hStatus").textContent = statusOf(c)[0];
+      $("#hStatus").className = "chip " + statusOf(c)[1];
+      $("#hNextTitle").textContent = `2027 寒假营期 · 共 ${upcoming.length} 个`;
+      $("#hNextMeta").textContent = [cs.join(" / "), c.start_date ? `最早 ${fmtDate(c.start_date)} 开营` : ""].filter(Boolean).join(" · ");
     } else {
       $("#hStatus").textContent = "筹备中";
       $("#hNextTitle").textContent = "下一期营期正在筹备中";
@@ -198,6 +215,13 @@
         b.innerHTML = `已复制 ${esc(wechat)}`;
         setTimeout(() => { b.classList.remove("copied"); b.innerHTML = html; }, 2200);
       }, () => prompt("微信号（长按复制）", wechat));
+      return;
+    }
+    const f = e.target.closest(".filters [data-city]");
+    if (f) {
+      city = f.dataset.city;
+      document.querySelectorAll(".filters .chip").forEach((x) => x.classList.toggle("on", x === f));
+      drawList();
       return;
     }
     const r = e.target.closest(".crow");
