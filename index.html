@@ -17,21 +17,26 @@
 <link rel="stylesheet" href="styles.css">
 <style>
   /* ---------- nav ---------- */
-  .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .4s, border-color .4s, transform .45s var(--ease); border-bottom: 1px solid transparent; }
+  .skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--gold); color: var(--ink); padding: 10px 16px; font-weight: 700; text-decoration: none; }
+  .skip:focus { top: 12px; }
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .4s, transform .45s var(--ease); }
   .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 76px; }
-  .nav .brand { display: block; height: 42px; position: relative; width: 110px; }
-  .nav .brand img { height: 42px; width: auto; position: absolute; top: 0; left: 0; transition: opacity .35s; }
+  .nav .brand { display: block; height: 40px; position: relative; width: 110px; }
+  .nav .brand img { height: 40px; width: auto; position: absolute; top: 0; left: 0; transition: opacity .35s; }
   .nav .brand .on-light { opacity: 0; }
-  .nav.solid { background: rgba(250, 241, 228, .94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom-color: var(--ink-14); }
+  .nav.solid { background: rgba(250, 241, 228, .95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
   .nav.solid .brand .on-dark { opacity: 0; }
   .nav.solid .brand .on-light { opacity: 1; }
   .nav.hide { transform: translateY(-100%); }
-  .nav-links { display: flex; align-items: center; gap: 30px; }
-  .nav-links a { text-decoration: none; font-size: 15px; color: var(--cream); position: relative; padding: 6px 0; transition: color .3s; }
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--ink-14); opacity: 0; transition: opacity .4s; }
+  .nav.solid .progress { opacity: 1; }
+  .progress i { position: absolute; inset: 0; background: var(--gold); transform-origin: left; transform: scaleX(var(--p, 0)); }
+  .nav-links { display: flex; align-items: center; gap: 34px; }
+  .nav-links a { text-decoration: none; font-size: 15px; color: var(--cream); position: relative; padding: 8px 0; transition: color .3s; }
   .nav.solid .nav-links a { color: var(--ink); }
   .nav-links a:not(.chip)::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
   .nav-links a:not(.chip):hover::after, .nav-links a.active::after { transform: scaleX(1); }
-  .nav-links .chip { color: var(--ink) !important; }
+  .nav-links .chip { color: var(--ink) !important; height: 40px; padding: 0 18px; }
   .menu-btn { display: none; background: none; border: 0; width: 44px; height: 44px; cursor: pointer; position: relative; }
   .menu-btn span { position: absolute; left: 11px; right: 11px; height: 2px; background: var(--cream); transition: transform .3s, top .3s, background .3s; }
   .nav.solid .menu-btn span, .nav.open .menu-btn span { background: var(--ink); }
@@ -39,108 +44,110 @@
   .nav.open .menu-btn span:nth-child(1) { top: 21px; transform: rotate(45deg); }
   .nav.open .menu-btn span:nth-child(2) { top: 21px; transform: rotate(-45deg); }
 
+  /* ---------- shared: split-line headings, hairlines ---------- */
+  .split .ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+  .split .ln > span { display: inline-block; transform: translateY(110%); transition: transform 1s var(--ease); transition-delay: calc(var(--i, 0) * .09s + var(--d, 0s)); }
+  .split.in .ln > span, .no-motion .split .ln > span { transform: none; }
+  .hair { height: 1px; background: var(--line); transform-origin: left; transform: scaleX(0); transition: transform 1.2s var(--ease); transition-delay: var(--d, 0s); }
+  .hair.in, .no-motion .hair { transform: scaleX(1); }
+  .num-tag { font-family: var(--en); font-weight: 700; font-size: 13px; letter-spacing: .08em; color: var(--accent); }
+
   /* ---------- hero (dark ground: first frame) ---------- */
-  .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; overflow: hidden; padding: 120px 0 90px; }
-  .hero-grid { display: grid; grid-template-columns: 1.25fr .9fr; gap: clamp(32px, 6vw, 90px); align-items: end; position: relative; z-index: 2; }
+  .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; }
+  .hero-main { flex: 1; display: flex; align-items: center; padding: 130px 0 60px; position: relative; z-index: 2; }
+  .hero-grid { display: grid; grid-template-columns: 1.35fr .8fr; gap: clamp(32px, 6vw, 96px); align-items: end; }
   .hero .kicker { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
-  .hero .kicker .star { width: 26px; height: 26px; color: var(--gold); }
-  .hero .kicker .en { font-weight: 700; font-size: 14px; color: var(--cream); }
+  .hero .kicker .star { width: 22px; height: 22px; color: var(--gold); }
+  .hero .kicker .en { font-weight: 700; font-size: 13px; color: var(--cream-60); }
   .hero h1 { color: var(--cream); }
-  .hero h1 .line { display: block; overflow: hidden; padding-bottom: .06em; }
-  .hero h1 .line > span { display: inline-block; transform: translateY(105%); transition: transform 1.1s var(--ease); }
-  .hero.ready h1 .line > span { transform: none; }
-  .hero h1 .line:nth-child(2) > span { transition-delay: .12s; }
   .hero h1 .gold { color: var(--gold); }
-  .hero .en-sub { font-family: var(--en); font-weight: 600; font-size: clamp(14px, 1.4vw, 18px); letter-spacing: .14em; text-transform: uppercase; color: var(--cream-60); margin-top: 26px; }
+  .hero .lede { max-width: 30em; }
   .hero .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; }
   .hero .fade { opacity: 0; transform: translateY(14px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
   .hero.ready .fade { opacity: 1; transform: none; }
   .hero .fade.d1 { transition-delay: .35s; } .hero .fade.d2 { transition-delay: .5s; } .hero .fade.d3 { transition-delay: .7s; }
 
-  .hero-card { color: var(--cream); }
-  .hero-card .tag { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 12px; }
-  .hero-card h3 { font-size: 24px; line-height: 1.4; }
-  .hero-card .meta { font-family: var(--en); font-weight: 500; letter-spacing: .06em; color: var(--cream-60); font-size: 14px; margin-top: 8px; }
-  .hero-card .go { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; color: var(--gold); text-decoration: none; font-weight: 500; }
-  .hero-card .go:hover .arrow { transform: translateX(4px); }
-  .hero-card .arrow { transition: transform .3s var(--ease); }
+  .latest { color: var(--cream); padding-top: 22px; border-top: 2px solid var(--gold); text-decoration: none; display: block; }
+  .latest .lbl { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--cream-60); }
+  .latest .lbl b { font-family: var(--en); color: var(--gold); letter-spacing: .12em; font-size: 12px; }
+  .latest h3 { font-size: clamp(20px, 1.8vw, 24px); line-height: 1.45; margin: 14px 0 8px; transition: color .3s; }
+  .latest .meta { font-family: var(--en); font-weight: 500; letter-spacing: .04em; color: var(--cream-60); font-size: 14px; }
+  .latest .go { display: inline-flex; gap: 8px; margin-top: 18px; color: var(--gold); font-weight: 500; font-size: 15px; }
+  .latest .go .arrow { transition: transform .3s var(--ease); }
+  .latest:hover h3 { color: var(--gold); }
+  .latest:hover .go .arrow { transform: translateX(5px); }
 
-  .hero-bg-star { position: absolute; right: -8vw; top: 50%; width: min(70vw, 820px); height: min(70vw, 820px); color: var(--gold); opacity: .07; transform: translateY(-50%); pointer-events: none; z-index: 1; will-change: transform; }
-  .hero .scroll-cue { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; font-family: var(--en); font-size: 11px; font-weight: 700; letter-spacing: .2em; color: var(--cream-60); text-decoration: none; }
-  .hero .scroll-cue i { width: 1.5px; height: 42px; background: var(--gold); animation: cue 2.4s var(--ease) infinite; transform-origin: top; }
-  @keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+  .hero-bg-star { position: absolute; right: -10vw; top: 42%; width: min(68vw, 800px); height: min(68vw, 800px); color: var(--gold); opacity: .06; transform: translateY(-50%); pointer-events: none; z-index: 1; will-change: transform; }
+
+  .marquee { position: relative; z-index: 2; border-top: 1px solid rgba(250, 241, 228, .12); overflow: hidden; white-space: nowrap; padding: 18px 0; }
+  .marquee-track { display: inline-flex; gap: 0; animation: marquee 48s linear infinite; }
+  .marquee span { font-family: var(--en); font-weight: 700; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--cream-60); display: inline-flex; align-items: center; gap: 28px; padding-right: 28px; }
+  .marquee span svg { width: 12px; height: 12px; color: var(--gold); }
+  @keyframes marquee { to { transform: translateX(-50%); } }
 
   /* ---------- sections ---------- */
-  section.block { padding: clamp(80px, 11vw, 150px) 0; position: relative; }
-  .sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; margin-bottom: clamp(40px, 6vw, 72px); }
-  .sec-head .lede { margin: 0; justify-self: end; }
-  .divider { padding: 0 var(--gutter) clamp(70px, 9vw, 110px); }
-  #services { padding-bottom: clamp(60px, 8vw, 100px); }
+  section.block { padding: clamp(90px, 12vw, 160px) 0; position: relative; }
+  .sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; margin-bottom: clamp(44px, 6vw, 80px); }
+  .sec-head .lede { margin: 0; justify-self: end; max-width: 26em; }
 
   /* about */
-  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
-  .about-grid p:not(.eyebrow) { margin: 0 0 18px; color: var(--ink-60); font-size: 18px; }
-  .about-grid p strong { color: var(--ink); font-weight: 500; }
-  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
-  .quote { text-align: center; padding-top: clamp(70px, 9vw, 120px); }
-  .quote blockquote { margin: 34px auto 0; font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 5vw, 64px); line-height: 1.55; max-width: 16em; }
-  .quote .qnote { font-family: var(--serif); font-weight: 600; color: var(--ink-60); font-size: clamp(16px, 1.5vw, 19px); margin-top: 18px; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 110px); align-items: start; }
+  .about-copy p { margin: 0 0 18px; color: var(--ink-60); font-size: 18px; }
+  .about-copy p strong { color: var(--ink); font-weight: 500; }
+  .regions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 26px; margin-top: 34px; padding-top: 22px; border-top: 1px solid var(--ink-14); font-size: 15px; }
+  .regions .r { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; }
+  .regions .r::before { content: ""; width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); }
+  .regions .en { font-size: 11px; font-weight: 700; color: var(--ink-60); }
+  .regions .soon { color: var(--ink-60); font-weight: 400; }
+  .regions .soon::before { background: transparent; border: 1.5px solid var(--gold); }
+  .quote { text-align: center; padding-top: clamp(80px, 10vw, 140px); }
+  .quote blockquote { margin: 34px auto 0; font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 5vw, 62px); line-height: 1.5; max-width: 16em; }
+  .quote .qnote { color: var(--ink-60); font-size: 15px; margin-top: 18px; }
 
-  /* services */
-  .services { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
-  .service h3 { font-size: 24px; }
-  .service .en { font-size: 12px; font-weight: 700; color: var(--deep-gold); display: block; margin: 6px 0 18px; }
-  .service p { margin: 0 0 18px; color: var(--ink-60); }
-  .service .no { position: absolute; right: 26px; top: 26px; font-family: var(--en); font-weight: 700; font-size: 13px; letter-spacing: .06em; color: var(--ink-60); }
-  .service { transition: transform .5s var(--ease), background .4s; }
-  .service:hover { transform: translateY(-4px); }
+  /* services: open numbered rows, no boxes */
+  .rows { border-bottom: 1px solid var(--ink-14); }
+  .srow { position: relative; display: grid; grid-template-columns: 90px 1.1fr 1.4fr; gap: 28px; padding: 38px 0 40px; }
+  .srow .hair { position: absolute; left: 0; right: 0; top: 0; }
+  .srow h3 { font-size: clamp(22px, 2.2vw, 28px); transition: color .35s, transform .5s var(--ease); }
+  .srow .en { display: block; font-size: 11px; font-weight: 700; color: var(--deep-gold); margin-top: 8px; }
+  .srow p { margin: 0 0 14px; color: var(--ink-60); }
+  .srow .points { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .srow .points li { position: relative; padding-left: 18px; }
+  .srow .points li::before { content: ""; position: absolute; left: 1px; top: .72em; width: 7px; height: 7px; background: var(--gold); transform: translateY(-50%) rotate(45deg); }
+  .srow:hover h3 { color: var(--deep-gold); transform: translateX(6px); }
 
   /* camps */
   .camps-band { background: var(--sand); }
-  .camp-feature { display: grid; grid-template-columns: 1.1fr 1fr; background: var(--card); border: 1.5px solid var(--ink); position: relative; }
-  .camp-feature::before { content: ""; position: absolute; left: -1.5px; top: -1.5px; height: 6px; width: 180px; background: var(--gold); z-index: 2; transform-origin: left; transform: scaleX(0); transition: transform .9s var(--ease) .2s; }
-  .camp-feature.in::before { transform: scaleX(1); }
-  .camp-media { position: relative; overflow: hidden; background: var(--ink); min-height: 380px; }
-  .camp-media img { position: absolute; inset: -6% 0; width: 100%; height: 112%; object-fit: cover; will-change: transform; }
-  .placeholder { display: grid; place-items: center; background: var(--cream) !important; border-right: 1px solid var(--ink-14); }
-  .placeholder .ph-inner { display: grid; justify-items: center; gap: 16px; padding: 24px; text-align: center; }
-  .placeholder img { position: static !important; width: 88px !important; height: auto !important; opacity: .55; transform: none !important; }
-  .placeholder span { font-size: 13px; color: var(--ink-60); letter-spacing: .04em; }
-  .camp-body { padding: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px; }
-  .camp-body .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .camp-body h3 { font-size: clamp(24px, 2.3vw, 30px); line-height: 1.35; }
-  .camp-body .src { font-size: 13px; color: var(--ink-60); margin: 0; padding-top: 14px; border-top: 1px solid var(--ink-14); }
-  .camp-body .title-en { font-family: var(--en); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; font-size: 14px; color: var(--deep-gold); margin-top: 8px; }
-  .camp-body .summary { color: var(--ink-60); margin: 0; }
-  .camp-body .dtable { font-size: 15px; }
-  .camp-body .dtable td:first-child { width: 34%; font-weight: 500; }
-  .camp-body .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+  .camp { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 80px); align-items: start; }
+  .camp-photo { grid-column: 1 / -1; aspect-ratio: 21 / 9; overflow: hidden; background: var(--ink); }
+  .camp-photo img { width: 100%; height: 118%; object-fit: cover; will-change: transform; }
+  .camp .status { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .camp h3 { font-size: clamp(28px, 3.2vw, 42px); line-height: 1.25; margin-top: 20px; }
+  .camp .title-en { font-family: var(--en); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; font-size: 13px; color: var(--deep-gold); margin-top: 12px; }
+  .camp .summary { color: var(--ink-60); margin: 24px 0 0; }
+  .camp .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .camp .src { font-size: 13px; color: var(--ink-60); margin: 28px 0 0; padding-top: 14px; border-top: 1px solid var(--ink-14); }
+  .camp .dtable { font-size: 15px; }
+  .camp .dtable td:first-child { width: 32%; font-weight: 500; }
+  .camp .diamonds { margin-top: 26px; font-size: 15px; }
+  .more-camps { margin-top: clamp(60px, 8vw, 100px); }
+  .more-camps h4 { font-size: 13px; font-family: var(--en); letter-spacing: .14em; color: var(--ink-60); margin: 0 0 8px; font-weight: 700; }
+  .crow { width: 100%; display: grid; grid-template-columns: 180px 1fr auto; gap: 24px; align-items: center; padding: 22px 0; background: none; border: 0; border-top: 1px solid var(--ink-14); text-align: left; cursor: pointer; font: inherit; color: var(--ink); }
+  .crow:last-child { border-bottom: 1px solid var(--ink-14); }
+  .crow .when { font-family: var(--en); font-weight: 500; font-size: 14px; color: var(--ink-60); letter-spacing: .04em; }
+  .crow .t { font-size: 18px; font-weight: 500; transition: transform .4s var(--ease), color .3s; }
+  .crow:hover .t { transform: translateX(6px); color: var(--deep-gold); }
+  .crow.past { opacity: .55; }
+  .camp-empty { padding: 40px 0; }
+  .camp-empty h3 { font-size: 26px; margin-top: 16px; }
+  .camp-empty p { color: var(--ink-60); max-width: 30em; margin: 12px 0 26px; }
 
-  .camp-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 28px; }
-  .camp-card { background: var(--card); border: 1.5px solid var(--ink); display: flex; flex-direction: column; position: relative; text-decoration: none; transition: transform .5s var(--ease); cursor: pointer; text-align: left; padding: 0; }
-  .camp-card:hover { transform: translateY(-4px); }
-  .camp-card .thumb { aspect-ratio: 4 / 3; overflow: hidden; background: var(--ink); display: grid; place-items: center; }
-  .camp-card .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
-  .camp-card:hover .thumb img { transform: scale(1.04); }
-  .camp-card .thumb.placeholder { border-right: 0; border-bottom: 1px solid var(--ink-14); }
-  .camp-card .thumb.placeholder img { width: 56px !important; }
-  .camp-card .info { padding: 22px 22px 24px; display: grid; gap: 8px; }
-  .camp-card h4 { margin: 0; font-size: 19px; line-height: 1.45; }
-  .camp-card .when { font-family: var(--en); font-weight: 500; font-size: 13px; letter-spacing: .06em; color: var(--ink-60); }
-  .camp-card.past { opacity: .62; }
-  .camp-empty { text-align: center; padding: 70px 24px; }
-  .camp-empty h3 { font-size: 26px; margin-top: 18px; }
-  .camp-empty p { color: var(--ink-60); max-width: 30em; margin: 12px auto 26px; }
-
-  /* camp dialog */
-  dialog.camp-dlg { border: 1.5px solid var(--ink); padding: 0; max-width: min(960px, calc(100vw - 32px)); width: 100%; background: var(--card); color: var(--ink); max-height: calc(100vh - 40px); }
+  dialog.camp-dlg { border: 0; padding: clamp(28px, 4vw, 48px); max-width: min(980px, calc(100vw - 32px)); width: 100%; background: var(--card); color: var(--ink); max-height: calc(100vh - 40px); border-top: 6px solid var(--gold); }
   dialog.camp-dlg::backdrop { background: rgba(47, 43, 40, .6); backdrop-filter: blur(3px); }
   dialog.camp-dlg[open] { animation: dlg .45s var(--ease); }
   @keyframes dlg { from { opacity: 0; transform: translateY(16px); } }
-  dialog.camp-dlg .camp-feature { border: 0; }
-  dialog.camp-dlg .camp-feature::before { transform: scaleX(1); }
-  .dlg-close { position: absolute; right: 12px; top: 12px; z-index: 5; width: 42px; height: 42px; border: 0; background: var(--ink); color: var(--cream); cursor: pointer; font-size: 22px; line-height: 1; }
-  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+  .dlg-close { position: absolute; right: 10px; top: 10px; z-index: 5; width: 44px; height: 44px; border: 0; background: none; color: var(--ink); cursor: pointer; font-size: 26px; line-height: 1; }
+  .gallery { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
   .gallery img { aspect-ratio: 1; object-fit: cover; width: 100%; }
 
   /* process */
@@ -150,40 +157,49 @@
   .step { position: relative; padding-top: 44px; }
   .step::before { content: ""; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; background: var(--cream); border: 2px solid var(--gold); transform: rotate(45deg); transition: background .4s; }
   .step.lit::before { background: var(--gold); }
-  .step .no { font-family: var(--en); font-weight: 700; letter-spacing: .06em; font-size: 13px; color: var(--ink-60); }
   .step h3 { font-size: 22px; margin: 8px 0 10px; }
   .step p { margin: 0; color: var(--ink-60); font-size: 16px; }
 
   /* contact (dark ground: last frame) */
-  .contact { padding: clamp(90px, 12vw, 160px) 0 clamp(70px, 9vw, 110px); position: relative; overflow: hidden; }
-  .contact .h-display { font-size: clamp(40px, 6.4vw, 84px); }
-  .socials { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: clamp(40px, 6vw, 70px); }
-  .social { display: flex; flex-direction: column; gap: 16px; color: var(--cream); }
-  .social .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .social .platform { font-size: 15px; color: var(--cream-60); display: flex; align-items: center; gap: 10px; }
-  .social .platform svg { width: 20px; height: 20px; color: var(--gold); }
-  .social .handle { font-family: var(--en); font-weight: 700; font-size: clamp(20px, 2.4vw, 28px); letter-spacing: .04em; word-break: break-all; }
-  .social .row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .social .qr { width: 132px; background: var(--cream); padding: 8px; }
-  .copy-ok { color: var(--gold); font-size: 14px; opacity: 0; transition: opacity .3s; }
+  .contact { padding: clamp(100px, 12vw, 160px) 0 clamp(80px, 9vw, 120px); position: relative; overflow: hidden; }
+  .contact-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(40px, 6vw, 100px); align-items: start; }
+  .contact .h-display { font-size: clamp(44px, 6vw, 84px); }
+  .socials { border-bottom: 1px solid rgba(250, 241, 228, .14); }
+  .social { position: relative; display: grid; grid-template-columns: 150px 1fr auto; gap: 20px; align-items: center; padding: 24px 0; }
+  .social .hair { position: absolute; left: 0; right: 0; top: 0; background: rgba(250, 241, 228, .14); }
+  .social .platform { font-size: 14px; color: var(--cream-60); display: flex; align-items: center; gap: 10px; }
+  .social .platform svg { width: 18px; height: 18px; color: var(--gold); flex: none; }
+  .social .handle { font-family: var(--en); font-weight: 600; font-size: clamp(17px, 1.7vw, 21px); letter-spacing: .02em; color: var(--cream); word-break: break-all; }
+  .social .act { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
+  .social .qr { grid-column: 2 / -1; width: 132px; background: var(--cream); padding: 8px; }
+  .link-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 4px; background: none; border: 0; color: var(--gold); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; white-space: nowrap; }
+  .link-btn .arrow { transition: transform .3s var(--ease); }
+  .link-btn:hover .arrow { transform: translate(3px, -3px); }
+  .link-btn:hover { color: var(--cream); }
+  .copy-ok { color: var(--gold); font-size: 13px; opacity: 0; transition: opacity .3s; }
   .copy-ok.show { opacity: 1; }
-  .contact .bg-logo { position: absolute; right: var(--gutter); bottom: -40px; width: min(38vw, 420px); opacity: .035; pointer-events: none; }
-  .contact-note { margin-top: 36px; color: var(--cream-60); font-size: 14px; }
+  .contact .bg-logo { position: absolute; left: var(--gutter); bottom: -50px; width: min(30vw, 340px); opacity: .03; pointer-events: none; }
+  .contact-note { margin-top: 28px; color: var(--cream-60); font-size: 13px; }
 
   .site-foot { background: var(--ink); color: var(--cream-60); font-size: 13px; }
   .site-foot .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 22px; padding-bottom: 26px; border-top: 1px solid rgba(250,241,228,.1); }
   .site-foot a { color: var(--cream-60); text-decoration: none; }
   .site-foot a:hover { color: var(--gold); }
 
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+    .split .ln > span, .hair { transition: none !important; transform: none !important; }
+  }
+
   /* ---------- responsive ---------- */
   @media (max-width: 960px) {
-    .hero-grid, .about-grid, .sec-head, .camp-feature { grid-template-columns: 1fr; }
+    .hero-grid, .about-grid, .sec-head, .camp, .contact-grid { grid-template-columns: 1fr; }
     .sec-head .lede { justify-self: start; }
-    .camp-list { grid-template-columns: repeat(2, 1fr); }
+    .srow { grid-template-columns: 60px 1fr; }
+    .srow > div:last-child { grid-column: 2; }
     .steps { grid-template-columns: repeat(2, 1fr); row-gap: 44px; }
     .steps-line { display: none; }
-    .camp-media { min-height: 280px; aspect-ratio: 16 / 10; }
-    .camp-media.placeholder { min-height: 180px; aspect-ratio: auto; border-right: 0; border-bottom: 1px solid var(--ink-14); }
+    .camp-photo { aspect-ratio: 16 / 10; }
   }
   @media (max-width: 760px) {
     .menu-btn { display: block; }
@@ -191,18 +207,25 @@
     .nav.open { background: var(--cream); }
     .nav.open .brand .on-dark { opacity: 0; } .nav.open .brand .on-light { opacity: 1; }
     .nav.open .nav-links { opacity: 1; transform: none; pointer-events: auto; }
-    .nav-links a { color: var(--ink) !important; padding: 14px 0; border-bottom: 1px solid var(--ink-14); font-size: 17px; }
+    .nav-links a { color: var(--ink) !important; padding: 15px 0; border-bottom: 1px solid var(--ink-14); font-size: 17px; }
     .nav-links a::after { display: none; }
     .nav-links .chip { margin-top: 16px; justify-content: center; height: 48px; border-bottom: 1.5px solid var(--gold); }
-    .services, .camp-list, .socials { grid-template-columns: 1fr; }
+    .srow { grid-template-columns: 1fr; gap: 12px; padding: 30px 0 32px; }
+    .srow > div:last-child { grid-column: 1; }
     .steps { grid-template-columns: 1fr; }
-    .hero { padding-top: 110px; align-items: flex-start; }
-    .hero .scroll-cue { display: none; }
-    .tab-card { padding: 30px 22px 24px; }
+    .hero-main { padding-top: 116px; align-items: flex-start; }
+    .crow { grid-template-columns: 1fr auto; gap: 6px 16px; }
+    .crow .when { grid-column: 1 / -1; }
+    .social { grid-template-columns: 1fr auto; gap: 6px 16px; }
+    .social .platform, .social .handle { grid-column: 1 / -1; }
+    .social .handle { word-break: normal; overflow-wrap: anywhere; }
+    .social .act { grid-column: 1 / -1; justify-content: flex-start; margin-left: -4px; }
+    .social .qr { grid-column: 1 / -1; }
   }
 </style>
 </head>
 <body>
+<a class="skip" href="#main">跳到主要内容</a>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 0C12.9 6.4 17.6 11.1 24 12 17.6 12.9 12.9 17.6 12 24 11.1 17.6 6.4 12.9 0 12 6.4 11.1 11.1 6.4 12 0Z"/></symbol>
@@ -220,72 +243,84 @@
       <img class="on-light" src="assets/logo-en-light.png" alt="">
     </a>
     <button class="menu-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
-    <nav class="nav-links" id="navLinks">
+    <nav class="nav-links" id="navLinks" aria-label="主导航">
       <a href="#about">关于我们</a>
-      <a href="#services">服务</a>
+      <a href="#services">我们做什么</a>
       <a href="#camps">最新营期</a>
       <a href="#process">流程</a>
       <a class="chip gold" href="#contact">联系我们</a>
     </nav>
   </div>
+  <div class="progress" aria-hidden="true"><i id="progress"></i></div>
 </header>
 
 <main id="top">
   <!-- HERO · dark ground -->
   <section class="hero dark" id="hero">
     <svg class="hero-bg-star" id="heroStar" aria-hidden="true"><use href="#star"/></svg>
-    <div class="wrap">
-      <div class="hero-grid">
-        <div>
-          <div class="kicker fade">
-            <svg class="star"><use href="#star"/></svg>
-            <span class="en">Straight Education · 国际教育</span>
+    <div class="hero-main">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <div class="kicker fade">
+              <svg class="star" aria-hidden="true"><use href="#star"/></svg>
+              <span class="en">Straight Education · 国际教育</span>
+            </div>
+            <h1 class="h-display split" id="heroTitle">
+              <span class="ln" style="--i:0"><span>一条直路，</span></span>
+              <span class="ln" style="--i:1"><span class="gold">直达名校。</span></span>
+            </h1>
+            <p class="lede fade d1">为中国家庭在马来西亚与泰国找到合适的学校与营地。先信息，后服务——每一条费用、每一个营期日期，都标注来源与更新时间。</p>
+            <div class="actions fade d2">
+              <a class="btn" href="#camps">查看最新营期 <span class="arrow">→</span></a>
+              <a class="btn ghost" href="#contact">联系我们</a>
+            </div>
           </div>
-          <h1 class="h-display">
-            <span class="line"><span>一条直路，</span></span>
-            <span class="line"><span class="gold">直达名校。</span></span>
-          </h1>
-          <p class="en-sub fade d1">Study camps &amp; schools · Malaysia · Thailand · Expanding</p>
-          <p class="lede fade d2">为中国家庭在马来西亚与泰国找到合适的学校与营地。先信息，后服务——每一条费用、每一个营期日期，都标注来源与更新时间。</p>
-          <div class="actions fade d3">
-            <a class="btn" href="#camps">查看最新营期 <span class="arrow">→</span></a>
-            <a class="btn ghost" href="#contact">预约咨询</a>
-          </div>
+          <a class="latest fade d3" id="heroCamp" href="#camps">
+            <div class="lbl"><span>最新营期</span><b>LATEST</b></div>
+            <h3>正在载入…</h3>
+            <div class="meta">&nbsp;</div>
+            <span class="go">查看营期 <span class="arrow">→</span></span>
+          </a>
         </div>
-        <aside class="tab-card hero-card fade d3" id="heroCamp" aria-live="polite">
-          <div class="tag"><span class="chip gold">最新营期</span><span class="en" style="font-size:12px;font-weight:700;color:var(--cream-60)">Latest camp</span></div>
-          <h3>营期即将公布</h3>
-          <div class="meta">COMING SOON</div>
-          <a class="go" href="#camps">了解详情 <span class="arrow">→</span></a>
-        </aside>
       </div>
     </div>
-    <a class="scroll-cue" href="#about" aria-label="向下滚动"><span>SCROLL</span><i></i></a>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Study camps <svg><use href="#star"/></svg> 马来西亚 Malaysia <svg><use href="#star"/></svg> 泰国 Thailand <svg><use href="#star"/></svg> School information <svg><use href="#star"/></svg> 逐步拓展中 Expanding <svg><use href="#star"/></svg> 一条直路 · 直达名校 <svg><use href="#star"/></svg></span>
+        <span>Study camps <svg><use href="#star"/></svg> 马来西亚 Malaysia <svg><use href="#star"/></svg> 泰国 Thailand <svg><use href="#star"/></svg> School information <svg><use href="#star"/></svg> 逐步拓展中 Expanding <svg><use href="#star"/></svg> 一条直路 · 直达名校 <svg><use href="#star"/></svg></span>
+      </div>
+    </div>
   </section>
+
+  <div id="main"></div>
 
   <!-- ABOUT -->
   <section class="block" id="about">
     <div class="wrap">
       <div class="about-grid">
-        <div class="reveal">
-          <p class="eyebrow"><span class="num">01</span> 关于我们 · About</p>
-          <h2 class="h1">信息先于服务。</h2>
+        <div>
+          <p class="eyebrow reveal"><span class="num">01</span> 关于我们 · About</p>
+          <h2 class="h1 split"><span class="ln" style="--i:0"><span>信息先于服务。</span></span></h2>
         </div>
-        <div class="reveal" style="--d:.12s">
+        <div class="about-copy reveal" style="--d:.12s">
           <p><strong>达成教育 Straight Education</strong> 帮助中国家庭把孩子送进马来西亚与泰国的游学营，并为之后的择校做准备。大多数家长都是第一次做这件事，需要的是清楚、具体的信息，而不是销售话术。</p>
           <p>所以我们先给信息：营地是谁办的、在哪里、哪几天、多少钱、包含什么。每一条都注明出处与核实日期。看完之后要不要找我们协助，由你决定。</p>
-          <div class="facts">
-            <span class="chip jade">马来西亚 · Malaysia</span>
-            <span class="chip jade">泰国 · Thailand</span>
-            <span class="chip">逐步拓展中 · Expanding</span>
+          <div class="regions">
+            <span class="r">马来西亚 <span class="en">Malaysia</span></span>
+            <span class="r">泰国 <span class="en">Thailand</span></span>
+            <span class="r soon">逐步拓展中 <span class="en">Expanding</span></span>
           </div>
         </div>
       </div>
 
       <div class="quote">
-        <div class="star-rule reveal-rule"><svg class="star"><use href="#star"/></svg></div>
-        <blockquote class="reveal">「学校我们都去过，<br>才敢推荐。」</blockquote>
-        <p class="qnote reveal" style="--d:.1s">— 达成教育</p>
+        <div class="star-rule reveal-rule"><svg class="star" aria-hidden="true"><use href="#star"/></svg></div>
+        <blockquote class="split">
+          <span class="ln" style="--i:0"><span>「学校我们都去过，</span></span>
+          <span class="ln" style="--i:1"><span>才敢推荐。」</span></span>
+        </blockquote>
+        <p class="qnote reveal" style="--d:.2s">— 达成教育</p>
       </div>
     </div>
   </section>
@@ -294,59 +329,64 @@
   <section class="block" id="services" style="padding-top:0">
     <div class="wrap">
       <div class="sec-head">
-        <div class="reveal">
-          <p class="eyebrow"><span class="num">02</span> 我们做什么 · What we do</p>
-          <h2 class="h1">少走弯路，<br>是我们唯一的承诺。</h2>
+        <div>
+          <p class="eyebrow reveal"><span class="num">02</span> 我们做什么 · What we do</p>
+          <h2 class="h1 split"><span class="ln" style="--i:0"><span>少走弯路，</span></span><span class="ln" style="--i:1"><span>是我们唯一的承诺。</span></span></h2>
         </div>
         <p class="lede reveal" style="--d:.1s">我们只做能说清楚、能核实的事。下面四项，是目前在做的全部。</p>
       </div>
-      <div class="services">
-        <article class="tab-card service reveal">
-          <span class="no">01 / 04</span>
-          <h3>游学营地</h3><span class="en">Study camps</span>
-          <p>与营地方直接对接假期英语营的报名，营期、费用与包含项目全部公开列出。</p>
-          <ul class="diamonds"><li>营期、年龄、费用一次列清</li><li>营地方收费与我们的服务费分开标注</li><li>信息来源与核实日期写在每期下方</li></ul>
+      <div class="rows">
+        <article class="srow reveal">
+          <div class="hair"></div>
+          <span class="num-tag">01 / 04</span>
+          <div><h3>游学营地</h3><span class="en">Study camps</span></div>
+          <div>
+            <p>与营地方直接对接假期英语营的报名，营期、费用与包含项目全部公开列出。</p>
+            <ul class="points"><li>营期、年龄、费用一次列清</li><li>营地收费与服务费分开标注</li><li>注明来源与核实日期</li></ul>
+          </div>
         </article>
-        <article class="tab-card service reveal" style="--d:.08s">
-          <span class="no">02 / 04</span>
-          <h3>报名与行程协调</h3><span class="en">Registration &amp; logistics</span>
-          <p>代为处理营地报名，协调当地接送与住宿安排，让第一次出门的家庭少操心。</p>
-          <ul class="diamonds"><li>报名材料与营地沟通</li><li>接送与住宿协调</li><li>出发前行程确认</li></ul>
+        <article class="srow reveal">
+          <div class="hair"></div>
+          <span class="num-tag">02 / 04</span>
+          <div><h3>报名与行程协调</h3><span class="en">Registration &amp; logistics</span></div>
+          <div>
+            <p>代为处理营地报名，协调当地接送与住宿安排，让第一次出门的家庭少操心。</p>
+            <ul class="points"><li>报名材料与营地沟通</li><li>接送与住宿协调</li><li>出发前行程确认</li></ul>
+          </div>
         </article>
-        <article class="tab-card service reveal">
-          <span class="no">03 / 04</span>
-          <h3>择校信息</h3><span class="en">School information</span>
-          <p>在马来西亚与泰国收集学校资料，覆盖范围逐步拓展，逐校核实后才会发布。</p>
-          <ul class="diamonds"><li>学费数据附来源与更新日期</li><li>未核实的数字不上线</li><li>讲清条件与取舍，不替你做决定</li></ul>
+        <article class="srow reveal">
+          <div class="hair"></div>
+          <span class="num-tag">03 / 04</span>
+          <div><h3>择校信息</h3><span class="en">School information</span></div>
+          <div>
+            <p>在马来西亚与泰国收集学校资料，覆盖范围逐步拓展，逐校核实后才会发布。</p>
+            <ul class="points"><li>学费附来源与更新日期</li><li>未核实的数字不上线</li><li>讲清取舍，不替你做决定</li></ul>
+          </div>
         </article>
-        <article class="tab-card service reveal" style="--d:.08s">
-          <span class="no">04 / 04</span>
-          <h3>不做的承诺</h3><span class="en">What we don't promise</span>
-          <p>升学与签证结果取决于学校与相关机构的审核。我们提供可核实的信息与协调工作，仅此而已。</p>
-          <ul class="diamonds"><li>不承诺录取结果</li><li>不承诺签证结果</li><li>不制造名额紧张</li></ul>
+        <article class="srow reveal">
+          <div class="hair"></div>
+          <span class="num-tag">04 / 04</span>
+          <div><h3>不做的承诺</h3><span class="en">What we don't promise</span></div>
+          <div>
+            <p>升学与签证结果取决于学校与相关机构的审核。我们提供可核实的信息与协调工作，仅此而已。</p>
+            <ul class="points"><li>不承诺录取结果</li><li>不承诺签证结果</li><li>不制造名额紧张</li></ul>
+          </div>
         </article>
       </div>
     </div>
   </section>
 
-  <div class="divider"><div class="star-rule reveal-rule"><svg class="star"><use href="#star"/></svg></div></div>
-
   <!-- CAMPS -->
   <section class="block camps-band" id="camps">
     <div class="wrap">
       <div class="sec-head">
-        <div class="reveal">
-          <p class="eyebrow"><span class="num">03</span> 最新营期 · Camps</p>
-          <h2 class="h1">这个假期，<br>先出去看看。</h2>
+        <div>
+          <p class="eyebrow reveal"><span class="num">03</span> 最新营期 · Camps</p>
+          <h2 class="h1 split"><span class="ln" style="--i:0"><span>这个假期，</span></span><span class="ln" style="--i:1"><span>先出去看看。</span></span></h2>
         </div>
         <p class="lede reveal" style="--d:.1s">最新营期会同步更新在这里和小红书。具体以营地官方信息为准。</p>
       </div>
-      <div id="campsRoot">
-        <div class="camp-empty tab-card in">
-          <svg class="star" style="width:26px;height:26px;color:var(--gold)"><use href="#star"/></svg>
-          <h3>正在载入营期…</h3>
-        </div>
-      </div>
+      <div id="campsRoot" aria-live="polite"><p class="muted">正在载入营期…</p></div>
     </div>
   </section>
 
@@ -354,17 +394,17 @@
   <section class="block" id="process">
     <div class="wrap">
       <div class="sec-head">
-        <div class="reveal">
-          <p class="eyebrow"><span class="num">04</span> 流程 · How it works</p>
-          <h2 class="h1">四步，走完一条直路。</h2>
+        <div>
+          <p class="eyebrow reveal"><span class="num">04</span> 流程 · How it works</p>
+          <h2 class="h1 split"><span class="ln" style="--i:0"><span>四步，走完一条直路。</span></span></h2>
         </div>
       </div>
       <div class="steps" id="steps">
         <div class="steps-line"><i></i></div>
-        <div class="step reveal"><span class="no">01 / 04</span><h3>先看信息</h3><p>营期、费用与包含项目都在这一页，先看清楚再决定。</p></div>
-        <div class="step reveal" style="--d:.08s"><span class="no">02 / 04</span><h3>直接提问</h3><p>在小红书或微信问我们，我们直接回答具体问题。</p></div>
-        <div class="step reveal" style="--d:.16s"><span class="no">03 / 04</span><h3>报名协调</h3><p>确定营期后，我们处理报名，并协调接送与住宿。</p></div>
-        <div class="step reveal" style="--d:.24s"><span class="no">04 / 04</span><h3>出发</h3><p>出发前再确认一次行程，孩子按时入营。</p></div>
+        <div class="step reveal"><span class="num-tag">01 / 04</span><h3>先看信息</h3><p>营期、费用与包含项目都在这一页，先看清楚再决定。</p></div>
+        <div class="step reveal" style="--d:.08s"><span class="num-tag">02 / 04</span><h3>直接提问</h3><p>在小红书或微信问我们，我们直接回答具体问题。</p></div>
+        <div class="step reveal" style="--d:.16s"><span class="num-tag">03 / 04</span><h3>报名协调</h3><p>确定营期后，我们处理报名，并协调接送与住宿。</p></div>
+        <div class="step reveal" style="--d:.24s"><span class="num-tag">04 / 04</span><h3>出发</h3><p>出发前再确认一次行程，孩子按时入营。</p></div>
       </div>
     </div>
   </section>
@@ -372,12 +412,16 @@
   <!-- CONTACT · dark ground -->
   <section class="contact dark" id="contact">
     <img class="bg-logo" src="assets/icon-dark.png" alt="" aria-hidden="true">
-    <div class="wrap">
-      <p class="eyebrow reveal"><span class="num" style="color:var(--cream)">05</span> 联系我们 · Contact</p>
-      <h2 class="h-display reveal" style="--d:.06s">先聊聊，<br><span style="color:var(--gold)">再决定。</span></h2>
-      <p class="lede reveal" style="--d:.12s">关注我们的小红书获取最新营期与学校资讯，或直接添加微信咨询。</p>
-      <div class="socials" id="socials"></div>
-      <p class="contact-note reveal">资料以学校官方公布为准 · 最新信息请以小红书与微信为准</p>
+    <div class="wrap contact-grid">
+      <div>
+        <p class="eyebrow reveal"><span class="num" style="color:var(--cream)">05</span> 联系我们 · Contact</p>
+        <h2 class="h-display split"><span class="ln" style="--i:0"><span>先聊聊，</span></span><span class="ln" style="--i:1"><span style="color:var(--gold)">再决定。</span></span></h2>
+        <p class="lede reveal" style="--d:.12s">关注小红书获取最新营期，或直接添加微信咨询。我们直接回答具体问题，不做销售话术。</p>
+      </div>
+      <div>
+        <div class="socials" id="socials"></div>
+        <p class="contact-note reveal">资料以学校与营地官方公布为准</p>
+      </div>
     </div>
   </section>
 </main>
