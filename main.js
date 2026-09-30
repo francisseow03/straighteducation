@@ -260,19 +260,19 @@
   const clamp01 = (x) => Math.min(1, Math.max(0, x));
   const smooth = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
   let bookP = 0;
-  // scroll position -> the book flies in and turns to face you (--f), then the cover opens once (--o0)
+  // scroll position -> how far the cover has opened (0 closed, 1 open)
   function updateBook() {
     const r = bookScroll.getBoundingClientRect();
     const total = r.height - innerHeight;
     const p = reduce || total <= 0 ? 1 : clamp01(-r.top / total);
     bookP = p;
+    const open = smooth((p - 0.08) / 0.5);
     const st = stage.style;
-    st.setProperty("--f", smooth((p - 0.02) / 0.4).toFixed(4));
-    st.setProperty("--o0", smooth((p - 0.46) / 0.3).toFixed(4));
-    st.setProperty("--g", smooth((p - 0.02) / 0.6).toFixed(3));
-    st.setProperty("--hint", (1 - smooth(p / 0.1)).toFixed(3));
-    stage.classList.toggle("idle", p > 0.42 && p < 0.47 && !reduce);
-    stage.classList.toggle("lit", p > 0.08 && !reduce);
+    st.setProperty("--o0", open.toFixed(4));
+    st.setProperty("--g", smooth((p - 0.05) / 0.55).toFixed(3));
+    st.setProperty("--hint", (1 - smooth(p / 0.12)).toFixed(3));
+    stage.classList.toggle("idle", p < 0.02 && !reduce);
+    stage.classList.toggle("lit", open > 0.35 && !reduce);
   }
   const steps = $("#steps"), stepLine = steps.querySelector(".steps-line i"), stepEls = [...steps.querySelectorAll(".step")];
   const sections = ["camp", "about", "process", "contact"].map((id) => document.getElementById(id));

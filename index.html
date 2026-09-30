@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <!-- CJK web fonts load without blocking; phones fall back to PingFang / YaHei instantly (Google may be slow or blocked in mainland China) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=202609302120">
+<link rel="stylesheet" href="styles.css?v=202609302124">
 <style>
   :root { --body: rgba(47, 43, 40, .8); }
   .dark { --body: rgba(250, 241, 228, .78); }
@@ -64,14 +64,16 @@
 
   /* ---------- hero: a book whose pages turn as you scroll (dark ground) ---------- */
   .hero { position: relative; }
-  .book-scroll { position: relative; height: 340vh; }
+  .book-scroll { position: relative; height: 300vh; }
   .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; perspective: 2600px; perspective-origin: 50% 35%;
-    --f: 0; --o0: 0; --g: 0; --hint: 1; --R: 1.32; --W: min(40vw, 440px, calc((100svh - 350px) / 1.32));
-    display: flex; flex-direction: column; align-items: center; padding-top: 80px; }
+    --o0: 0; --g: 0; --hint: 1; --R: 1.32; --W: min(44vw, 430px, calc((100svh - 330px) / 1.32));
+    display: flex; flex-direction: column; align-items: center; padding-top: 88px; }
   .stage-top { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter); }
-  .stage-top .kicker { margin: 0; font-size: 14px; color: var(--cream); display: inline-flex; align-items: center; gap: 10px; }
+  .stage-top .kicker { margin: 0 0 12px; font-size: 14px; color: var(--cream); display: inline-flex; align-items: center; gap: 10px; }
   .stage-top .kicker .star { width: 18px; height: 18px; color: var(--gold); }
   .stage-top .kicker .en { font-size: 11px; font-weight: 700; color: var(--cream-60); }
+  .stage-top h1 { font-size: clamp(30px, 5vw, 68px); font-weight: 900; line-height: 1.15; color: var(--cream); letter-spacing: -.005em; word-break: keep-all; white-space: nowrap; }
+  .stage-top h1 .gold { color: var(--gold); }
   .stage-foot { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter) 68px; }
   .stage-foot h1 { font-size: clamp(30px, 4.6vw, 62px); font-weight: 900; line-height: 1.15; color: var(--cream); letter-spacing: -.005em; word-break: keep-all; white-space: nowrap; }
   .stage-foot h1 .gold { color: var(--gold); }
@@ -82,9 +84,8 @@
   .glow { position: absolute; left: 50%; top: 46%; width: calc(var(--W) * 4.4); height: calc(var(--W) * 3.2); transform: translate(-50%, -50%) scale(calc(.55 + var(--g) * .55)); opacity: calc(.18 + var(--g) * .82);
     background: radial-gradient(closest-side, rgba(217, 160, 55, .36), rgba(217, 160, 55, .12) 55%, rgba(217, 160, 55, 0) 100%); pointer-events: none; z-index: 1; }
   .book-wrap { transform-style: preserve-3d; position: relative; z-index: 2; flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; margin: 6px 0 4px; }
-  .book { position: relative; width: var(--W); height: calc(var(--W) * var(--R)); transform-style: preserve-3d; font-size: calc(var(--W) / 17); animation: bob 5.5s ease-in-out infinite;
-    transform: translate3d(calc((1 - var(--f)) * 24vw + var(--W) * .5 * var(--o0)), calc((1 - var(--f)) * 9svh), 0) rotateZ(calc((1 - var(--f)) * 14deg)) rotateX(calc((1 - var(--f)) * 24deg + (1 - var(--o0)) * 7deg)) rotateY(calc((1 - var(--f)) * -62deg + (1 - var(--o0)) * -9deg)) scale(calc(.72 + var(--f) * .28)); }
-  @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -9px; } }
+  .book { position: relative; width: var(--W); height: calc(var(--W) * var(--R)); transform-style: preserve-3d; font-size: calc(var(--W) / 17);
+    transform: translateX(calc(var(--W) * .5 * var(--o0))) rotateX(calc((1 - var(--o0)) * 9deg)) rotateY(calc((1 - var(--o0)) * -10deg)); }
   .pg, .face { --body: rgba(47, 43, 40, .8); --fg: var(--ink); --fg-2: var(--ink-60); --line: var(--ink-14); --stroke: var(--ink); --accent: var(--deep-gold); color: var(--ink); }
   .pg { position: absolute; inset: 0; background: var(--card); border: 1.5px solid var(--ink); }
   .pg.under1 { transform: translate(4px, 3px); background: var(--sand); }
@@ -302,11 +303,10 @@
     .nav-links a { color: var(--ink) !important; padding: 15px 0; border-bottom: 1px solid var(--ink-14); font-size: 17px; }
     .nav-links a::after { display: none; }
     .nav-links .chip { margin-top: 16px; justify-content: center; height: 48px; }
-    .book-scroll { height: 300vh; }
-    .stage { --R: 1.62; --W: min(46vw, 210px, calc((100svh - 330px) / 1.62)); padding-top: 76px; }
-    .stage-foot { padding-bottom: 64px; }
-    .stage-foot h1 { font-size: clamp(27px, 8vw, 38px); }
-    .book { font-size: calc(var(--W) / 12.5); transform: translate3d(calc((1 - var(--f)) * 16vw + var(--W) * .5 * var(--o0)), calc((1 - var(--f)) * 8svh), 0) rotateZ(calc((1 - var(--f)) * 12deg)) rotateX(calc((1 - var(--f)) * 22deg + (1 - var(--o0)) * 7deg)) rotateY(calc((1 - var(--f)) * -60deg + (1 - var(--o0)) * -9deg)) scale(calc(.8 + var(--f) * .2 + (1 - var(--o0)) * .3 * var(--f))); }
+    .book-scroll { height: 260vh; }
+    .stage { --R: 1.6; --W: min(46vw, 210px, calc((100svh - 300px) / 1.6)); padding-top: 84px; }
+    .stage-top h1 { font-size: clamp(28px, 8.4vw, 40px); }
+    .book { font-size: calc(var(--W) / 12.5); transform: translateX(calc(var(--W) * .5 * var(--o0))) scale(calc(1 + (1 - var(--o0)) * .38)) rotateX(calc((1 - var(--o0)) * 9deg)) rotateY(calc((1 - var(--o0)) * -10deg)); }
     .pgc .sub, .pgc .regions, .pgc .kk .en, .pgc [data-copy-wechat], .city .en, .steps-b span { display: none; }
     .pgc h2, .pgc h3 { font-size: 1.4em; }
     .pgc .btn { width: 100%; justify-content: center; padding: 0 .4em; font-size: .95em; }
@@ -373,6 +373,7 @@
         <div class="glow" aria-hidden="true"></div>
         <div class="stage-top">
           <p class="kicker"><svg class="star" aria-hidden="true"><use href="#star"/></svg>达成教育 <span class="en">Straight Education</span></p>
+          <h1 id="hTitle">一条直路，<span class="gold">直达名校。</span></h1>
         </div>
         <div class="book-wrap">
           <div class="book" id="book">
@@ -388,7 +389,6 @@
                 <a class="btn" href="#camp">查看最新营期 <span class="arrow">↓</span></a>
                 <button class="btn ghost" data-copy-wechat>复制微信号</button>
               </div>
-              <span class="ribbon" aria-hidden="true"></span>
             </div>
 
             <!-- the cover; its back is the left-hand page -->
@@ -416,10 +416,7 @@
             <svg class="spark" style="left:112%;top:64%;--d:2.2s" aria-hidden="true"><use href="#star"/></svg>
           </div>
         </div>
-        <div class="stage-foot">
-          <h1 id="hTitle"><span class="ln"><span>一条直路，</span></span><span class="ln"><span class="gold">直达名校。</span></span></h1>
-        </div>
-        <p class="hint" id="hint">向下滚动，让这本书飞过来<i></i></p>
+        <p class="hint" id="hint">向下滚动，翻开这一页<i></i></p>
       </div>
     </div>
     <a class="next-bar stagger" href="#camp" id="hNext">
@@ -536,7 +533,7 @@
   <div id="dlgBody"></div>
 </dialog>
 
-<script src="config.js?v=202609302120"></script>
-<script src="main.js?v=202609302120"></script>
+<script src="config.js?v=202609302124"></script>
+<script src="main.js?v=202609302124"></script>
 </body>
 </html>
