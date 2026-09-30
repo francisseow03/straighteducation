@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <!-- CJK web fonts load without blocking; phones fall back to PingFang / YaHei instantly (Google may be slow or blocked in mainland China) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=202609302124">
+<link rel="stylesheet" href="styles.css?v=202609302127">
 <style>
   :root { --body: rgba(47, 43, 40, .8); }
   .dark { --body: rgba(250, 241, 228, .78); }
@@ -74,7 +74,7 @@
   .stage-top .kicker .en { font-size: 11px; font-weight: 700; color: var(--cream-60); }
   .stage-top h1 { font-size: clamp(30px, 5vw, 68px); font-weight: 900; line-height: 1.15; color: var(--cream); letter-spacing: -.005em; word-break: keep-all; white-space: nowrap; }
   .stage-top h1 .gold { color: var(--gold); }
-  .stage-foot { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter) 68px; }
+  .stage-foot { position: relative; z-index: 3; text-align: center; padding: 0 var(--gutter) 22px; }
   .stage-foot h1 { font-size: clamp(30px, 4.6vw, 62px); font-weight: 900; line-height: 1.15; color: var(--cream); letter-spacing: -.005em; word-break: keep-all; white-space: nowrap; }
   .stage-foot h1 .gold { color: var(--gold); }
   .stage-foot .ln { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; }
@@ -134,8 +134,8 @@
   .spark { position: absolute; z-index: 3; width: 14px; height: 14px; color: var(--gold); opacity: 0; pointer-events: none; }
   .stage.lit .spark { animation: rise 5s ease-in-out infinite; animation-delay: var(--d); }
   @keyframes rise { 0% { opacity: 0; transform: translateY(24px) scale(.4) rotate(0); } 25% { opacity: .95; } 100% { opacity: 0; transform: translateY(-90px) scale(1.1) rotate(80deg); } }
-  .hint { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 3; text-align: center; font-size: 13px; color: var(--cream-60); letter-spacing: .14em; opacity: var(--hint); pointer-events: none; margin: 0; }
-  .hint i { display: block; width: 1.5px; height: 16px; background: var(--gold); margin: 6px auto 0; transform-origin: top; animation: cue 2.4s var(--ease) infinite; }
+  .hint { margin: 8px 0 0; font-size: 12px; color: var(--cream-60); letter-spacing: .16em; opacity: var(--hint); pointer-events: none; }
+  .hint i { display: block; width: 1.5px; height: 14px; background: var(--gold); margin: 5px auto 0; transform-origin: top; animation: cue 2.4s var(--ease) infinite; }
   @keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
   .next-bar { position: relative; z-index: 2; display: block; text-decoration: none; color: var(--cream); border-top: 1px solid rgba(250, 241, 228, .16); background: rgba(250, 241, 228, .04); transition: background .35s; }
   .next-bar .wrap { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 32px); min-height: 72px; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
@@ -305,7 +305,8 @@
     .nav-links .chip { margin-top: 16px; justify-content: center; height: 48px; }
     .book-scroll { height: 260vh; }
     .stage { --R: 1.6; --W: min(46vw, 210px, calc((100svh - 300px) / 1.6)); padding-top: 84px; }
-    .stage-top h1 { font-size: clamp(28px, 8.4vw, 40px); }
+    .stage-foot h1 { font-size: clamp(27px, 8vw, 38px); }
+    .stage-foot { padding-bottom: 18px; }
     .book { font-size: calc(var(--W) / 12.5); transform: translateX(calc(var(--W) * .5 * var(--o0))) scale(calc(1 + (1 - var(--o0)) * .38)) rotateX(calc((1 - var(--o0)) * 9deg)) rotateY(calc((1 - var(--o0)) * -10deg)); }
     .pgc .sub, .pgc .regions, .pgc .kk .en, .pgc [data-copy-wechat], .city .en, .steps-b span { display: none; }
     .pgc h2, .pgc h3 { font-size: 1.4em; }
@@ -373,7 +374,6 @@
         <div class="glow" aria-hidden="true"></div>
         <div class="stage-top">
           <p class="kicker"><svg class="star" aria-hidden="true"><use href="#star"/></svg>达成教育 <span class="en">Straight Education</span></p>
-          <h1 id="hTitle">一条直路，<span class="gold">直达名校。</span></h1>
         </div>
         <div class="book-wrap">
           <div class="book" id="book">
@@ -416,7 +416,10 @@
             <svg class="spark" style="left:112%;top:64%;--d:2.2s" aria-hidden="true"><use href="#star"/></svg>
           </div>
         </div>
-        <p class="hint" id="hint">向下滚动，翻开这一页<i></i></p>
+        <div class="stage-foot">
+          <h1 id="hTitle">一条直路，<span class="gold">直达名校。</span></h1>
+          <p class="hint" id="hint">向下滚动，翻开<i></i></p>
+        </div>
       </div>
     </div>
     <a class="next-bar stagger" href="#camp" id="hNext">
@@ -533,7 +536,7 @@
   <div id="dlgBody"></div>
 </dialog>
 
-<script src="config.js?v=202609302124"></script>
-<script src="main.js?v=202609302124"></script>
+<script src="config.js?v=202609302127"></script>
+<script src="main.js?v=202609302127"></script>
 </body>
 </html>
