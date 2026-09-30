@@ -45,11 +45,9 @@
   function detail(c, inDialog) {
     const [label, tone] = statusOf(c);
     const [summary, src] = splitSummary(c.summary);
-    // on the page the hero already shows dates/place/age; the dialog repeats them since it stands alone
-    const kv = [
-      ...(inDialog ? [["日期", fmtRange(c.start_date, c.end_date)], ["地点", c.location], ["适合年龄", c.ages]] : []),
-      ["形式", c.format], ["费用包含", c.includes], ["服务费", c.service_fee],
-    ].filter((r) => r[1]);
+    const spec = [["日期", fmtRange(c.start_date, c.end_date)], ["地点", c.location], ["适合年龄", c.ages], ["营地费", c.price, "price"], ["形式", c.format, "zh"]].filter((r) => r[1]);
+    const kv = [["费用包含", c.includes], ["服务费", c.service_fee]].filter((r) => r[1]);
+    const [name, loc] = splitTitle(c.title);
     const rows = (c.highlights || []).map((h) => {
       const i = h.indexOf(" · ");
       return i > 0 ? [h.slice(0, i), h.slice(i + 3)] : ["", h];
@@ -64,16 +62,23 @@
     const gal = inDialog && (c.gallery || []).length ? `<div class="gallery">${c.gallery.filter(safeUrl).map((u) => `<img src="${esc(u)}" alt="" loading="lazy">`).join("")}</div>` : "";
     const rv = inDialog ? "in" : "reveal";
     return `
+      <div class="camp-head">
+        <p class="eyebrow ${rv}">${inDialog ? "营期详情" : "最新营期"} <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span></p>
+        <h2 class="split${inDialog ? " in" : ""}"><span class="ln"><span>${esc(name)}</span></span>${loc ? `<span class="ln" style="--i:1"><span class="loc">${esc(loc)}</span></span>` : ""}</h2>
+        ${c.title_en ? `<p class="title-en ${rv}">${esc(c.title_en)}</p>` : ""}
+      </div>
       <div class="detail">
         ${photo}
         <div class="${rv}">
-          <p class="eyebrow" style="display:flex;gap:12px;align-items:center">营期详情 <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span></p>
-          <h2>${inDialog ? esc(c.title) : "营期安排与费用"}</h2>
+          ${spec.length ? `<dl class="spec">${spec.map(([k, v, cls]) => `<div><dt>${k}</dt><dd${cls ? ` class="${cls}"` : ""}>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
           ${summary ? `<p class="summary">${esc(summary).replace(/\n/g, "<br>")}</p>` : ""}
-          ${kv.length ? `<dl class="kv">${kv.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
           <div class="actions">${isPast(c) ? "" : `<button class="btn" data-copy-wechat>复制微信号咨询这期</button>`}</div>
         </div>
-        <div class="${rv}" style="--d:.1s">${table}${src ? `<p class="src">${esc(src)}</p>` : ""}</div>
+        <div class="${rv}" style="--d:.1s">
+          ${table}
+          ${kv.length ? `<dl class="kv">${kv.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
+          ${src ? `<p class="src">${esc(src)}</p>` : ""}
+        </div>
         ${gal}
       </div>`;
   }
@@ -98,24 +103,19 @@
     }
     observe(root);
 
-    // hero = the next upcoming camp
+    // hero bar = a pointer to the next upcoming camp
     const c = upcoming[0];
-    const hero = $("#hero");
     if (c) {
-      const [name, loc] = splitTitle(c.title);
-      $("#hTitle").innerHTML = `<span class="ln"><span>${esc(name)}</span></span>${loc ? `<span class="ln" style="--i:1"><span class="loc">${esc(loc)}</span></span>` : ""}`;
-      $("#hTitleEn").textContent = c.title_en || "";
-      $("#hStatus").textContent = statusOf(c)[0];
-      $("#hStatus").className = "chip " + statusOf(c)[1];
-      const facts = [["日期", fmtRange(c.start_date, c.end_date)], ["地点", c.location], ["适合年龄", c.ages], ["营地费", c.price, "price"], ["形式", c.format, "zh"]].filter((f) => f[1]);
-      $("#hFacts").innerHTML = facts.map(([k, v, cls], i) => `<div style="--k:${i}"><dt>${k}</dt><dd${cls ? ` class="${cls}"` : ""}>${esc(v)}</dd></div>`).join("");
+      const [label, tone] = statusOf(c);
+      $("#hStatus").textContent = label;
+      $("#hStatus").className = "chip " + tone;
+      $("#hNextTitle").textContent = c.title;
+      $("#hNextMeta").textContent = [fmtRange(c.start_date, c.end_date), c.ages].filter(Boolean).join(" · ");
     } else {
-      $("#hTitle").innerHTML = `<span class="ln"><span>下一期营期</span></span><span class="ln" style="--i:1"><span class="loc">筹备中</span></span>`;
-      $("#hTitleEn").textContent = "";
-      $("#hStatus").textContent = "即将公布";
-      $("#hFacts").innerHTML = `<div><dt>关注</dt><dd class="zh">新营期公布时，小红书与微信会第一时间更新。</dd></div>`;
+      $("#hStatus").textContent = "筹备中";
+      $("#hNextTitle").textContent = "下一期营期正在筹备中";
+      $("#hNextMeta").textContent = "关注小红书或添加微信，第一时间获取";
     }
-    if (hero.classList.contains("ready")) $("#hTitle").classList.add("in");
   }
 
   // ---------- contact ----------
@@ -147,11 +147,7 @@
     $("#others").innerHTML = items.map(([k, name, v, url, go]) =>
       `<a href="${esc(url)}"${k === "email" ? "" : ' target="_blank" rel="noopener"'}><svg aria-hidden="true"><use href="#${ICON[k]}"/></svg><span class="p">${name}</span><span class="h">${esc(k === "rednote" ? v : handleOf(k, v))}</span><span class="go">${go}</span></a>`).join("");
 
-    if (s.rednote_id) {
-      $("#footRn").textContent = "小红书号 " + s.rednote_id;
-      $("#hRn").textContent = s.rednote_id;
-    }
-    $("#hOr").hidden = !s.rednote_id;
+    if (s.rednote_id) $("#footRn").textContent = "小红书号 " + s.rednote_id;
     const dockRn = $("#dockRn");
     dockRn.href = rnUrl || "#contact";
     dockRn.hidden = !rnUrl;

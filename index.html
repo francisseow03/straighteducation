@@ -62,28 +62,41 @@
   .copied { background: var(--ink) !important; border-color: var(--ink) !important; color: var(--gold) !important; }
   .dark .copied { background: var(--cream) !important; border-color: var(--cream) !important; color: var(--ink) !important; }
 
-  /* ---------- hero: the camp itself (dark ground) ---------- */
-  .hero { position: relative; min-height: 92vh; min-height: 92svh; display: flex; align-items: center; padding: 120px 0 72px; overflow: hidden; }
-  .hero .wrap { position: relative; z-index: 2; width: 100%; }
-  .tagline { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--cream-60); margin: 0 0 clamp(40px, 6vw, 72px); }
-  .tagline .star { width: 16px; height: 16px; color: var(--gold); }
-  .tagline b { color: var(--cream); font-weight: 500; }
-  .hero .label { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; font-size: 14px; color: var(--cream-60); }
-  .hero h1 { font-size: clamp(36px, 5.2vw, 76px); font-weight: 900; line-height: 1.12; color: var(--cream); letter-spacing: -.005em; }
-  .hero h1 .loc { color: var(--gold); }
-  .hero .title-en { font-family: var(--en); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: clamp(12px, 1.1vw, 14px); color: var(--cream-60); margin-top: 18px; }
-  .hero-grid { display: grid; grid-template-columns: 1.35fr .9fr; grid-template-areas: "main spec" "cta spec"; column-gap: clamp(40px, 6vw, 110px); align-items: end; }
-  .h-main { grid-area: main; } .h-cta { grid-area: cta; } .spec { grid-area: spec; }
-  .hero h1 { word-break: keep-all; overflow-wrap: anywhere; text-wrap: balance; }
+  /* ---------- hero: Straight Education (dark ground) ---------- */
+  .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; }
+  .hero-inner { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: 120px; padding-bottom: 56px; position: relative; z-index: 2; }
+  .hero .kicker { margin: 0 0 clamp(24px, 3vw, 36px); font-size: 15px; color: var(--cream); }
+  .hero .kicker > span { display: inline-flex; align-items: center; gap: 12px; }
+  .hero .kicker .star { width: 20px; height: 20px; color: var(--gold); }
+  .hero .kicker .en { font-size: 12px; font-weight: 700; color: var(--cream-60); }
+  .hero h1 { font-size: clamp(56px, 10.5vw, 150px); font-weight: 900; line-height: 1.02; color: var(--cream); letter-spacing: -.01em; word-break: keep-all; }
+  .hero h1 .gold { color: var(--gold); }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 5vw, 80px); align-items: end; margin-top: clamp(36px, 5vw, 64px); padding-top: clamp(24px, 3vw, 32px); border-top: 1px solid rgba(250, 241, 228, .16); }
+  .hero .lede { margin: 0; max-width: 30em; font-size: clamp(16px, 1.4vw, 19px); color: var(--body); }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
+  .next-bar { position: relative; z-index: 2; display: block; text-decoration: none; color: var(--cream); border-top: 1px solid rgba(250, 241, 228, .16); background: rgba(250, 241, 228, .04); transition: background .35s; }
+  .next-bar .wrap { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 32px); min-height: 72px; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
+  .nb-label { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--cream-60); }
+  .nb-label .chip { height: 26px; font-size: 12px; padding: 0 10px; }
+  .nb-title { font-weight: 700; font-size: 16px; }
+  .nb-meta { font-family: var(--en); font-weight: 500; font-size: 14px; color: var(--cream-60); letter-spacing: .03em; }
+  .nb-go { margin-left: auto; color: var(--gold); font-weight: 500; font-size: 15px; white-space: nowrap; }
+  .nb-go .arrow { display: inline-block; transition: transform .3s var(--ease); }
+  .next-bar:hover { background: rgba(250, 241, 228, .08); }
+  .next-bar:hover .nb-go .arrow { transform: translateX(5px); }
+
+  /* ---------- latest camp (section 2, cream) ---------- */
+  .camp-head { margin-bottom: clamp(36px, 5vw, 60px); }
+  .camp-head .eyebrow { display: flex; gap: 12px; align-items: center; }
+  .camp-head h2 { font-size: clamp(34px, 5vw, 64px); font-weight: 900; line-height: 1.12; word-break: keep-all; text-wrap: balance; }
+  .camp-head h2 .loc { color: var(--deep-gold); }
+  .camp-head .title-en { font-family: var(--en); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; color: var(--ink-60); margin-top: 14px; }
   .spec { margin: 0; border-top: 2px solid var(--gold); }
-  .spec > div { display: grid; grid-template-columns: 84px 1fr; gap: 16px; align-items: baseline; padding: 15px 0; border-bottom: 1px solid rgba(250, 241, 228, .14); }
-  .spec dt { font-size: 13px; color: var(--cream-60); }
-  .spec dd { margin: 0; font-family: var(--en); font-weight: 600; font-size: clamp(17px, 1.5vw, 20px); color: var(--cream); letter-spacing: .02em; }
+  .spec > div { display: grid; grid-template-columns: 84px 1fr; gap: 16px; align-items: baseline; padding: 15px 0; border-bottom: 1px solid var(--ink-14); }
+  .spec dt { font-size: 14px; color: var(--ink-60); }
+  .spec dd { margin: 0; font-family: var(--en); font-weight: 600; font-size: clamp(17px, 1.5vw, 20px); color: var(--ink); letter-spacing: .02em; }
   .spec dd.zh { font-family: var(--sans); font-weight: 500; font-size: 15px; letter-spacing: 0; line-height: 1.6; }
-  .spec dd.price { color: var(--gold); }
-  .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 40px; align-items: center; }
-  .hero .or { font-size: 14px; color: var(--cream-60); margin: 16px 0 0; }
-  .hero .or a { color: var(--cream); }
+  .spec dd.price { color: var(--deep-gold); }
   .stagger > * { opacity: 0; transform: translateY(12px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: calc(var(--k, 0) * .07s + .35s); }
   .hero.ready .stagger > * { opacity: 1; transform: none; }
 
@@ -193,8 +206,8 @@
 
   @media (max-width: 960px) {
     .detail, .about-grid, .contact-grid { grid-template-columns: 1fr; }
-    .hero-grid { grid-template-columns: 1fr; grid-template-areas: "main" "spec" "cta"; align-items: start; }
-    .spec { margin-top: 32px; }
+    .hero-grid { grid-template-columns: 1fr; align-items: start; }
+    .hero .actions { justify-content: flex-start; }
     .steps { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
     .steps-line { display: none; }
     .does { grid-template-columns: 1fr; }
@@ -208,11 +221,14 @@
     .nav-links a { color: var(--ink) !important; padding: 15px 0; border-bottom: 1px solid var(--ink-14); font-size: 17px; }
     .nav-links a::after { display: none; }
     .nav-links .chip { margin-top: 16px; justify-content: center; height: 48px; }
-    .hero { min-height: 0; padding: 96px 0 48px; }
-    .tagline { display: none; }
-    .spec { margin-top: 26px; }
-    .spec > div { grid-template-columns: 72px 1fr; padding: 11px 0; }
-    .hero .actions { margin-top: 26px; }
+    .hero { min-height: 88svh; }
+    .hero-inner { padding-top: 104px; padding-bottom: 36px; justify-content: flex-end; }
+    .hero h1 { font-size: clamp(52px, 16vw, 72px); }
+    .spec > div { grid-template-columns: 72px 1fr; padding: 12px 0; }
+    .next-bar .wrap { gap: 4px 12px; }
+    .nb-label { width: 100%; }
+    .nb-meta { width: 100%; order: 3; }
+    .nb-go { order: 2; }
     .dtable .th { display: block; }
     .dtable .dt { display: block; font-family: var(--en); font-size: 13px; color: var(--ink-60); margin-top: 2px; }
     .dtable .sep { display: none; }
@@ -233,7 +249,7 @@
 </style>
 </head>
 <body>
-<a class="skip" href="#camp">跳到营期详情</a>
+<a class="skip" href="#camp">跳到最新营期</a>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 0C12.9 6.4 17.6 11.1 24 12 17.6 12.9 12.9 17.6 12 24 11.1 17.6 6.4 12.9 0 12 6.4 11.1 11.1 6.4 12 0Z"/></symbol>
@@ -252,7 +268,7 @@
     </a>
     <button class="menu-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
     <nav class="nav-links" id="navLinks" aria-label="主导航">
-      <a href="#camp">营期详情</a>
+      <a href="#camp">最新营期</a>
       <a href="#about">关于我们</a>
       <a href="#process">报名流程</a>
       <a class="chip gold" href="#contact">微信咨询</a>
@@ -262,37 +278,30 @@
 </header>
 
 <main id="top">
-  <!-- 1 · HERO: the camp a parent came for -->
+  <!-- 1 · HERO: Straight Education itself -->
   <section class="hero dark" id="hero">
-    <div class="wrap">
-      <p class="tagline"><svg class="star" aria-hidden="true"><use href="#star"/></svg><b>达成教育 Straight Education</b><span>一条直路 · 直达名校</span></p>
-      <div class="hero-grid">
-        <div class="h-main">
-          <div class="label"><span>最新营期</span><span class="chip gold" id="hStatus">报名中</span></div>
-          <h1 class="split" id="hTitle"><span class="ln"><span>Traidhos 冬季英语营</span></span><span class="ln" style="--i:1"><span class="loc">泰国</span></span></h1>
-          <p class="title-en" id="hTitleEn">Traidhos Winter English Camp</p>
+    <div class="wrap hero-inner">
+      <p class="kicker stagger"><span style="--k:0"><svg class="star" aria-hidden="true"><use href="#star"/></svg>达成教育 <span class="en">Straight Education</span></span></p>
+      <h1 class="split" id="hTitle"><span class="ln"><span>一条直路，</span></span><span class="ln" style="--i:1"><span class="gold">直达名校。</span></span></h1>
+      <div class="hero-grid stagger">
+        <p class="lede" style="--k:1">为中国家庭整理马来西亚与泰国的游学营与择校信息。营期、费用、包含项目全部公开，注明来源与核实日期——先信息，后服务。</p>
+        <div class="actions" style="--k:2">
+          <a class="btn" href="#camp">查看最新营期 <span class="arrow">↓</span></a>
+          <button class="btn ghost" data-copy-wechat>复制微信号咨询</button>
         </div>
-        <div class="h-cta">
-          <div class="stagger">
-            <div class="actions" style="--k:4">
-              <button class="btn" data-copy-wechat>复制微信号咨询</button>
-              <a class="btn ghost" href="#camp">营期安排与费用 <span class="arrow">↓</span></a>
-            </div>
-            <p class="or" style="--k:5" id="hOr">也可以在小红书搜索 <span class="en" style="letter-spacing:.04em" id="hRn">95964122071</span> 关注我们</p>
-          </div>
-        </div>
-        <dl class="spec stagger" id="hFacts">
-          <div style="--k:0"><dt>日期</dt><dd>2027.01.04 — 29</dd></div>
-          <div style="--k:1"><dt>地点</dt><dd>泰国</dd></div>
-          <div style="--k:2"><dt>适合年龄</dt><dd>6–12 岁</dd></div>
-          <div style="--k:3"><dt>营地费</dt><dd class="price">THB 15,000 / 期</dd></div>
-          <div style="--k:4"><dt>形式</dt><dd class="zh">日营 · 不含住宿 · 每日 08:45 入营，15:30 放学</dd></div>
-        </dl>
       </div>
     </div>
+    <a class="next-bar stagger" href="#camp" id="hNext">
+      <span class="wrap" style="--k:4">
+        <span class="nb-label">最新营期 <span class="chip gold" id="hStatus">报名中</span></span>
+        <span class="nb-title" id="hNextTitle">Traidhos 冬季英语营</span>
+        <span class="nb-meta" id="hNextMeta">2027.01.04 — 29</span>
+        <span class="nb-go">查看营期 <span class="arrow">→</span></span>
+      </span>
+    </a>
   </section>
 
-  <!-- 2 · CAMP DETAILS -->
+  <!-- 2 · LATEST CAMP -->
   <section class="block" id="camp">
     <div class="wrap" id="campRoot">
       <p class="muted">正在载入营期…</p>
