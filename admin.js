@@ -150,6 +150,11 @@
     $("#fIncludes").value = editing.includes || "";
     $("#fService").value = editing.service_fee || "";
     $("#fExcludes").value = editing.excludes || "";
+    const en = editing.en || {};
+    $("#enTitle").value = en.title || ""; $("#enLocation").value = en.location || ""; $("#enAges").value = en.ages || "";
+    $("#enPrice").value = en.price || ""; $("#enService").value = en.service_fee || ""; $("#enFormat").value = en.format || "";
+    $("#enIncludes").value = en.includes || ""; $("#enExcludes").value = en.excludes || ""; $("#enSummary").value = en.summary || "";
+    $("#enHl").value = (en.highlights || []).join("\n");
     $("#fHl").value = (editing.highlights || []).join("\n");
     $("#fSort").value = editing.sort ?? 0;
     $("#fPub").checked = editing.published !== false;
@@ -177,6 +182,11 @@
       includes: $("#fIncludes").value.trim(),
       service_fee: $("#fService").value.trim(),
       excludes: $("#fExcludes").value.trim(),
+      en: {
+        title: $("#enTitle").value, location: $("#enLocation").value, ages: $("#enAges").value, price: $("#enPrice").value,
+        service_fee: $("#enService").value, format: $("#enFormat").value, includes: $("#enIncludes").value, excludes: $("#enExcludes").value,
+        summary: $("#enSummary").value, highlights: $("#enHl").value.split("\n"),
+      },
       highlights: $("#fHl").value.split("\n"),
       sort: parseInt($("#fSort").value, 10) || 0,
       published: $("#fPub").checked,

@@ -6,6 +6,8 @@
 <title>后台管理 · 达成教育</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#2F2B28">
+<meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light">
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +15,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="styles.css">
 <style>
+  :root { color-scheme: only light; }
   body { font-size: 16px; min-height: 100vh; display: flex; flex-direction: column; }
   .top { background: var(--ink); color: var(--cream); }
   .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; max-width: 1040px; }
@@ -67,6 +70,8 @@
   .form-actions { display: flex; gap: 12px; flex-wrap: wrap; grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid var(--ink-14); align-items: center; }
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: var(--ink); color: var(--cream); padding: 12px 20px; opacity: 0; transition: .35s var(--ease); pointer-events: none; z-index: 99; border-top: 3px solid var(--gold); }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .en-box { border: 1.5px solid var(--ink-14); padding: 14px 18px; background: var(--card); }
+  .en-box summary { cursor: pointer; font-weight: 500; }
   .tip { background: var(--jade-mist); padding: 14px 18px; font-size: 14px; color: var(--jade); margin-bottom: 22px; }
   [hidden] { display: none !important; }
 
@@ -163,6 +168,20 @@
         <div class="field"><label for="fService">达成教育服务费</label><input class="input" id="fService" maxlength="200" placeholder="例：报名 ¥230 · 住宿协调 ¥50"></div>
         <div class="field full"><label for="fSummary">简介</label><textarea class="textarea" id="fSummary" maxlength="800" placeholder="一两句话介绍这期营。"></textarea><span class="hint">最后一行以「信息来源：」开头时，会以小字显示在营期底部。</span></div>
         <div class="field full"><label for="fHl">营期安排 / 亮点</label><textarea class="textarea" id="fHl" placeholder="每行一条，例：第 1 期 · 英语与自然探索营 · 1月4日–8日"></textarea><span class="hint">用「 · 」分隔的行会显示成表格：第一段在左栏，其余在右栏。</span></div>
+        <details class="full en-box"><summary>English version 英文版（可选 · 访客选择英文时显示；留空则显示中文）</summary>
+          <div class="form" style="margin-top:18px">
+            <div class="field full"><label for="enTitle">Title</label><input class="input" id="enTitle" maxlength="160" placeholder="Camp name · City"><span class="hint">Use " · " before the city, e.g. “Traidhos Winter English Camp · Chiang Mai”.</span></div>
+            <div class="field"><label for="enLocation">Location</label><input class="input" id="enLocation" maxlength="120"></div>
+            <div class="field"><label for="enAges">Age</label><input class="input" id="enAges" maxlength="160"></div>
+            <div class="field"><label for="enPrice">Camp fee</label><input class="input" id="enPrice" maxlength="160"></div>
+            <div class="field"><label for="enService">Our service fee</label><input class="input" id="enService" maxlength="240"></div>
+            <div class="field full"><label for="enFormat">Format</label><input class="input" id="enFormat" maxlength="300"></div>
+            <div class="field"><label for="enIncludes">Included</label><input class="input" id="enIncludes" maxlength="300"></div>
+            <div class="field"><label for="enExcludes">Not included</label><input class="input" id="enExcludes" maxlength="300"></div>
+            <div class="field full"><label for="enSummary">Description</label><textarea class="textarea" id="enSummary" placeholder="Last line starting with “Source:” is shown as the small source note."></textarea></div>
+            <div class="field full"><label for="enHl">Schedule rows</label><textarea class="textarea" id="enHl" placeholder="One per line, e.g. Week 1 · Around the World · Jan 4–8"></textarea></div>
+          </div>
+        </details>
         <div class="field full"><label>相册（可选）</label>
           <div class="gal" id="gal"></div>
           <label class="sm file-btn" style="display:inline-flex;align-items:center;width:max-content">添加照片<input type="file" accept="image/*" id="galFile" multiple></label>

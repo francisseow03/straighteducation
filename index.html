@@ -6,6 +6,9 @@
 <title>达成教育 Straight Education · 泰国与马来西亚游学营</title>
 <meta name="description" content="达成教育 Straight Education — 为中国家庭整理马来西亚与泰国的游学营与择校信息。营期、费用、包含项目全部公开，注明来源与核实日期。">
 <meta name="theme-color" content="#2F2B28">
+<meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light">
+<script>(function(){try{var q=new URLSearchParams(location.search).get("lang");var v=null;try{v=localStorage.getItem("se_lang")}catch(e){}var l=(q==="en"||q==="zh")?q:((v==="en"||v==="zh")?v:null);if(!l){var n=(navigator.languages&&navigator.languages[0])||navigator.language||"";l=(!n||/^zh/i.test(n))?"zh":"en"}window.__lang=l;document.documentElement.lang=l==="en"?"en":"zh-CN";if(l==="en"){document.documentElement.className+=" pre-en";setTimeout(function(){document.documentElement.className=document.documentElement.className.replace(" pre-en","")},2500)}}catch(e){}})();</script>
 <meta property="og:title" content="达成教育 Straight Education">
 <meta property="og:description" content="一条直路 · 直达名校 — 马来西亚与泰国的游学营与择校信息，逐步拓展中">
 <meta property="og:image" content="assets/icon-light.png">
@@ -14,12 +17,35 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <!-- CJK web fonts load without blocking; phones fall back to PingFang / YaHei instantly (Google may be slow or blocked in mainland China) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=202609302141">
+<link rel="stylesheet" href="styles.css?v=202610011421">
 <style>
+  :root { color-scheme: only light; }
+  html.pre-en body { visibility: hidden; }
   :root { --body: rgba(47, 43, 40, .8); }
   .dark { --body: rgba(250, 241, 228, .78); }
   p { color: var(--body); }
   [hidden] { display: none !important; }
+
+
+  /* language switch + English typography */
+  .nav-right { display: flex; align-items: center; gap: 22px; }
+  .lang { font-family: var(--en); font-weight: 700; font-size: 13px; letter-spacing: .1em; color: var(--cream); background: none; border: 1.5px solid rgba(250, 241, 228, .5); min-height: 40px; min-width: 54px; padding: 0 12px; cursor: pointer; transition: color .3s, border-color .3s, background .3s; }
+  .lang:hover { border-color: var(--gold); color: var(--gold); }
+  .nav.solid .lang, .nav.open .lang { color: var(--ink); border-color: rgba(47, 43, 40, .5); }
+  .nav.solid .lang:hover, .nav.open .lang:hover { border-color: var(--deep-gold); color: var(--deep-gold); }
+  html[lang="en"] { --sans: "Archivo", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  html[lang="en"] body { letter-spacing: 0; line-height: 1.65; }
+  html[lang="en"] .stage-foot h1 { white-space: normal; text-wrap: balance; font-size: clamp(26px, 4vw, 54px); line-height: 1.12; max-width: 17em; margin: 0 auto; }
+  html[lang="en"] .front .cv-line { white-space: normal; text-align: center; line-height: 1.4; letter-spacing: .02em; }
+  html[lang="en"] .eyebrow, html[lang="en"] .proof-h { letter-spacing: .12em; text-transform: uppercase; font-family: var(--en); font-size: 12px; }
+  html[lang="en"] .hint { text-transform: uppercase; }
+  html[lang="en"] .camp-head h2, html[lang="en"] .about h2, html[lang="en"] .sec-title h2, html[lang="en"] .contact h2 { text-wrap: balance; }
+  html[lang="en"] .quote { font-family: var(--serif), Georgia, serif; font-size: clamp(20px, 2.2vw, 28px); line-height: 1.5; }
+  html[lang="en"] .crow .t { font-size: 17px; }
+  html[lang="en"] .nav-links { gap: 26px; }
+  html[lang="en"] .pgc h2, html[lang="en"] .pgc h3 { line-height: 1.2; }
+  html[lang="en"] .book { font-size: calc(var(--W) / 18.5); }
+  html[lang="en"] .pgc .kk b { white-space: normal; }
 
   /* ---------- nav ---------- */
   .skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--gold); color: var(--ink); padding: 10px 16px; font-weight: 700; text-decoration: none; }
@@ -299,6 +325,8 @@
   }
   @media (max-width: 760px) {
     .menu-btn { display: block; }
+    .nav-right { gap: 8px; }
+    .lang { min-height: 38px; min-width: 48px; padding: 0 8px; font-size: 12px; }
     .nav-links { position: fixed; inset: 72px 0 auto; flex-direction: column; align-items: stretch; gap: 0; background: var(--cream); border-bottom: 1px solid var(--ink-14); padding: 8px var(--gutter) 22px; transform: translateY(-8px); opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s var(--ease); }
     .nav.open { background: var(--cream); }
     .nav.open .brand .on-dark { opacity: 0; } .nav.open .brand .on-light { opacity: 1; }
@@ -310,6 +338,7 @@
     .stage { --R: 1.6; --W: min(46vw, 210px, calc((100svh - 300px) / 1.6)); padding-top: 84px; }
     .stage-foot h1 { font-size: clamp(27px, 8vw, 38px); }
     .stage-foot { padding-bottom: 18px; }
+    html[lang="en"] .book { font-size: calc(var(--W) / 13.5); }
     .book { font-size: calc(var(--W) / 12.5); transform: translateX(calc(var(--W) * .5 * var(--o0))) scale(calc(1 + (1 - var(--o0)) * .38)) rotateX(calc((1 - var(--o0)) * 9deg)) rotateY(calc((1 - var(--o0)) * -10deg)); }
     .pgc .sub, .pgc .regions, .pgc .kk .en, .pgc [data-copy-wechat], .city .en, .steps-b span { display: none; }
     .pgc h2, .pgc h3 { font-size: 1.4em; }
@@ -341,7 +370,7 @@
 </style>
 </head>
 <body>
-<a class="skip" href="#camp">跳到最新营期</a>
+<a class="skip" href="#camp" data-i18n="skip">跳到最新营期</a>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 0C12.9 6.4 17.6 11.1 24 12 17.6 12.9 12.9 17.6 12 24 11.1 17.6 6.4 12.9 0 12 6.4 11.1 11.1 6.4 12 0Z"/></symbol>
@@ -358,13 +387,16 @@
       <img class="on-dark" src="assets/logo-cn-dark.png" alt="">
       <img class="on-light" src="assets/logo-cn-light.png" alt="">
     </a>
-    <button class="menu-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
-    <nav class="nav-links" id="navLinks" aria-label="主导航">
-      <a href="#camp">最新营期</a>
-      <a href="#about">关于我们</a>
-      <a href="#process">报名流程</a>
-      <a class="chip gold" href="#contact">微信咨询</a>
-    </nav>
+    <div class="nav-right">
+      <nav class="nav-links" id="navLinks" aria-label="主导航">
+        <a href="#camp" data-i18n="navCamps">最新营期</a>
+        <a href="#about" data-i18n="navAbout">关于我们</a>
+        <a href="#process" data-i18n="navProcess">报名流程</a>
+        <a class="chip gold" href="#contact" data-i18n="navContact">微信咨询</a>
+      </nav>
+      <button class="lang" id="langBtn" type="button" aria-label="Switch to English">EN</button>
+      <button class="menu-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
+    </div>
   </div>
   <div class="progress" aria-hidden="true"><i id="progress"></i></div>
 </header>
@@ -382,12 +414,12 @@
 
             <!-- the right-hand page (revealed once the cover opens) -->
             <div class="pg base pgc">
-              <p class="lbl">最新营期 <span class="chip gold" id="hStatus">报名中</span></p>
+              <p class="lbl"><span data-i18n="latestCamps">最新营期</span> <span class="chip gold" id="hStatus">报名中</span></p>
               <h2 id="bkTitle">2027 寒假营期</h2>
               <p class="sub" id="bkMeta">泰国清迈 · 普吉岛 · 曼谷</p>
               <div class="btns">
-                <a class="btn" href="#camp">查看最新营期 <span class="arrow">↓</span></a>
-                <button class="btn ghost" data-copy-wechat>复制微信号</button>
+                <a class="btn" href="#camp"><span data-i18n="seeLatest">查看最新营期</span> <span class="arrow">↓</span></a>
+                <button class="btn ghost" data-copy-wechat data-i18n="copyWx">复制微信号</button>
               </div>
             </div>
 
@@ -396,13 +428,13 @@
               <div class="face front">
                 <svg class="cv-star" aria-hidden="true"><use href="#star"/></svg>
                 <img src="assets/logo-cn-light.png" alt="达成教育 Straight Education">
-                <span class="cv-line">一条直路 · 直达名校</span>
+                <span class="cv-line" data-i18n="coverLine">一条直路 · 直达名校</span>
               </div>
               <div class="face b pgc">
-                <p class="kk"><svg class="star" aria-hidden="true"><use href="#star"/></svg><b>先信息，后服务</b> <span class="en">Information first</span></p>
-                <h3>营期、费用、<br><span class="gold">包含项目全部列清</span></h3>
-                <p class="sub">为中国家庭整理马来西亚与泰国的游学营与择校信息，注明来源与核实日期。</p>
-                <div class="regions"><span class="r">泰国</span><span class="r">马来西亚</span><span class="r soon">逐步拓展中</span></div>
+                <p class="kk"><svg class="star" aria-hidden="true"><use href="#star"/></svg><b data-i18n="kkB">先信息，后服务</b> <span class="en" data-i18n="kkEn">Information first</span></p>
+                <h3 data-i18n="leftH3">营期、费用、<br><span class="gold">包含项目全部列清</span></h3>
+                <p class="sub" data-i18n="leftSub">为中国家庭整理马来西亚与泰国的游学营与择校信息，注明来源与核实日期。</p>
+                <div class="regions"><span class="r" data-i18n="regThai">泰国</span><span class="r" data-i18n="regMy">马来西亚</span><span class="r soon" data-i18n="regSoon">逐步拓展中</span></div>
               </div>
             </div>
 
@@ -417,17 +449,17 @@
           </div>
         </div>
         <div class="stage-foot">
-          <h1 id="hTitle">一条直路，<span class="gold">直达名校。</span></h1>
-          <p class="hint" id="hint">向下滚动，翻开<i></i></p>
+          <h1 id="hTitle" data-i18n="slogan">一条直路，<span class="gold">直达名校。</span></h1>
+          <p class="hint" id="hint"><span data-i18n="hint">向下滚动，翻开</span><i></i></p>
         </div>
       </div>
     </div>
     <a class="next-bar stagger" href="#camp" id="hNext">
       <span class="wrap" style="--k:4">
-        <span class="nb-label">最新营期 <span class="chip gold" id="hStatus2">报名中</span></span>
+        <span class="nb-label"><span data-i18n="latestCamps">最新营期</span> <span class="chip gold" id="hStatus2">报名中</span></span>
         <span class="nb-title" id="hNextTitle">2027 寒假营期</span>
         <span class="nb-meta" id="hNextMeta">清迈 / 普吉岛 / 曼谷</span>
-        <span class="nb-go">查看营期 <span class="arrow">→</span></span>
+        <span class="nb-go"><span data-i18n="seeCamps">查看营期</span> <span class="arrow">→</span></span>
       </span>
     </a>
   </section>
@@ -436,9 +468,9 @@
   <section class="block" id="camp">
     <div class="wrap">
       <div class="camp-head">
-        <p class="eyebrow reveal">最新营期</p>
-        <h2 class="split"><span class="ln"><span>2027 寒假营期</span></span></h2>
-        <p class="lede reveal" style="--d:.1s">泰国清迈、普吉岛、曼谷的冬令营，日期、费用、包含项目全部列清，注明来源。</p>
+        <p class="eyebrow reveal" data-i18n="latestCamps">最新营期</p>
+        <h2 class="split"><span class="ln"><span data-i18n="campsH2">2027 寒假营期</span></span></h2>
+        <p class="lede reveal" style="--d:.1s" data-i18n="campsLede">泰国清迈、普吉岛、曼谷的冬令营，日期、费用、包含项目全部列清，注明来源。</p>
       </div>
       <div id="campRoot"><p class="muted">正在载入营期…</p></div>
     </div>
@@ -449,32 +481,32 @@
     <div class="wrap">
       <div class="about-grid">
         <div>
-          <p class="eyebrow reveal">关于我们</p>
-          <h2 class="split"><span class="ln"><span>信息先于服务。</span></span></h2>
-          <blockquote class="quote reveal" style="--d:.1s">「学校我们都去过，<br>才敢推荐。」</blockquote>
+          <p class="eyebrow reveal" data-i18n="aboutEyebrow">关于我们</p>
+          <h2 class="split"><span class="ln"><span data-i18n="aboutH2">信息先于服务。</span></span></h2>
+          <blockquote class="quote reveal" style="--d:.1s" data-i18n="quote">「学校我们都去过，<br>才敢推荐。」</blockquote>
         </div>
         <div class="copy reveal" style="--d:.12s">
-          <p><strong>达成教育 Straight Education</strong> 帮中国家庭把马来西亚、泰国这些正在起势的学校和营地讲清楚。现阶段我们专注安排冬令营、夏令营和短期插班，覆盖多个城市、多种类型和年龄段。每个孩子情况不同，我们按孩子情况匹配，而不是只推一个“标准答案”。</p>
-          <p>大多数家长都是第一次做这件事，需要的是清楚、具体的信息，而不是销售话术。所以我们先把信息摆出来，并注明出处；看完之后要不要找我们协助，由你决定。</p>
+          <p data-i18n="aboutP1"><strong>达成教育 Straight Education</strong> 帮中国家庭把马来西亚、泰国这些正在起势的学校和营地讲清楚。现阶段我们专注安排冬令营、夏令营和短期插班，覆盖多个城市、多种类型和年龄段。每个孩子情况不同，我们按孩子情况匹配，而不是只推一个“标准答案”。</p>
+          <p data-i18n="aboutP2">大多数家长都是第一次做这件事，需要的是清楚、具体的信息，而不是销售话术。所以我们先把信息摆出来，并注明出处；看完之后要不要找我们协助，由你决定。</p>
           <div class="regions">
-            <span class="r">泰国</span><span class="r">马来西亚</span><span class="r soon">更多地区逐步拓展中</span>
+            <span class="r" data-i18n="regThai">泰国</span><span class="r" data-i18n="regMy">马来西亚</span><span class="r soon" data-i18n="regSoon2">更多地区逐步拓展中</span>
           </div>
         </div>
       </div>
       <div class="does">
-        <div class="reveal"><span class="hair"></span><h3>营地报名</h3><p>需求评估、按孩子年龄与基础匹配，并直接对接营地代报名额。营期、费用、包含项目一次列清，营地收费与我们的服务费分开标注。</p></div>
-        <div class="reveal" style="--d:.08s"><span class="hair" style="--d:.08s"></span><h3>签证与落地协助</h3><p>协助准备陪读签或旅游签材料，提供住宿推荐与生活辅助。走读营需要家长在当地陪同，我们会提前说明。</p></div>
-        <div class="reveal" style="--d:.16s"><span class="hair" style="--d:.16s"></span><h3>择校信息</h3><p>学校我们去过，人我们认识：实拍校园环境，客观披露华人学生比例，费用来自校方公布并注明来源。</p></div>
+        <div class="reveal"><span class="hair"></span><h3 data-i18n="does1h">营地报名</h3><p data-i18n="does1p">需求评估、按孩子年龄与基础匹配，并直接对接营地代报名额。营期、费用、包含项目一次列清，营地收费与我们的服务费分开标注。</p></div>
+        <div class="reveal" style="--d:.08s"><span class="hair" style="--d:.08s"></span><h3 data-i18n="does2h">签证与落地协助</h3><p data-i18n="does2p">协助准备陪读签或旅游签材料，提供住宿推荐与生活辅助。走读营需要家长在当地陪同，我们会提前说明。</p></div>
+        <div class="reveal" style="--d:.16s"><span class="hair" style="--d:.16s"></span><h3 data-i18n="does3h">择校信息</h3><p data-i18n="does3p">学校我们去过，人我们认识：实拍校园环境，客观披露华人学生比例，费用来自校方公布并注明来源。</p></div>
       </div>
       <div class="proof reveal">
-        <p class="proof-h">可以查验的事实</p>
+        <p class="proof-h" data-i18n="proofH">可以查验的事实</p>
         <ul class="diamonds">
-          <li><b>正规注册。</b>马来西亚 SSM 注册公司 <span class="en">STRAIGHT EDUCATION SERVICES</span>，注册号 <span class="en num">202603229335</span>。可在 SSM 官方系统 EZBIZ 输入注册号或公司名查验注册状态。</li>
-          <li><b>我们是各营地的授权代理，不是营地本身。</b>最终名额与安排，以营地官方确认为准。</li>
-          <li><b>学费直接支付给学校官方账户，</b>我们不代收学费。</li>
+          <li data-i18n="proof1"><b>正规注册。</b>马来西亚 SSM 注册公司 <span class="en">STRAIGHT EDUCATION SERVICES</span>，注册号 <span class="en num">202603229335</span>。可在 SSM 官方系统 EZBIZ 输入注册号或公司名查验注册状态。</li>
+          <li data-i18n="proof2"><b>我们是各营地的授权代理，不是营地本身。</b>最终名额与安排，以营地官方确认为准。</li>
+          <li data-i18n="proof3"><b>学费直接支付给学校官方账户，</b>我们不代收学费。</li>
         </ul>
       </div>
-      <p class="nopromise reveal"><b>我们不承诺：</b><span>录取结果 · 签证结果 · 名额紧张。升学与签证取决于学校与相关机构的审核。</span></p>
+      <p class="nopromise reveal"><b data-i18n="npB">我们不承诺：</b><span data-i18n="npS">录取结果 · 签证结果 · 名额紧张。升学与签证取决于学校与相关机构的审核。</span></p>
     </div>
   </section>
 
@@ -482,15 +514,15 @@
   <section class="block" id="process">
     <div class="wrap">
       <div class="sec-title">
-        <p class="eyebrow reveal">报名流程</p>
-        <h2 class="h1 split"><span class="ln"><span>四步，走完一条直路。</span></span></h2>
+        <p class="eyebrow reveal" data-i18n="procEyebrow">报名流程</p>
+        <h2 class="h1 split"><span class="ln"><span data-i18n="procH2">四步，走完一条直路。</span></span></h2>
       </div>
       <div class="steps" id="steps">
         <div class="steps-line"><i></i></div>
-        <div class="step reveal"><span class="n">第一步</span><h3>先看信息</h3><p>营期、费用与包含项目都在这一页，先看清楚再决定。</p></div>
-        <div class="step reveal" style="--d:.08s"><span class="n">第二步</span><h3>微信提问</h3><p>添加微信或在小红书留言，我们直接回答具体问题。</p></div>
-        <div class="step reveal" style="--d:.16s"><span class="n">第三步</span><h3>报名协调</h3><p>确定营期后，我们直接对接营地代为报名，并提供住宿推荐。</p></div>
-        <div class="step reveal" style="--d:.24s"><span class="n">第四步</span><h3>出发</h3><p>出发前再确认一次行程，孩子按时入营。</p></div>
+        <div class="step reveal"><span class="n" data-i18n="st1n">第一步</span><h3 data-i18n="st1h">先看信息</h3><p data-i18n="st1p">营期、费用与包含项目都在这一页，先看清楚再决定。</p></div>
+        <div class="step reveal" style="--d:.08s"><span class="n" data-i18n="st2n">第二步</span><h3 data-i18n="st2h">微信提问</h3><p data-i18n="st2p">添加微信或在小红书留言，我们直接回答具体问题。</p></div>
+        <div class="step reveal" style="--d:.16s"><span class="n" data-i18n="st3n">第三步</span><h3 data-i18n="st3h">报名协调</h3><p data-i18n="st3p">确定营期后，我们直接对接营地代为报名，并提供住宿推荐。</p></div>
+        <div class="step reveal" style="--d:.24s"><span class="n" data-i18n="st4n">第四步</span><h3 data-i18n="st4h">出发</h3><p data-i18n="st4p">出发前再确认一次行程，孩子按时入营。</p></div>
       </div>
     </div>
   </section>
@@ -499,18 +531,18 @@
   <section class="contact dark" id="contact">
     <div class="wrap contact-grid">
       <div>
-        <p class="eyebrow reveal">联系我们</p>
-        <h2 class="split"><span class="ln"><span>先聊聊，</span></span><span class="ln" style="--i:1"><span style="color:var(--gold)">再决定。</span></span></h2>
-        <p class="lead reveal" style="--d:.1s">微信咨询最直接。告诉我们孩子的年龄和想去的营期，我们会把具体安排与费用发给你。</p>
+        <p class="eyebrow reveal" data-i18n="conEyebrow">联系我们</p>
+        <h2 class="split"><span class="ln"><span data-i18n="conH2a">先聊聊，</span></span><span class="ln" style="--i:1"><span style="color:var(--gold)" data-i18n="conH2b">再决定。</span></span></h2>
+        <p class="lead reveal" style="--d:.1s" data-i18n="conLead">微信咨询最直接。告诉我们孩子的年龄和想去的营期，我们会把具体安排与费用发给你。</p>
       </div>
       <div class="reveal" style="--d:.1s">
         <div class="wechat">
-          <div class="k"><svg aria-hidden="true"><use href="#i-wechat"/></svg>微信 WeChat</div>
+          <div class="k"><svg aria-hidden="true"><use href="#i-wechat"/></svg><span data-i18n="wxLabel">微信 WeChat</span></div>
           <div class="id" id="wxId">Straight_Education</div>
-          <div class="row"><button class="btn" data-copy-wechat>复制微信号</button><img class="qr" id="wxQr" alt="微信二维码" hidden></div>
+          <div class="row"><button class="btn" data-copy-wechat data-i18n="copyWx">复制微信号</button><img class="qr" id="wxQr" alt="微信二维码" hidden></div>
         </div>
         <div class="others" id="others"></div>
-        <p class="note">资料以学校与营地官方公布为准</p>
+        <p class="note" data-i18n="conNote">资料以学校与营地官方公布为准</p>
       </div>
     </div>
   </section>
@@ -519,16 +551,16 @@
 <footer>
   <div class="footer-bar">
     <div class="wrap">
-      <span>一条直路 · 直达名校</span>
+      <span data-i18n="footSlogan">一条直路 · 直达名校</span>
       <span class="rn" id="footRn">小红书号 95964122071</span>
     </div>
   </div>
-  <div class="site-foot"><div class="wrap"><span>© <span id="yr">2026</span> 达成教育 Straight Education · SSM 202603229335</span><span>马来西亚 · 泰国</span></div></div>
+  <div class="site-foot"><div class="wrap"><span>© <span id="yr">2026</span> 达成教育 Straight Education · SSM 202603229335</span><span data-i18n="footRegion">马来西亚 · 泰国</span></div></div>
 </footer>
 
 <div class="dock" id="dock" aria-label="快捷联系">
-  <button class="wx" data-copy-wechat><svg aria-hidden="true"><use href="#i-wechat"/></svg>复制微信号</button>
-  <a class="rn" id="dockRn" href="#contact" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-rednote"/></svg>小红书</a>
+  <button class="wx" data-copy-wechat><svg aria-hidden="true"><use href="#i-wechat"/></svg><span data-i18n="copyWxShort">复制微信号</span></button>
+  <a class="rn" id="dockRn" href="#contact" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-rednote"/></svg><span data-i18n="rednote">小红书</span></a>
 </div>
 
 <dialog class="camp-dlg" id="campDlg" aria-label="营期详情">
@@ -536,7 +568,8 @@
   <div id="dlgBody"></div>
 </dialog>
 
-<script src="config.js?v=202609302141"></script>
-<script src="main.js?v=202609302141"></script>
+<script src="i18n.js?v=202610011421"></script>
+<script src="config.js?v=202610011421"></script>
+<script src="main.js?v=202610011421"></script>
 </body>
 </html>
