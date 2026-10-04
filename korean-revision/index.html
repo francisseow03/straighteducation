@@ -107,6 +107,17 @@ h2.sec{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(
 .tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tabs button[aria-selected="true"]{color:var(--accent);background:var(--soft);font-weight:700}
 @media (prefers-reduced-motion:no-preference){.meter i{transition:width .3s}}
+.fs{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,6.5vw,2.4rem);line-height:1.6;overflow-wrap:anywhere}
+.blank{display:inline-block;min-width:2.4em;border-bottom:3px solid var(--accent);text-align:center;color:var(--accent);margin-inline:2px;line-height:1.1}
+.fillin{display:inline-block;padding:0 6px;border-radius:8px;margin-inline:1px}
+.fillin.right{background:color-mix(in srgb,var(--good) 22%,transparent);color:var(--good)}
+.fillin.wrong{background:color-mix(in srgb,var(--bad) 22%,transparent);color:var(--bad);text-decoration:line-through}
+.why{background:var(--soft);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.95rem}
+.opt.ko.p{text-align:center;font-size:1.5rem}
+.cheat{width:100%;border-collapse:collapse;font-size:.92rem}
+.cheat th,.cheat td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.cheat td:first-child{font-family:var(--display);font-weight:700;white-space:nowrap}
+.cheatw{overflow-x:auto}
 </style>
 
 <div class="wrap">
@@ -130,6 +141,7 @@ h2.sec{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(
   <main>
     <section class="view" id="v-cards"></section>
     <section class="view" id="v-quiz" hidden></section>
+    <section class="view" id="v-fill" hidden></section>
     <section class="view" id="v-write" hidden>
       <div class="meta"><span id="wTag"></span><span id="wCount"></span></div>
       <div class="ans" id="wPrompt"></div>
@@ -263,13 +275,14 @@ const spk='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="c
 /* ---------- TABS ---------- */
 const TABS=[['cards','Cards','<path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 10h8M8 14h5"/>'],
  ['quiz','Quiz','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 16.5v.01"/>'],
+ ['fill','Fill','<path d="M4 8h5M15 8h5M4 16h3M11 16h9"/><path d="M9.5 8.5v-1M9.5 12v-2" stroke-dasharray="1 3"/><path d="M7 12h10"/>'],
  ['write','Write','<path d="M4 20l1-4L16.5 4.5a2 2 0 0 1 3 3L8 19z"/><path d="M14 7l3 3"/>'],
  ['grammar','Grammar','<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>'],
  ['hangul','Hangul','<path d="M5 5h8M9 5v3M5 8h8M16 4v9M16 9h3M7 12h6v4H7zM6 20h12"/>']];
 $('#tabs').innerHTML=TABS.map(([k,n,p])=>`<button role="tab" data-tab="${k}"><svg viewBox="0 0 24 24">${p}</svg>${n}</button>`).join('');
 function go(t){S.tab=t;$$('[data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
   $$('.view').forEach(v=>v.hidden=v.id!=='v-'+t);scrollTo(0,0);
-  if(t==='cards')renderCards();if(t==='quiz')renderQuiz();if(t==='grammar')renderGrammar();if(t==='hangul')renderHangul();
+  if(t==='cards')renderCards();if(t==='quiz')renderQuiz();if(t==='fill')renderFill();if(t==='grammar')renderGrammar();if(t==='hangul')renderHangul();
   if(t==='write'){if(!S.w.card)nextWrite();requestAnimationFrame(sizeCanvas)}}
 $('#tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
 
@@ -296,7 +309,7 @@ $('#custList').onclick=e=>{const b=e.target.closest('[data-del]');if(!b)return;S
 let armed=false;
 $('#resetBtn').onclick=()=>{const b=$('#resetBtn');if(!armed){armed=true;b.textContent='Tap again to confirm';setTimeout(()=>{armed=false;b.textContent='Reset progress'},3000);return}
   armed=false;S.score={};sv('kr.score',S.score);b.textContent='Reset progress';refresh()};
-function refresh(){S.card=null;S.quiz=null;S.w.card=null;renderPanel();go(S.tab)}
+function refresh(){S.card=null;S.quiz=null;S.w.card=null;S.fill.q=null;renderPanel();go(S.tab)}
 
 /* ---------- CARDS ---------- */
 function nextCard(){const p=pool();S.card=p.length?pick(p,S.card&&id(S.card)):null;S.flip=false}
@@ -354,6 +367,114 @@ $('#v-quiz').onclick=e=>{const q=S.quiz;
   const b=e.target.closest('[data-o]');if(!b||!q)return;const x=q.qs[q.i];if(x.done!==null)return;
   x.pick=+b.dataset.o;x.done=x.opts[x.pick]===x.c;mark(x.c,x.done);if(x.done)q.ok++;
   if(!x.done||x.dir==='e2k')say(x.c.k);renderPanel();renderQuiz()};
+
+/* ---------- FILL IN THE BLANK ----------
+   [lesson, sentence with ___, answer (| = also accepted), options (comma list), why, English]  X = no particle needed */
+const F=[
+[1,'저___ 학생이에요.','는','은,는,이,가','저 ends in a vowel, so topic marker 는.','I am a student.'],
+[1,'선생님___ 한국 사람이에요.','은','은,는,이,가','선생님 ends in a consonant (ㅁ), so 은.','The teacher is Korean.'],
+[1,'이름___ 뭐예요?','이','이,가,을,에','이름 ends in a consonant, so subject marker 이.','What is your name?'],
+[1,'저는 학생___.','이에요','이에요,예요,아니에요,입니다','Consonant ending + 이에요 (informal polite).','I am a student.'],
+[1,'저는 의사___.','예요','이에요,예요,입니다,아니에요','Vowel ending + 예요 (informal polite).','I am a doctor.'],
+[1,'학생___? (formal question)','입니까','입니다,입니까,이에요,예요','Formal polite question ending is 입니까.','Are you a student?'],
+[1,'저는 한국 사람이 ___.','아니에요','아니에요,없어요,있어요,이에요','N이/가 아니에요 = is not.','I am not Korean.'],
+[1,'저는 미국 사람___ 아니에요.','이','이,가,은,를','사람 ends in a consonant, so 이 before 아니에요.','I am not American.'],
+[1,'저는 의사___ 아니에요.','가','이,가,은,는','의사 ends in a vowel, so 가 before 아니에요.','I am not a doctor.'],
+[2,'(near me) ___은 책이에요.','이것','이것,그것,저것,여기','이것 = this, near the speaker.','This is a book.'],
+[2,'(far from both of us) ___ 사람은 누구예요?','저','이,그,저,여기','저 = that over there, far from both.','Who is that person over there?'],
+[2,'이것___ 뭐예요?','은|이','은,는,을,도','Topic 은 or subject 이 both work after 이것 (ends in a consonant).','What is this?'],
+[3,'학교___ 가요.','에','에,에서,을,가','Destination of 가다 takes 에.','I go to school.'],
+[3,'집___ 있어요.','에','에,에서,를,도','Location of 있다 takes 에.','I am at home.'],
+[3,'책상 위___ 책이 있어요.','에','에,에서,을,도','Position word + 에 + 있다.','There is a book on the desk.'],
+[3,'도서관___ 공부해요.','에서','에,에서,을,도','Place where an action happens takes 에서.','I study at the library.'],
+[3,'돈___ 없어요.','이','이,가,을,에','돈 ends in a consonant, so 이.','I have no money.'],
+[3,'친구___ 있어요.','가','이,가,을,를','친구 ends in a vowel, so 가.','I have a friend.'],
+[3,'은행___ 어디에 있어요?','이|은','이,은,를,에서','Subject 이 or topic 은 after a consonant.','Where is the bank?'],
+[4,'커피___ 마셔요.','를','을,를,이,가','Object marker. 커피 ends in a vowel, so 를.','I drink coffee.'],
+[4,'밥___ 먹어요.','을','을,를,이,가','Object marker. 밥 ends in a consonant, so 을.','I eat a meal.'],
+[4,'식당___ 먹어요. (at the restaurant)','에서','에,에서,를,도','Eating is an action done at a place, so 에서.','I eat at the restaurant.'],
+[4,'저___ 영화를 봐요. (also)','도','도,는,을,에','도 = also, replaces 는/이/가/을/를.','I also watch movies.'],
+[4,'빵___ 우유를 먹어요. (and)','하고','하고,도,에서,에','N하고 N = N and N.','I eat bread and milk.'],
+[4,'저___ 한국어를 공부해요.','는','는,은,가,를','저 ends in a vowel, so topic 는.','I study Korean.'],
+[4,'밥을 ___ 먹어요. (do not)','안','안,못,도,이','안 + verb = do not.','I do not eat.'],
+[4,'친구를 ___. (meet, polite)','만나요','만나요,만나다,만났어요,만나고','Dictionary form 만나다 → stem 만나 + 아요 → 만나요.','I meet a friend.'],
+[4,'책을 ___. (read, polite)','읽어요','읽어요,읽아요,읽다,읽었어요','읽 has ㅣ, so 어요.','I read a book.'],
+[4,'커피를 ___. (drink, polite)','마셔요','마셔요,마시어요,마셨어요,마시요','마시 + 어요 contracts to 마셔요.','I drink coffee.'],
+[4,'영화를 ___. (watch, polite)','봐요','봐요,보어요,봤어요,보요','보 + 아요 contracts to 봐요.','I watch a movie.'],
+[4,'운동___. (exercise, polite)','해요','해요,하요,했어요,하다','하다 verbs become 해요.','I exercise.'],
+[5,'물 두 ___ 주세요. (bottles)','병','병,잔,권,명','병 counts bottles.','Two bottles of water, please.'],
+[5,'커피 한 ___ 주세요. (cups)','잔','잔,병,개,명','잔 counts cups.','One cup of coffee, please.'],
+[5,'학생이 세 ___ 있어요. (people)','명','명,개,권,병','명 counts people.','There are three students.'],
+[5,'책 두 ___ 있어요. (books)','권','권,개,명,잔','권 counts books.','There are two books.'],
+[5,'사과 ___ 개 주세요. (3, native)','세','세,삼,셋,사','Native number before a counter: 세.','Three apples, please.'],
+[5,'이거 ___? (how much)','얼마예요','얼마예요,뭐예요,어디예요,누구예요','얼마 = how much.','How much is this?'],
+[5,'삼천 ___이에요. (won)','원','원,개,시,분','원 is the currency.','It is 3,000 won.'],
+[6,'일곱 시___ 일어나요.','에','에,에서,을,도','Specific time takes 에.','I wake up at 7.'],
+[6,'월요일___ 학교에 가요.','에','에,에서,을,도','Day of the week takes 에.','I go to school on Monday.'],
+[6,'내일 ___ 만나요. (no particle)','X','에,X,에서,를','내일, 오늘, 어제, 지금 do not take 에.','We meet tomorrow.'],
+[6,'지금 ___ 시예요? (what)','몇','몇,뭐,언제,누구','몇 + counter = how many / what.','What time is it?'],
+[6,'세 시 ___이에요. (half)','반','반,분,시,원','반 = half past.','It is 3:30.'],
+[6,'___ 시 십 분이에요. (2, native)','두','두,이,둘,이십','시 takes native numbers: 두.','It is 2:10.'],
+[6,'십 ___ 걸려요. (minutes)','분','분,시,원,개','분 takes Sino-Korean numbers.','It takes 10 minutes.'],
+[7,'날씨___ 좋아요.','가','가,이,를,은','Adjective 좋다 takes 이/가. 날씨 ends in a vowel.','The weather is nice.'],
+[7,'김치___ 맛있어요.','가','가,이,를,은','Subject of an adjective. 김치 ends in a vowel.','Kimchi is delicious.'],
+[7,'한국어___ 어려워요.','가','가,이,를,은','Subject of an adjective. 한국어 ends in a vowel.','Korean is difficult.'],
+[7,'커피___ 좋아해요.','를','를,가,이,에','좋아하다 is a verb, so it takes 을/를.','I like coffee.'],
+[7,'커피___ 좋아요.','가','가,를,을,에','좋다 is an adjective, so it takes 이/가.','Coffee is good.'],
+[7,'날씨가 ___. (hot)','더워요','더워요,덥어요,더와요,덥아요','ㅂ irregular: 덥다 → 더워요.','The weather is hot.'],
+[7,'날씨가 ___. (cold)','추워요','추워요,춥어요,추와요,춥아요','ㅂ irregular: 춥다 → 추워요.','The weather is cold.'],
+[7,'한국어가 ___. (easy)','쉬워요','쉬워요,쉽어요,쉬와요,쉽아요','ㅂ irregular: 쉽다 → 쉬워요.','Korean is easy.'],
+[7,'한국어가 ___. (difficult)','어려워요','어려워요,어렵어요,어려와요,어렵아요','ㅂ irregular: 어렵다 → 어려워요.','Korean is difficult.'],
+[7,'김치가 ___. (delicious)','맛있어요','맛있어요,맛있아요,맛있요,맛있다','맛있 has ㅣ, so 어요.','Kimchi is delicious.'],
+[8,'어제 영화를 ___. (watched)','봤어요','봤어요,봐요,보었어요,보고 싶어요','Past: 봐요 → 봤어요.','I watched a movie yesterday.'],
+[8,'밥을 ___. (ate)','먹었어요','먹었어요,먹았어요,먹어요,먹고 싶어요','먹 has ㅓ, so 었어요.','I ate a meal.'],
+[8,'학교에 ___. (went)','갔어요','갔어요,가었어요,가요,가고 싶어요','가 + ㅆ어요 contracts to 갔어요.','I went to school.'],
+[8,'친구를 ___. (met)','만났어요','만났어요,만났아요,만나요,만나고 싶어요','만나 + ㅆ어요 → 만났어요.','I met a friend.'],
+[8,'커피를 ___. (drank)','마셨어요','마셨어요,마싰어요,마셔요,마시고 싶어요','마셔요 → 마셨어요.','I drank coffee.'],
+[8,'공부___. (studied)','했어요','했어요,하었어요,해요,하고 싶어요','하다 past = 했어요.','I studied.'],
+[8,'한국에 가___ 싶어요.','고','고,서,면,지','Verb stem + 고 싶어요 = want to.','I want to go to Korea.'],
+[8,'냉면을 먹___ 싶어요.','고','고,서,면,지','Verb stem + 고 싶어요 = want to.','I want to eat cold noodles.'],
+[8,'보통 집___ 먹어요.','에서','에,에서,를,도','Eating is an action done at a place: 에서.','I usually eat at home.']
+].map(([l,s,a,o,w,e])=>({l,k:'F|'+s,s,a:a.split('|'),o:o.split(','),w,e,f:1}));
+const CHEAT=[['은 / 는','Topic. 은 after consonant, 는 after vowel.','학생은 · 저는'],['이 / 가','Subject (also before 아니에요, with 있다/없다 and adjectives). 이 after consonant, 가 after vowel.','책이 · 친구가'],
+['을 / 를','Object of a verb. 을 after consonant, 를 after vowel.','밥을 · 커피를'],['에','Destination (가다/오다), location of 있다, time, position words.','학교에 · 세 시에 · 위에'],
+['에서','Place where an action happens.','도서관에서 공부해요'],['도','Also. Replaces 은/는/이/가/을/를.','저도'],['하고','And (between nouns).','빵하고 우유'],
+['이에요 / 예요','To be. 이에요 after consonant, 예요 after vowel.','학생이에요 · 의사예요'],['-아요 / -어요','Present polite. ㅏ/ㅗ → 아요, others → 어요, 하다 → 해요.','가요 · 먹어요 · 해요'],
+['-았어요 / -었어요','Past polite.','갔어요 · 먹었어요 · 했어요'],['-고 싶어요','Want to.','가고 싶어요'],['안','Not (before the verb).','안 먹어요']];
+S.fill={q:null,mode:ld('kr.fmode','choice'),pick:null,shown:false,opts:[]};
+const fpool=()=>F.filter(q=>S.sel.has(q.l));
+function nextFill(){const p=fpool(),f=S.fill;f.pick=null;f.shown=false;
+  if(!p.length){f.q=null;return}
+  f.q=pick(p,f.q&&id(f.q));f.opts=[...f.q.o].sort(()=>Math.random()-.5)}
+const sent=(q,ans,cls)=>esc(q.s).replace('___',ans==null?'<span class="blank">&nbsp;</span>':`<span class="fillin ${cls||''}">${esc(ans==='X'?'—':ans)}</span>`);
+function renderFill(){
+  const v=$('#v-fill'),f=S.fill,p=fpool();
+  if(!p.length){v.innerHTML='<div class="empty">No lessons selected. Open the lessons panel and pick some.</div>';return}
+  if(!f.q||!S.sel.has(f.q.l))nextFill();const q=f.q,m=p.filter(mastered).length;
+  const ok=f.pick!==null&&q.a.includes(f.pick);
+  let ans=null,cls='';if(f.pick!==null){ans=q.a[0];cls='right'}else if(f.shown){ans=q.a.join(' / ');cls='right'}
+  const show=f.pick!==null||f.shown;
+  v.innerHTML=`<div class="meta"><span><span class="tag">Lesson ${q.l}</span> Fill in the blank</span><span>${m} / ${p.length} mastered</span></div>
+  <div class="meter"><i style="width:${m/p.length*100}%"></i></div>
+  <div class="row" style="margin-top:12px"><div class="seg" id="fmode"><button data-m="choice" aria-pressed="${f.mode==='choice'}">Choices</button><button data-m="recall" aria-pressed="${f.mode==='recall'}">Recall</button></div></div>
+  <div class="q" style="margin-top:12px"><div class="fs">${sent(q,show?ans:null,cls)}</div>
+    <div class="en" style="margin-top:6px;color:var(--muted);font-size:1rem;font-weight:400">${esc(q.e)}</div></div>
+  ${f.mode==='choice'?`<div class="opts" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">${f.opts.map((o,i)=>`<button class="opt ko p ${show?(q.a.includes(o)?'right':o===f.pick?'wrong':''):''}" data-o="${i}" ${show?'disabled':''}>${o==='X'?'— none':esc(o)}</button>`).join('')}</div>`
+   :(show?'':`<div class="row" style="margin-top:12px"><button class="btn sun grow" id="freveal">Show answer</button></div>`)}
+  ${show?`<div class="why"><b>${f.pick!==null?(ok?'Correct. ':'Not quite. '):''}</b>${esc(q.w)}</div>
+    <div class="row" style="margin-top:12px"><button class="btn sm" id="flisten">${spk} Listen</button><span class="grow"></span>
+    ${f.mode==='recall'&&f.pick===null?'<button class="btn bad" data-fr="0">Missed it</button><button class="btn good" data-fr="1">Got it</button>':'<button class="btn primary" id="fnext">Next</button>'}</div>`:''}
+  <h2 class="sec">Particle and ending cheat sheet</h2>
+  <details class="g"><summary>Open the cheat sheet</summary><div class="body cheatw"><table class="cheat"><tbody>${CHEAT.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}<br><span style="color:var(--muted)">${esc(r[2])}</span></td></tr>`).join('')}</tbody></table></div></details>`;
+}
+$('#v-fill').onclick=e=>{const f=S.fill,q=f.q;
+  const md=e.target.closest('[data-m]');if(md){f.mode=md.dataset.m;sv('kr.fmode',f.mode);f.pick=null;f.shown=false;renderFill();return}
+  if(e.target.closest('#freveal')){f.shown=true;renderFill();return}
+  if(e.target.closest('#flisten')){say(q.s.replace('___',q.a[0]==='X'?'':q.a[0]));return}
+  if(e.target.closest('#fnext')){nextFill();renderFill();return}
+  const fr=e.target.closest('[data-fr]');if(fr){mark(q,fr.dataset.fr==='1');renderPanel();nextFill();renderFill();return}
+  const o=e.target.closest('[data-o]');if(o&&f.pick===null){f.pick=f.opts[+o.dataset.o];mark(q,q.a.includes(f.pick));renderPanel();
+    if(q.a.includes(f.pick))say(q.s.replace('___',q.a[0]==='X'?'':q.a[0]));renderFill()}};
 
 /* ---------- WRITE ---------- */
 const cv=$('#cv'),ctx=cv.getContext('2d'),pad=$('#pad');
