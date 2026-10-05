@@ -97,7 +97,7 @@
   }
 
   // city = first known place name found in the (Chinese) location text
-  const CITIES = ["清迈", "普吉岛", "曼谷", "吉隆坡", "新山", "槟城"];
+  const CITIES = ["清迈", "普吉岛", "曼谷", "吉隆坡", "新山", "槟城", "新加坡"];
   const cityOf = (c) => CITIES.find((k) => (c.location || "").includes(k) || (c.title || "").includes(k)) || "";
   const cityLabel = (k) => (k && U().cities[k]) || k;
   const shortPrice = (p) => String(p || "").split(/[（(]/)[0].trim();
