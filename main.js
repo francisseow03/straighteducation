@@ -112,13 +112,23 @@
       <span class="chip ${tone}" style="height:28px;font-size:13px;padding:0 12px">${label}</span></button>`;
   }
 
-  let camps = [], city = "", settings = null, loaded = false;
+  let camps = [], city = "", page = 0, settings = null, loaded = false;
+  const PER_PAGE = 7;
   function drawList() {
     const list = $("#campList");
     if (!list) return;
     const ordered = [...camps.filter((c) => !isPast(c)), ...camps.filter(isPast)];
     const shown = ordered.filter((c) => !city || cityOf(c) === city);
-    list.innerHTML = shown.length ? shown.map(row).join("") : `<p class="muted" style="padding:24px 0">${U().none}</p>`;
+    const pages = Math.max(1, Math.ceil(shown.length / PER_PAGE));
+    page = Math.min(page, pages - 1);
+    const T = U();
+    list.innerHTML = shown.length ? shown.slice(page * PER_PAGE, (page + 1) * PER_PAGE).map(row).join("") : `<p class="muted" style="padding:24px 0">${T.none}</p>`;
+    const pager = $("#campPager");
+    if (!pager) return;
+    pager.hidden = pages < 2;
+    pager.innerHTML = pages < 2 ? "" : `<button class="pg-btn" data-page="${page - 1}" aria-label="${T.prev}"${page === 0 ? " disabled" : ""}>←</button>`
+      + Array.from({ length: pages }, (_, i) => `<button class="pg-num${i === page ? " on" : ""}" data-page="${i}"${i === page ? ' aria-current="page"' : ""}>${i + 1}</button>`).join("")
+      + `<button class="pg-btn" data-page="${page + 1}" aria-label="${T.next}"${page === pages - 1 ? " disabled" : ""}>→</button>`;
   }
   function renderCamps() {
     const T = U();
@@ -133,6 +143,7 @@
       root.innerHTML = `
         ${cities.length > 1 ? `<div class="filters reveal" role="group" aria-label="${T.filterAria}"><button class="chip${city ? "" : " on"}" data-city="">${T.all} ${camps.length}</button>${cities.map((k) => `<button class="chip${city === k ? " on" : ""}" data-city="${k}">${cityLabel(k)}</button>`).join("")}</div>` : ""}
         <div class="clist reveal" id="campList"></div>
+        <nav class="pager" id="campPager" aria-label="${T.pageAria}" hidden></nav>
         <p class="clist-note reveal">${T.note}</p>`;
       drawList();
     }
@@ -281,8 +292,17 @@
     const f = e.target.closest(".filters [data-city]");
     if (f) {
       city = f.dataset.city;
+      page = 0;
       document.querySelectorAll(".filters .chip").forEach((x) => x.classList.toggle("on", x === f));
       drawList();
+      return;
+    }
+    const pg = e.target.closest("#campPager [data-page]");
+    if (pg && !pg.disabled) {
+      page = +pg.dataset.page;
+      drawList();
+      const top = $("#campList").getBoundingClientRect().top + scrollY - 120;
+      if (top < scrollY) scrollTo({ top, behavior: "smooth" });
       return;
     }
     const r = e.target.closest(".crow");
