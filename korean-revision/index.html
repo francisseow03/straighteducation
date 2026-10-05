@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#3a45d6"><style>html{padding-top:env(safe-area-inset-top,0px)}body{margin:0}[hidden]{display:none!important}</style></head><body>
+<title>Hangul Midterm Drill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap">
+<style>
+/* Layout: one column app, sticky lesson bar on top, thumb-reach tab bar at the bottom. Cover-yellow (sun) marks emphasis, indigo drives actions. */
+:root {
+  --bg:#eef0f6; --surface:#ffffff; --fg:#1b1f3b; --muted:#5a6083; --line:#d3d8e8;
+  --accent:#3a45d6; --accent-fg:#ffffff; --sun:#ffcf33; --sun-fg:#3b2e00;
+  --good:#1b7f47; --bad:#c3372d; --ink:#1b1f3b; --grid:#c4cae2; --soft:#e4e7f4;
+  --display:'Noto Serif KR','Batang',serif; --body:'Noto Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo',sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#0f1226; --surface:#181c38; --fg:#eceefb; --muted:#9ba2c9; --line:#2a2f5e;
+  --accent:#929bff; --accent-fg:#0f1226; --good:#52d38a; --bad:#ff7d73; --ink:#f4f5ff; --grid:#33396e; --soft:#222750; color-scheme:dark; } }
+:root[data-theme="dark"] {
+  --bg:#0f1226; --surface:#181c38; --fg:#eceefb; --muted:#9ba2c9; --line:#2a2f5e;
+  --accent:#929bff; --accent-fg:#0f1226; --good:#52d38a; --bad:#ff7d73; --ink:#f4f5ff; --grid:#33396e; --soft:#222750; color-scheme:dark; }
+
+*{box-sizing:border-box}
+body{touch-action:manipulation;-webkit-text-size-adjust:100%;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;padding-inline:16px;padding-block:0 96px;-webkit-tap-highlight-color:transparent}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:880px;margin-inline:auto}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}
+.brand{min-width:0}
+.brand b{font-family:var(--display);font-size:1.15rem;display:block;line-height:1.2}
+.brand span{font-size:.8rem;color:var(--muted)}
+.pill{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:.88rem;font-weight:500;white-space:nowrap}
+.pill[aria-expanded="true"]{border-color:var(--accent)}
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 18px;font-weight:500;min-height:48px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:700}
+.btn.good{border-color:var(--good);color:var(--good);font-weight:700}
+.btn.bad{border-color:var(--bad);color:var(--bad);font-weight:700}
+.btn.sun{background:var(--sun);border-color:var(--sun);color:var(--sun-fg);font-weight:700}
+.btn.sm{padding:8px 12px;min-height:40px;font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.end{justify-content:flex-end}
+.grow{flex:1 1 0;min-width:0}
+
+#panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px;display:grid;gap:16px}
+#panel h3{margin:0 0 8px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;min-width:48px;min-height:44px;padding:6px 12px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.field{display:flex;flex-wrap:wrap;gap:8px}
+.field input,.field select{border:1.5px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;min-height:44px;min-width:0;flex:1 1 140px}
+.cust{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+
+.view{padding-block:18px}
+.view[hidden]{display:none!important}
+.meter{height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.meta{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;color:var(--muted);margin-bottom:8px}
+.tag{display:inline-block;background:var(--sun);color:var(--sun-fg);font-weight:700;font-size:.75rem;border-radius:6px;padding:2px 8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px 20px;min-height:260px;display:grid;place-items:center;text-align:center;gap:10px;cursor:pointer;user-select:none;margin-block:14px}
+.card .ko{font-family:var(--display);font-weight:700;font-size:clamp(2rem,9vw,3.6rem);line-height:1.25;overflow-wrap:anywhere}
+.card .ko.s{font-size:clamp(1.5rem,6vw,2.3rem)}
+.card .en{font-size:clamp(1.2rem,4.5vw,1.7rem);font-weight:500;overflow-wrap:anywhere}
+.card .hint{font-size:.8rem;color:var(--muted)}
+.empty{padding:28px 8px;text-align:center;color:var(--muted)}
+.opts{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:12px}
+@media (max-width:520px){.opts{grid-template-columns:1fr}}
+.opt{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:14px;min-height:64px;text-align:left;font-weight:500;overflow-wrap:anywhere}
+.opt.ko{font-family:var(--display);font-weight:700;font-size:1.25rem}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 16%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,var(--surface))}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 18px;text-align:center}
+.q .ko{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,8vw,3rem);overflow-wrap:anywhere}
+.q .en{font-size:clamp(1.2rem,5vw,1.6rem);font-weight:500;overflow-wrap:anywhere}
+.big{font-family:var(--display);font-size:3rem;font-weight:700}
+
+.pad{position:relative;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);height:clamp(300px,48vh,520px);margin-block:12px;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:80px 80px;background-position:-1px -1px}
+.pad::before{content:"";position:absolute;inset:0;background-image:linear-gradient(90deg,transparent calc(50% - .5px),var(--grid) calc(50% - .5px),var(--grid) calc(50% + .5px),transparent calc(50% + .5px));background-size:80px 80px;opacity:.55;pointer-events:none}
+#ghost{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:700;color:var(--fg);opacity:.14;pointer-events:none;text-align:center;line-height:1.15;padding:8px}
+#cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sw{width:40px;height:40px;border-radius:50%;border:3px solid var(--line);padding:0}
+.sw[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--surface) inset}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:10px 14px;min-height:44px;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);font-weight:700}
+.ans{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-align:center}
+.ans .ko{font-family:var(--display);font-weight:700;font-size:1.9rem;overflow-wrap:anywhere}
+.ans .en{color:var(--muted)}
+
+details.g{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
+details.g summary{padding:14px 16px;cursor:pointer;display:flex;gap:10px;align-items:center;font-weight:700;list-style:none}
+details.g summary::-webkit-details-marker{display:none}
+details.g .body{padding:0 16px 14px;display:grid;gap:8px}
+.form{font-family:var(--display);font-weight:700;background:var(--soft);border-radius:8px;padding:6px 10px;display:inline-block;overflow-wrap:anywhere}
+.ex{display:grid;gap:0;border-top:1px solid var(--line);padding-top:6px}
+.ex b{font-family:var(--display)}
+.ex span{color:var(--muted);font-size:.9rem}
+h2.sec{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+.hg{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.hg button{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;min-height:64px;font-family:var(--display);font-weight:700;font-size:1.6rem}
+.hg button small{display:block;font-family:var(--body);font-weight:400;font-size:.68rem;color:var(--muted)}
+
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs div{display:flex;gap:4px;width:100%;max-width:880px}
+.tabs button{flex:1 1 0;min-width:0;border:0;background:none;border-radius:12px;padding:8px 2px;min-height:56px;color:var(--muted);font-size:.74rem;font-weight:500;display:grid;justify-items:center;gap:2px}
+.tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected="true"]{color:var(--accent);background:var(--soft);font-weight:700}
+@media (prefers-reduced-motion:no-preference){.meter i{transition:width .3s}}
+.fs{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,6.5vw,2.4rem);line-height:1.6;overflow-wrap:anywhere}
+.blank{display:inline-block;min-width:2.4em;border-bottom:3px solid var(--accent);text-align:center;color:var(--accent);margin-inline:2px;line-height:1.1}
+.fillin{display:inline-block;padding:0 6px;border-radius:8px;margin-inline:1px}
+.fillin.right{background:color-mix(in srgb,var(--good) 22%,transparent);color:var(--good)}
+.fillin.wrong{background:color-mix(in srgb,var(--bad) 22%,transparent);color:var(--bad);text-decoration:line-through}
+.why{background:var(--soft);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.95rem}
+.opt.ko.p{text-align:center;font-size:1.5rem}
+.cheat{width:100%;border-collapse:collapse;font-size:.92rem}
+.cheat th,.cheat td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.cheat td:first-child{font-family:var(--display);font-weight:700;white-space:nowrap}
+.cheatw{overflow-x:auto}
+.tk{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;min-height:48px;font-family:var(--display);font-weight:700;font-size:1.2rem}
+.ordbox{min-height:72px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px;border:1.5px dashed var(--line);border-radius:14px;margin-top:12px;background:var(--surface)}
+.ordbank{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tk:disabled{opacity:1}
+.ctx{text-align:left;background:var(--soft);border-radius:12px;padding:10px 14px;margin:10px 0;font-family:var(--display);font-weight:600;line-height:1.7;overflow-wrap:anywhere}
+.legend{font-size:.8rem;color:var(--muted);line-height:1.6;margin-top:8px}
+select.sel{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;min-height:40px}
+.row>.btn.grow{flex:1 1 130px;white-space:nowrap}
+#toast{pointer-events:none;position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:9;background:var(--fg);color:var(--bg);border-radius:12px;padding:12px 16px;max-width:560px;margin-inline:auto;font-size:.92rem;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+#sheet{position:fixed;inset:0;z-index:10;background:rgba(10,12,30,.55);display:flex;align-items:flex-end;justify-content:center}
+#sheet[hidden]{display:none!important}
+.sheetbox{background:var(--bg);color:var(--fg);width:100%;max-width:640px;max-height:82%;overflow:auto;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:12px}
+.exa p{margin:0 0 10px}
+.exa{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 14px 4px}
+#toast{z-index:11}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>서울대 한국어 1A</b><span>Midterm drill · Lessons 1 to 8</span></div>
+    <button class="pill" id="lessonsBtn" aria-expanded="false" aria-controls="panel"></button>
+  </header>
+
+  <section id="panel" hidden>
+    <div><h3>Lessons in the test</h3><div class="chips" id="chips"></div><div class="legend" id="legend"></div></div>
+    <div><h3>Cards to practise</h3>
+      <div class="seg" id="filterSeg"><button data-f="all">All</button><button data-f="weak">Weak ones</button><button data-f="w">Words</button><button data-f="s">Sentences</button></div></div>
+    <div><h3>Add your own card</h3>
+      <form class="field" id="addForm"><input id="addKo" placeholder="Korean" lang="ko" autocomplete="off"><input id="addEn" placeholder="English" autocomplete="off">
+        <select id="addL" aria-label="Lesson"></select><select id="addT" aria-label="Type"><option value="w">Word</option><option value="s">Sentence</option></select>
+        <button class="btn primary" type="submit">Add</button></form>
+      <div id="custList"></div></div>
+    <div><h3>Sound</h3><div class="row"><span id="soundTxt" class="grow"></span><button class="btn sm sun" id="testSnd">Test sound</button></div></div>
+    <div><h3>Hidden cards</h3><div class="row"><span id="hidTxt" class="grow"></span><button class="btn sm" id="restoreBtn">Restore all</button></div></div>
+    <div><h3>Progress</h3><div class="row"><span id="progTxt" class="grow"></span><button class="btn sm bad" id="resetBtn">Reset progress</button></div></div>
+  </section>
+
+  <main>
+    <section class="view" id="v-cards"></section>
+    <section class="view" id="v-quiz" hidden></section>
+    <section class="view" id="v-fill" hidden></section>
+    <section class="view" id="v-write" hidden>
+      <div class="row" style="margin-bottom:10px"><div class="seg" id="wmode"><button data-wm="see">See English</button><button data-wm="hear">Hear Korean</button></div></div>
+      <div class="meta"><span id="wTag"></span><span id="wCount"></span></div>
+      <div class="ans" id="wPrompt"></div>
+      <div class="pad" id="pad"><div id="ghost" hidden></div><canvas id="cv" aria-label="Writing area. Draw with Apple Pencil or finger."></canvas></div>
+      <div class="tools">
+        <div class="seg" id="toolSeg"><button data-t="pen" aria-pressed="true">Pen</button><button data-t="er" aria-pressed="false">Eraser</button></div>
+        <button class="sw" data-c="ink" aria-label="Ink" style="background:var(--ink)"></button>
+        <button class="sw" data-c="red" aria-label="Red" style="background:#d93a2f"></button>
+        <button class="sw" data-c="blue" aria-label="Blue" style="background:#2563eb"></button>
+        <div class="seg" id="inSeg" title="Which input draws"><button data-i="any" aria-pressed="true">Pencil + finger</button><button data-i="pen" aria-pressed="false">Pencil only</button></div>
+        <button class="btn sm" id="undoBtn">Undo</button><button class="btn sm" id="clearBtn">Clear</button>
+      </div>
+      <div class="row" style="margin-top:14px" id="wActions"></div>
+    </section>
+    <section class="view" id="v-grammar" hidden></section>
+    <section class="view" id="v-hangul" hidden></section>
+  </main>
+</div>
+
+<div id="sheet" hidden role="dialog" aria-modal="true" aria-label="Explanation"><div class="sheetbox">
+  <div class="row"><b class="grow" style="font-family:var(--display);font-size:1.15rem">Why was it wrong?</b><button class="btn sm" id="sheetClose">Close</button></div>
+  <div id="sheetBody"></div>
+  <form class="field" id="sheetForm"><input id="sheetQ" placeholder="Ask a follow-up question" autocomplete="off"><button class="btn primary sm" type="submit">Ask</button></form>
+</div></div>
+<nav class="tabs" aria-label="Sections"><div role="tablist" id="tabs"></div></nav>
+
+<script>
+/* ---------- CONTENT ----------
+   Lesson titles are from the book's contents page. The cards inside each lesson are from memory,
+   so use "Fix lesson" on a card if it sits in the wrong lesson.
+   Format: [lesson, korean, english, type]  (w = word, s = sentence) */
+const LT={1:'Hello?',2:'What is this?',3:'I study Korean',4:'Where is it?',5:'I met a friend on the weekend',6:'How much is it?',7:'How is the weather?',8:'Shall we watch a movie?'};
+const D=[
+// Lesson 1: greetings, introductions, countries, jobs
+[1,'안녕하세요','Hello','w'],[1,'안녕히 가세요','Goodbye (to the one leaving)','w'],[1,'안녕히 계세요','Goodbye (to the one staying)','w'],
+[1,'감사합니다','Thank you','w'],[1,'죄송합니다','I am sorry','w'],[1,'네','Yes','w'],[1,'아니요','No','w'],
+[1,'처음 뵙겠습니다','Nice to meet you (first time)','w'],[1,'만나서 반갑습니다','Pleased to meet you','w'],
+[1,'저','I, me (humble)','w'],[1,'이름','Name','w'],[1,'학생','Student','w'],[1,'선생님','Teacher','w'],[1,'사람','Person','w'],
+[1,'회사원','Office worker','w'],[1,'의사','Doctor','w'],[1,'한국','Korea','w'],[1,'미국','USA','w'],[1,'중국','China','w'],[1,'일본','Japan','w'],
+[1,'영국','United Kingdom','w'],[1,'프랑스','France','w'],[1,'어느 나라','Which country','w'],
+[1,'저는 학생입니다.','I am a student.','s'],[1,'이름이 뭐예요?','What is your name?','s'],[1,'저는 한국 사람이 아니에요.','I am not Korean.','s'],[1,'어느 나라 사람이에요?','Which country are you from?','s'],[1,'저는 미국 사람이에요.','I am American.','s'],
+// Lesson 2: objects, this / that
+[2,'이것','This','w'],[2,'그것','That','w'],[2,'저것','That over there','w'],[2,'이/그/저','this / that / that over there (+noun)','w'],
+[2,'책','Book','w'],[2,'가방','Bag','w'],[2,'연필','Pencil','w'],[2,'볼펜','Ballpoint pen','w'],[2,'공책','Notebook','w'],[2,'지우개','Eraser','w'],
+[2,'휴대폰','Mobile phone','w'],[2,'시계','Watch, clock','w'],[2,'우산','Umbrella','w'],[2,'의자','Chair','w'],[2,'책상','Desk','w'],[2,'컴퓨터','Computer','w'],
+[2,'무엇 / 뭐','What','w'],[2,'누구','Who','w'],[2,'제','My','w'],[2,'여기','Here','w'],[2,'거기','There','w'],[2,'저기','Over there','w'],[2,'맞아요','That is right','w'],
+[2,'이것은 책이에요.','This is a book.','s'],[2,'그것은 뭐예요?','What is that?','s'],[2,'저것은 제 가방이에요.','That over there is my bag.','s'],[2,'이게 뭐예요?','What is this?','s'],[2,'이것은 제 우산이 아니에요.','This is not my umbrella.','s'],
+// Lesson 3: daily activities with verbs
+[3,'먹다','To eat','w'],[3,'마시다','To drink','w'],[3,'보다','To see, to watch','w'],[3,'읽다','To read','w'],[3,'쓰다','To write','w'],[3,'듣다','To listen','w'],
+[3,'만나다','To meet','w'],[3,'공부하다','To study','w'],[3,'일하다','To work','w'],[3,'운동하다','To exercise','w'],[3,'자다','To sleep','w'],[3,'사다','To buy','w'],[3,'하다','To do','w'],
+[3,'영화','Movie','w'],[3,'음악','Music','w'],[3,'친구','Friend','w'],[3,'커피','Coffee','w'],[3,'물','Water','w'],[3,'밥','Rice, meal','w'],[3,'빵','Bread','w'],[3,'한국어','Korean language','w'],
+[3,'커피를 마셔요.','I drink coffee.','s'],[3,'도서관에서 공부해요.','I study at the library.','s'],[3,'친구를 만나요.','I meet a friend.','s'],[3,'저도 영화를 봐요.','I also watch movies.','s'],[3,'밥을 안 먹어요.','I do not eat.','s'],[3,'한국어를 공부해요.','I study Korean.','s'],
+// Lesson 4: places and location
+[4,'학교','School','w'],[4,'집','Home, house','w'],[4,'회사','Company','w'],[4,'식당','Restaurant','w'],[4,'카페','Cafe','w'],[4,'은행','Bank','w'],
+[4,'도서관','Library','w'],[4,'병원','Hospital','w'],[4,'편의점','Convenience store','w'],[4,'공원','Park','w'],[4,'시장','Market','w'],[4,'화장실','Restroom','w'],
+[4,'가다','To go','w'],[4,'오다','To come','w'],[4,'있다','To exist, to be (at)','w'],[4,'없다','To not exist','w'],[4,'어디','Where','w'],
+[4,'위','On, above','w'],[4,'아래 / 밑','Under, below','w'],[4,'앞','Front','w'],[4,'뒤','Back, behind','w'],[4,'옆','Beside','w'],[4,'안','Inside','w'],[4,'밖','Outside','w'],
+[4,'학교에 가요.','I go to school.','s'],[4,'집에 있어요.','I am at home.','s'],[4,'은행이 어디에 있어요?','Where is the bank?','s'],[4,'책상 위에 책이 있어요.','There is a book on the desk.','s'],[4,'화장실이 어디예요?','Where is the restroom?','s'],[4,'도서관은 학교 옆에 있어요.','The library is next to the school.','s'],
+// Lesson 5: past tense, days, dates, weekend
+[5,'어제','Yesterday','w'],[5,'오늘','Today','w'],[5,'내일','Tomorrow','w'],[5,'주말','Weekend','w'],[5,'지난주','Last week','w'],[5,'이번 주','This week','w'],
+[5,'월요일','Monday','w'],[5,'화요일','Tuesday','w'],[5,'수요일','Wednesday','w'],[5,'목요일','Thursday','w'],[5,'금요일','Friday','w'],[5,'토요일','Saturday','w'],[5,'일요일','Sunday','w'],
+[5,'월','Month','w'],[5,'일','Day (date)','w'],[5,'며칠','Which day of the month','w'],[5,'무슨 요일','Which day of the week','w'],
+[5,'일 (1)','One (Sino-Korean)','w'],[5,'이 (2)','Two (Sino-Korean)','w'],[5,'삼 (3)','Three (Sino-Korean)','w'],[5,'사 (4)','Four (Sino-Korean)','w'],[5,'오 (5)','Five (Sino-Korean)','w'],
+[5,'육 (6)','Six (Sino-Korean)','w'],[5,'칠 (7)','Seven (Sino-Korean)','w'],[5,'팔 (8)','Eight (Sino-Korean)','w'],[5,'구 (9)','Nine (Sino-Korean)','w'],[5,'십 (10)','Ten (Sino-Korean)','w'],
+[5,'백 (100)','Hundred','w'],[5,'천 (1,000)','Thousand','w'],[5,'만 (10,000)','Ten thousand','w'],
+[5,'매일','Every day','w'],[5,'자주','Often','w'],[5,'가끔','Sometimes','w'],[5,'보통','Usually','w'],[5,'여행','Travel, trip','w'],[5,'쇼핑','Shopping','w'],[5,'생일','Birthday','w'],[5,'선물','Gift','w'],
+[5,'어제 친구를 만났어요.','I met a friend yesterday.','s'],[5,'주말에 영화를 봤어요.','I watched a movie on the weekend.','s'],[5,'월요일에 학교에 갔어요.','I went to school on Monday.','s'],[5,'생일 선물을 샀어요.','I bought a birthday gift.','s'],[5,'보통 집에서 먹어요.','I usually eat at home.','s'],
+// Lesson 6: shopping, native numbers, counters, money
+[6,'하나 (한)','One (native)','w'],[6,'둘 (두)','Two (native)','w'],[6,'셋 (세)','Three (native)','w'],[6,'넷 (네)','Four (native)','w'],[6,'다섯','Five (native)','w'],
+[6,'여섯','Six (native)','w'],[6,'일곱','Seven (native)','w'],[6,'여덟','Eight (native)','w'],[6,'아홉','Nine (native)','w'],[6,'열','Ten (native)','w'],
+[6,'원','Won (currency)','w'],[6,'개','Counter for things','w'],[6,'명','Counter for people','w'],[6,'권','Counter for books','w'],[6,'잔','Counter for cups','w'],[6,'병','Counter for bottles','w'],
+[6,'얼마예요?','How much is it?','w'],[6,'주세요','Please give me','w'],[6,'비싸요','It is expensive','w'],[6,'싸요','It is cheap','w'],
+[6,'사과','Apple','w'],[6,'우유','Milk','w'],[6,'김치','Kimchi','w'],[6,'불고기','Bulgogi','w'],[6,'비빔밥','Bibimbap','w'],[6,'냉면','Cold noodles','w'],
+[6,'이거 얼마예요?','How much is this?','s'],[6,'물 두 병 주세요.','Two bottles of water, please.','s'],[6,'커피 한 잔 주세요.','One cup of coffee, please.','s'],[6,'오천 원이에요.','It is 5,000 won.','s'],
+// Lesson 7: weather, adjectives, seasons
+[7,'날씨','Weather','w'],[7,'덥다','To be hot (weather)','w'],[7,'춥다','To be cold (weather)','w'],[7,'따뜻하다','To be warm','w'],[7,'시원하다','To be cool','w'],
+[7,'맑다','To be clear (sky)','w'],[7,'흐리다','To be cloudy','w'],[7,'비가 오다','To rain','w'],[7,'눈이 오다','To snow','w'],
+[7,'봄','Spring','w'],[7,'여름','Summer','w'],[7,'가을','Autumn','w'],[7,'겨울','Winter','w'],
+[7,'어때요?','How is it?','w'],[7,'좋다','To be good','w'],[7,'좋아하다','To like','w'],[7,'싫어하다','To dislike','w'],[7,'맛있다','To be delicious','w'],[7,'맛없다','To be not tasty','w'],
+[7,'크다','To be big','w'],[7,'작다','To be small','w'],[7,'많다','To be many, much','w'],[7,'적다','To be few, little','w'],
+[7,'예쁘다','To be pretty','w'],[7,'재미있다','To be fun','w'],[7,'재미없다','To be boring','w'],[7,'어렵다','To be difficult','w'],[7,'쉽다','To be easy','w'],
+[7,'날씨가 어때요?','How is the weather?','s'],[7,'오늘은 날씨가 좋아요.','The weather is nice today.','s'],[7,'여름에는 아주 더워요.','It is very hot in summer.','s'],[7,'김치가 맛있어요.','Kimchi is delicious.','s'],[7,'저는 커피를 좋아해요.','I like coffee.','s'],
+// Lesson 8: suggestions, time, plans
+[8,'시','O\'clock','w'],[8,'분','Minute','w'],[8,'반','Half','w'],[8,'지금','Now','w'],[8,'몇 시','What time','w'],[8,'오전','AM','w'],[8,'오후','PM','w'],
+[8,'아침','Morning','w'],[8,'점심','Lunch, noon','w'],[8,'저녁','Evening, dinner','w'],[8,'극장','Movie theater','w'],[8,'같이','Together','w'],[8,'약속','Appointment, plan','w'],
+[8,'아주 / 정말','Very, really','w'],[8,'너무','Too, so much','w'],[8,'조금','A little','w'],[8,'언제','When','w'],[8,'그래요','Okay, sure','w'],[8,'좋아요','Sounds good','w'],
+[8,'같이 영화를 볼까요?','Shall we watch a movie together?','s'],[8,'몇 시에 만날까요?','What time shall we meet?','s'],[8,'뭐 먹을까요?','What shall we eat?','s'],[8,'지금 몇 시예요?','What time is it now?','s'],[8,'세 시 반이에요.','It is 3:30.','s'],[8,'일곱 시에 만나요.','Let us meet at seven.','s']
+];
+const G=[
+{l:1,t:'N은/는',f:'N은 (after consonant) · N는 (after vowel)',n:'Topic marker. Use it to introduce or contrast the topic of the sentence.',x:[['저는 학생이에요.','I am a student.'],['선생님은 한국 사람이에요.','The teacher is Korean.']]},
+{l:1,t:'N입니다 / N입니까?',f:'N입니다. · N입니까?',n:'Formal polite "to be". The question ending is 입니까.',x:[['저는 마이클입니다.','I am Michael.'],['학생입니까?','Are you a student?']]},
+{l:1,t:'N이에요 / N예요',f:'N이에요 (consonant) · N예요 (vowel)',n:'Informal polite "to be". Rising tone makes it a question.',x:[['책이에요.','It is a book.'],['의사예요?','Are you a doctor?']]},
+{l:1,t:'N이/가 아니에요',f:'N이 아니에요 · N가 아니에요',n:'Negative "to be": is not. Use 이 after a consonant, 가 after a vowel.',x:[['학생이 아니에요.','I am not a student.'],['의사가 아니에요.','I am not a doctor.']]},
+{l:2,t:'이/그/저 + N, 이것/그것/저것',f:'이 (near me) · 그 (near you / known) · 저 (far from both)',n:'Spoken short forms: 이거, 그거, 저거. With the subject marker: 이게, 그게, 저게.',x:[['이게 뭐예요?','What is this?'],['저 사람은 누구예요?','Who is that person?']]},
+{l:2,t:'N이/가 (subject marker)',f:'N이 (consonant) · N가 (vowel)',n:'Marks the subject, often new information or the answer to a question word like 누구 or 뭐.',x:[['누가 선생님이에요?','Who is the teacher?'],['책이 있어요.','There is a book.']]},
+{l:3,t:'-아요 / -어요 (present polite)',f:'Stem ending in ㅏ,ㅗ + 아요 · other vowels + 어요 · 하다 → 해요',n:'Vowel contractions: 가다 → 가요, 보다 → 봐요, 마시다 → 마셔요, 먹다 → 먹어요, 공부하다 → 공부해요.',x:[['밥을 먹어요.','I eat a meal.'],['영화를 봐요.','I watch a movie.']]},
+{l:3,t:'N을/를 (object marker)',f:'N을 (consonant) · N를 (vowel)',n:'Marks the thing the verb acts on.',x:[['물을 마셔요.','I drink water.'],['친구를 만나요.','I meet a friend.']]},
+{l:3,t:'N에서 (place of action)',f:'Place + 에서 + verb',n:'Where an action happens. Compare 에 for going / being / time.',x:[['식당에서 먹어요.','I eat at a restaurant.'],['도서관에서 공부해요.','I study at the library.']]},
+{l:3,t:'N도, N하고',f:'N도 = also · N하고 N = N and N',n:'도 replaces 은/는/이/가/을/를.',x:[['저도 학생이에요.','I am a student too.'],['빵하고 우유를 먹어요.','I eat bread and milk.']]},
+{l:3,t:'안 + V (negation)',f:'안 + verb · 하다 verbs: N 안 해요',n:'Put 안 before the verb. With 하다 verbs, 안 goes before 하다.',x:[['안 먹어요.','I do not eat.'],['공부 안 해요.','I do not study.']]},
+{l:4,t:'N에 가다 / 오다',f:'Place + 에 + 가요 / 와요',n:'에 marks the destination of movement.',x:[['학교에 가요.','I go to school.'],['한국에 와요.','I come to Korea.']]},
+{l:4,t:'N이/가 있어요 / 없어요',f:'N이/가 있어요 · N이/가 없어요',n:'There is / there is not. Also "to have" when the owner is the topic.',x:[['돈이 없어요.','I have no money.'],['식당이 있어요.','There is a restaurant.']]},
+{l:4,t:'N에 있어요 (location)',f:'Place 에 있어요 · Place N 위에 / 앞에 / 옆에',n:'Say where something is. Position words take 에.',x:[['가방이 의자 위에 있어요.','The bag is on the chair.'],['은행 옆에 있어요.','It is next to the bank.']]},
+{l:5,t:'-았어요 / -었어요 (past)',f:'Present 요-stem: 아/어 + ㅆ어요',n:'가요 → 갔어요, 먹어요 → 먹었어요, 해요 → 했어요, 봐요 → 봤어요, 마셔요 → 마셨어요.',x:[['어제 영화를 봤어요.','I watched a movie yesterday.'],['밥을 먹었어요.','I ate a meal.']]},
+{l:5,t:'N에 (time)',f:'Time word + 에',n:'Marks a specific time or day. Not used with 오늘, 내일, 어제, 지금.',x:[['토요일에 만나요.','We meet on Saturday.'],['주말에 영화를 봤어요.','I watched a movie on the weekend.']]},
+{l:5,t:'Days and dates',f:'N월 N일 · 무슨 요일 · 며칠',n:'Dates use Sino-Korean numbers: 3월 5일 = 삼월 오일. 6월 = 유월, 10월 = 시월 are irregular.',x:[['오늘은 며칠이에요?','What is the date today?'],['오늘은 무슨 요일이에요?','What day is it today?']]},
+{l:5,t:'Frequency adverbs',f:'매일 · 자주 · 보통 · 가끔 · 안 ... 자주',n:'Usually placed before the verb.',x:[['보통 집에서 먹어요.','I usually eat at home.'],['가끔 영화를 봐요.','I sometimes watch movies.']]},
+{l:6,t:'Two number systems',f:'Sino: 일 이 삼 · Native: 하나 둘 셋',n:'Sino for money, dates, minutes, phone numbers. Native (with counters) for things and people. Native 하나 둘 셋 넷 become 한 두 세 네 before a counter, and 스물 becomes 스무.',x:[['커피 두 잔','two cups of coffee'],['삼천 원','3,000 won']]},
+{l:6,t:'Counters',f:'N + native number + counter',n:'개 things, 명 people, 권 books, 잔 cups, 병 bottles. The order is noun, number, counter.',x:[['학생이 세 명 있어요.','There are three students.'],['책 두 권','two books']]},
+{l:6,t:'N 주세요 / 얼마예요?',f:'N + 주세요 · 얼마예요?',n:'Ask for something politely, and ask a price.',x:[['물 한 병 주세요.','One bottle of water, please.'],['이거 얼마예요?','How much is this?']]},
+{l:7,t:'Adjectives with -아요/어요',f:'Adjective stem + 아요/어요',n:'Adjectives conjugate like verbs. ㅂ irregular: 덥다 → 더워요, 춥다 → 추워요, 어렵다 → 어려워요, 쉽다 → 쉬워요.',x:[['날씨가 더워요.','The weather is hot.'],['한국어가 쉬워요.','Korean is easy.']]},
+{l:7,t:'N이/가 + adjective',f:'Subject takes 이/가 with adjectives',n:'날씨가 좋아요. The thing being described is marked with 이/가.',x:[['날씨가 어때요?','How is the weather?'],['김치가 맛있어요.','Kimchi is delicious.']]},
+{l:7,t:'N을/를 좋아해요',f:'N을/를 좋아해요 vs N이/가 좋아요',n:'좋아하다 is a verb (takes 을/를). 좋다 is an adjective (takes 이/가).',x:[['커피를 좋아해요.','I like coffee.'],['커피가 좋아요.','Coffee is good.']]},
+{l:8,t:'V-(으)ㄹ까요? (shall we)',f:'Vowel stem + ㄹ까요 · consonant stem + 을까요',n:'Suggest doing something together or ask for opinion. Reply with 좋아요 or 네, 그래요. 보다 → 볼까요, 먹다 → 먹을까요, 만나다 → 만날까요.',x:[['같이 영화를 볼까요?','Shall we watch a movie together?'],['뭐 먹을까요?','What shall we eat?']]},
+{l:8,t:'시 and 분 (telling time)',f:'Native number + 시 · Sino number + 분',n:'3:30 is 세 시 삼십 분 or 세 시 반. 오전 is AM and 오후 is PM.',x:[['지금 두 시 십 분이에요.','It is now 2:10.'],['몇 시에 만날까요?','What time shall we meet?']]}
+];
+const CONS=['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const TENSE=['ㄲ','ㄸ','ㅃ','ㅆ','ㅉ'];
+const VOW=['ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅣ'];
+const VOW2=['ㅐ','ㅒ','ㅔ','ㅖ','ㅘ','ㅙ','ㅚ','ㅝ','ㅞ','ㅟ','ㅢ'];
+const CHO='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ', JUNG='ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ';
+const syl=(c,v)=>String.fromCharCode(0xAC00+(CHO.indexOf(c)*21+JUNG.indexOf(v))*28);
+
+/* ---------- STATE ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const S={tab:'cards',sel:new Set(ld('kr.sel',[1,2,3,4,5,6,7,8])),filter:ld('kr.filter','all'),score:ld('kr.score',{}),custom:ld('kr.custom',[]),
+  side:ld('kr.side','ko'),ov:ld('kr.ov',{}),hide:ld('kr.hide',[]),card:null,flip:false,quiz:null,w:{card:null,shown:false,trace:true,hear:ld('kr.hear',false)}};
+const base=D.map(([l,k,e,t])=>({l,ol:l,k,e,t}));
+const id=c=>(c.ol??c.l)+':'+c.k;
+let ALL=[];
+function rebuild(){ALL=base.concat(S.custom).filter(c=>!S.hide.includes(id(c))).map(c=>{const v=S.ov[id(c)];return v?{...c,l:v}:c})}
+const all=()=>ALL;
+const sc=c=>S.score[id(c)]||{ok:0,bad:0};
+const pool=()=>all().filter(c=>S.sel.has(c.l)&&(S.filter==='all'||(S.filter==='weak'?sc(c).bad>sc(c).ok:c.t===S.filter)));
+const wt=c=>{const s=sc(c);return Math.min(8,Math.max(.25,1+2*s.bad-.5*s.ok))};
+function pick(p,not){const q=p.length>1?p.filter(c=>id(c)!==not):p;let r=Math.random()*q.reduce((a,c)=>a+wt(c),0);for(const c of q){r-=wt(c);if(r<=0)return c}return q[q.length-1]}
+function mark(c,ok){const s=sc(c);ok?s.ok++:s.bad++;S.score[id(c)]=s;sv('kr.score',S.score)}
+const mastered=c=>sc(c).ok>=2&&sc(c).ok>sc(c).bad;
+let koV=null,sayWarned=false;
+function loadVoices(){try{koV=speechSynthesis.getVoices().find(v=>v.lang.replace('_','-').toLowerCase().startsWith('ko'))||null}catch(e){}}
+try{loadVoices();speechSynthesis.addEventListener('voiceschanged',loadVoices)}catch(e){}
+function toast(m){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,6000)}
+function say(t){
+  if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){toast('This browser cannot play spoken Korean. Try Safari or Chrome.');return}
+  loadVoices();const all_=speechSynthesis.getVoices();
+  if(all_.length&&!koV&&!sayWarned){sayWarned=true;toast('No Korean voice on this device. On iPad: Settings, Accessibility, Spoken Content, Voices, Korean, then download one.')}
+  try{const u=new SpeechSynthesisUtterance(t.replace(/[~()/\d,]/g,' ').replace(/\s+/g,' ').trim());u.lang='ko-KR';u.rate=.85;u.volume=1;if(koV)u.voice=koV;
+    u.onerror=ev=>{if(ev.error&&ev.error!=='interrupted'&&ev.error!=='canceled')toast('Sound did not play ('+ev.error+'). Check the volume and the silent switch.')};
+    speechSynthesis.cancel();setTimeout(()=>{try{speechSynthesis.resume();speechSynthesis.speak(u)}catch(e){}},80)}catch(e){toast('Sound did not play.')}}
+const spk='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+
+/* ---------- TABS ---------- */
+const TABS=[['cards','Cards','<path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 10h8M8 14h5"/>'],
+ ['quiz','Quiz','<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 16.5v.01"/>'],
+ ['fill','Fill','<path d="M4 8h5M15 8h5M4 16h3M11 16h9"/><path d="M9.5 8.5v-1M9.5 12v-2" stroke-dasharray="1 3"/><path d="M7 12h10"/>'],
+ ['write','Write','<path d="M4 20l1-4L16.5 4.5a2 2 0 0 1 3 3L8 19z"/><path d="M14 7l3 3"/>'],
+ ['grammar','Grammar','<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>'],
+ ['hangul','Hangul','<path d="M5 5h8M9 5v3M5 8h8M16 4v9M16 9h3M7 12h6v4H7zM6 20h12"/>']];
+$('#tabs').innerHTML=TABS.map(([k,n,p])=>`<button role="tab" data-tab="${k}"><svg viewBox="0 0 24 24">${p}</svg>${n}</button>`).join('');
+function go(t){S.tab=t;$$('[data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
+  $$('.view').forEach(v=>v.hidden=v.id!=='v-'+t);scrollTo(0,0);
+  if(t==='cards')renderCards();if(t==='quiz')renderQuiz();if(t==='fill')renderFill();if(t==='grammar')renderGrammar();if(t==='hangul')renderHangul();
+  if(t==='write'){if(!S.w.card)nextWrite();requestAnimationFrame(sizeCanvas)}}
+$('#tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
+
+/* ---------- LESSON PANEL ---------- */
+function renderPanel(){
+  const n=pool().length;const ls=[...S.sel].sort((a,b)=>a-b);
+  $('#lessonsBtn').textContent=(ls.length===8?'Lessons 1–8':ls.length?'L'+ls.join(', '):'No lessons')+' · '+n;
+  $('#chips').innerHTML=[1,2,3,4,5,6,7,8].map(l=>`<button class="chip" data-l="${l}" aria-pressed="${S.sel.has(l)}">${l}</button>`).join('')+
+    `<button class="chip" data-l="all">All</button>`;
+  $$('#filterSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===S.filter));
+  $('#legend').innerHTML=Object.entries(LT).map(([k,v])=>`<b>${k}</b> ${esc(v)}`).join(' · ');
+  $('#hidTxt').textContent=S.hide.length?S.hide.length+' card'+(S.hide.length>1?'s':'')+' hidden':'None hidden';
+  $('#addL').innerHTML=[1,2,3,4,5,6,7,8].map(l=>`<option value="${l}">Lesson ${l}</option>`).join('');
+  $('#custList').innerHTML=S.custom.map((c,i)=>`<div class="cust"><span>L${c.l} · <b>${esc(c.k)}</b> ${esc(c.e)}</span><button class="btn sm" data-del="${i}">Remove</button></div>`).join('');
+  const all_=all(),m=all_.filter(mastered).length;
+  $('#progTxt').textContent=`${m} of ${all_.length} cards mastered (right twice or more)`;
+}
+$('#lessonsBtn').onclick=()=>{const p=$('#panel');p.hidden=!p.hidden;$('#lessonsBtn').setAttribute('aria-expanded',!p.hidden)};
+$('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;
+  if(b.dataset.l==='all')S.sel=new Set([1,2,3,4,5,6,7,8]);else{const l=+b.dataset.l;S.sel.has(l)?S.sel.delete(l):S.sel.add(l)}
+  sv('kr.sel',[...S.sel]);refresh()};
+$('#filterSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.filter=b.dataset.f;sv('kr.filter',S.filter);refresh()};
+$('#addForm').onsubmit=e=>{e.preventDefault();const k=$('#addKo').value.trim(),en=$('#addEn').value.trim();if(!k||!en)return;
+  S.custom.push({l:+$('#addL').value,ol:+$('#addL').value,k,e:en,t:$('#addT').value});sv('kr.custom',S.custom);$('#addKo').value=$('#addEn').value='';refresh()};
+$('#custList').onclick=e=>{const b=e.target.closest('[data-del]');if(!b)return;S.custom.splice(+b.dataset.del,1);sv('kr.custom',S.custom);refresh()};
+$('#testSnd').onclick=()=>{loadVoices();$('#soundTxt').textContent=koV?'Korean voice: '+koV.name:(speechSynthesis.getVoices().length?'No Korean voice found':'Voices not loaded yet, tap again');say('안녕하세요');if(!koV&&!sayWarned)toast('If you hear nothing: raise the volume, turn off the silent switch, and install a Korean voice in iPad Settings, Accessibility, Spoken Content, Voices.')};
+$('#restoreBtn').onclick=()=>{S.hide=[];S.ov={};sv('kr.hide',S.hide);sv('kr.ov',S.ov);refresh()};
+let armed=false;
+$('#resetBtn').onclick=()=>{const b=$('#resetBtn');if(!armed){armed=true;b.textContent='Tap again to confirm';setTimeout(()=>{armed=false;b.textContent='Reset progress'},3000);return}
+  armed=false;S.score={};sv('kr.score',S.score);b.textContent='Reset progress';refresh()};
+function refresh(){rebuild();S.card=null;S.quiz=null;S.w.card=null;S.fill.q=null;renderPanel();go(S.tab)}
+
+/* ---------- CARDS ---------- */
+function nextCard(){const p=pool();S.card=p.length?pick(p,S.card&&id(S.card)):null;S.flip=false}
+function renderCards(){
+  const v=$('#v-cards'),p=pool();
+  if(!p.length){v.innerHTML=`<div class="empty">No cards match. Open the lessons panel and pick a lesson, or switch the filter back to All.</div>`;return}
+  if(!S.card||!p.some(c=>id(c)===id(S.card)))nextCard();
+  const c=S.card,m=p.filter(mastered).length,front=S.side==='ko'?c.k:c.e,back=S.side==='ko'?c.e:c.k;
+  const cls=(S.side==='ko'?'ko':'en')+(c.t==='s'&&S.side==='ko'?' s':'');
+  v.innerHTML=`<div class="meta"><span><span class="tag">Lesson ${c.l}</span> ${esc(LT[c.l]||'')}</span><span>${m} / ${p.length} mastered</span></div>
+  <div class="meter"><i style="width:${p.length?m/p.length*100:0}%"></i></div>
+  <div class="card" id="theCard" role="button" tabindex="0" aria-label="Flip card">
+    ${!S.flip?`<div class="${cls}">${esc(front)}</div><div class="hint">Tap to flip</div>`
+    :`<div class="${S.side==='ko'?'en':'ko'+(c.t==='s'?' s':'')}">${esc(back)}</div><div class="hint">${esc(front)}</div>`}
+  </div>
+  <div class="row"><button class="btn sm" id="sideBtn">${S.side==='ko'?'Korean first':'English first'}</button><button class="btn sm" id="listenBtn">${spk} Listen</button>${S.flip?'<button class="btn sm sun" data-explain="card">Explain</button>':''}
+   <span class="grow"></span><label style="font-size:.8rem;color:var(--muted)">Lesson <select class="sel" id="fixL">${[1,2,3,4,5,6,7,8].map(l=>`<option ${l===c.l?'selected':''}>${l}</option>`).join('')}</select></label><button class="btn sm" id="hideBtn">Hide</button></div>
+  <div class="row" style="margin-top:12px"><button class="btn bad grow" data-r="0">Again</button><button class="btn good grow" data-r="1">Got it</button></div>`;
+}
+$('#v-cards').onclick=e=>{
+  if(e.target.closest('#theCard')){S.flip=!S.flip;renderCards();return}
+  if(e.target.closest('#sideBtn')){S.side=S.side==='ko'?'en':'ko';sv('kr.side',S.side);S.flip=false;renderCards();return}
+  if(e.target.closest('#listenBtn')){say(S.card.k);return}
+  if(e.target.closest('#hideBtn')){S.hide.push(id(S.card));sv('kr.hide',S.hide);rebuild();S.card=null;renderPanel();renderCards();return}
+  const r=e.target.closest('[data-r]');if(r){mark(S.card,r.dataset.r==='1');nextCard();renderPanel();renderCards()}};
+$('#v-cards').addEventListener('change',e=>{if(e.target.id!=='fixL')return;const cid=id(S.card);S.ov[cid]=+e.target.value;sv('kr.ov',S.ov);rebuild();S.card=ALL.find(x=>id(x)===cid)||null;renderPanel();renderCards()});
+$('#v-cards').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.id==='theCard'){e.preventDefault();e.target.click()}});
+
+/* ---------- NUMBERS ---------- */
+const SD=['영','일','이','삼','사','오','육','칠','팔','구'];
+function sino(n){if(n===0)return'영';let s='';for(const[v,w]of[[10000,'만'],[1000,'천'],[100,'백'],[10,'십']]){const d=Math.floor(n/v);n%=v;if(d)s+=(d>1?SD[d]:'')+w}return s+(n?SD[n]:'')}
+const NT=['','열','스물','서른','마흔','쉰','예순','일흔','여든','아흔'],NO=['','하나','둘','셋','넷','다섯','여섯','일곱','여덟','아홉'],NOC=['','한','두','세','네','다섯','여섯','일곱','여덟','아홉'];
+function nat(n,counter){if(counter&&n===20)return'스무';return NT[Math.floor(n/10)]+(counter?NOC[n%10]:NO[n%10])}
+const hm=(h,m)=>nat(h,true)+' 시'+(m===30?' 반':m?' '+sino(m)+' 분':'');
+
+/* ---------- READING PASSAGES ---------- */
+const R=[
+{l:1,lines:['A: 안녕하세요? 저는 마이클이에요. 미국 사람이에요.','B: 안녕하세요? 저는 수진이에요. 한국 사람이에요. 학생이에요?','A: 네, 학생이에요.'],en:'A: Hello, I am Michael. I am American. B: Hello, I am Sujin. I am Korean. Are you a student? A: Yes, I am a student.',
+ qs:[['마이클은 어느 나라 사람이에요?','미국 사람이에요','한국 사람이에요,중국 사람이에요,일본 사람이에요'],['마이클은 학생이에요?','네, 학생이에요','아니요, 학생이 아니에요,아니요, 선생님이에요,아니요, 의사예요']]},
+{l:2,lines:['A: 이게 뭐예요?','B: 그것은 우산이에요.','A: 저것도 우산이에요?','B: 아니요, 저것은 가방이에요.'],en:'A: What is this? B: That is an umbrella. A: Is that over there an umbrella too? B: No, that is a bag.',
+ qs:[['저것은 뭐예요?','가방이에요','우산이에요,책이에요,연필이에요'],['이것은 뭐예요?','우산이에요','가방이에요,책이에요,시계예요']]},
+{l:3,lines:['저는 한국어를 공부해요.','도서관에서 책을 읽어요.','친구하고 커피를 마셔요.'],en:'I study Korean. I read books at the library. I drink coffee with a friend.',
+ qs:[['어디에서 책을 읽어요?','도서관에서 읽어요','식당에서 읽어요,집에서 읽어요,학교에서 읽어요'],['누구하고 커피를 마셔요?','친구하고 마셔요','선생님하고 마셔요,혼자 마셔요,의사하고 마셔요']]},
+{l:4,lines:['A: 은행이 어디에 있어요?','B: 은행은 학교 옆에 있어요.','A: 학교는 어디에 있어요?','B: 도서관 앞에 있어요.'],en:'A: Where is the bank? B: The bank is next to the school. A: Where is the school? B: It is in front of the library.',
+ qs:[['은행은 어디에 있어요?','학교 옆에 있어요','도서관 앞에 있어요,학교 앞에 있어요,도서관 옆에 있어요'],['학교는 어디에 있어요?','도서관 앞에 있어요','은행 옆에 있어요,도서관 옆에 있어요,은행 앞에 있어요']]},
+{l:5,lines:['주말에 친구를 만났어요.','같이 영화를 봤어요.','그리고 저녁을 먹었어요.'],en:'I met a friend on the weekend. We watched a movie together. And we ate dinner.',
+ qs:[['주말에 누구를 만났어요?','친구를 만났어요','선생님을 만났어요,의사를 만났어요,학생을 만났어요'],['친구하고 뭐 했어요?','영화를 봤어요','커피를 마셨어요,공부했어요,쇼핑했어요']]},
+{l:6,lines:['A: 이거 얼마예요?','B: 삼천 원이에요.','A: 두 개 주세요.','B: 육천 원이에요.'],en:'A: How much is this? B: It is 3,000 won. A: Two, please. B: It is 6,000 won.',
+ qs:[['이거는 하나에 얼마예요?','삼천 원이에요','육천 원이에요,이천 원이에요,오천 원이에요'],['두 개는 얼마예요?','육천 원이에요','삼천 원이에요,구천 원이에요,이천 원이에요']]},
+{l:7,lines:['오늘은 날씨가 좋아요. 조금 더워요.','내일은 추워요. 비가 와요.'],en:'The weather is nice today. It is a little hot. Tomorrow it is cold. It rains.',
+ qs:[['오늘 날씨는 어때요?','좋아요. 조금 더워요','추워요,비가 와요,눈이 와요'],['내일 날씨는 어때요?','추워요. 비가 와요','더워요,좋아요,눈이 와요']]},
+{l:8,lines:['A: 주말에 영화 볼까요?','B: 좋아요. 몇 시에 볼까요?','A: 세 시에 봐요.','B: 네, 그래요.'],en:'A: Shall we watch a movie on the weekend? B: Sounds good. What time shall we watch? A: Let us watch at three. B: Yes, okay.',
+ qs:[['두 사람은 뭐 해요?','영화를 봐요','커피를 마셔요,공부해요,쇼핑해요'],['몇 시에 영화를 봐요?','세 시에 봐요','두 시에 봐요,네 시에 봐요,일곱 시에 봐요']]}
+];
+const readQs=()=>R.filter(r=>S.sel.has(r.l)).flatMap(r=>r.qs.map(([q,a,w])=>mcq({sec:'Reading',head:q,ctx:r.lines,right:a,wrong:w.split(','),ko:true,why:r.en})));
+
+/* ---------- QUIZ ---------- */
+const shuf=a=>[...a].sort(()=>Math.random()-.5),rnd=n=>Math.floor(Math.random()*n),uq=a=>[...new Set(a)];
+const QM=[['mean','Meaning','10 vocabulary questions, Korean and English.'],['listen','Listening','Listen, then pick the meaning. Turn your volume up.'],['order','Word order','Put the words in the right order.'],
+ ['num','Numbers','Prices, counters and clock times.'],['read','Reading','Short dialogues with questions.'],['mock','Mock test','About 30 mixed questions in test order, with a score for each section.']];
+S.qm=ld('kr.qm','mean');
+function mcq(o){const right=[].concat(o.right),wr=uq(o.wrong.filter(w=>!right.includes(w)));
+  return{kind:'mc',plain:o.plain||'',sec:o.sec,head:o.head,big:o.big||'',bigHtml:o.bigHtml||null,filledHtml:o.filledHtml||null,cls:o.cls||(o.bigKo?'ko':'en'),audio:o.audio||null,hideBig:!!o.hideBig,ctx:o.ctx||null,
+    opts:shuf([right[0],...(o.ordered?wr:shuf(wr)).slice(0,3)]),right,ko:!!o.ko,card:o.card||null,why:o.why||'',txt:right[0],done:null}}
+function pickN(p,n){const out=[],left=[...p];while(out.length<n&&left.length){const c=pick(left);out.push(c);left.splice(left.findIndex(x=>id(x)===id(c)),1)}return out}
+function others(c){const same=all().filter(x=>x.t===c.t&&x.k!==c.k&&x.e!==c.e),near=same.filter(x=>S.sel.has(x.l));return shuf(near.length>=3?near:same).slice(0,6)}
+function gMean(c){const k2e=Math.random()<.5,ds=others(c);
+  return mcq({sec:'Vocabulary',head:k2e?'What does this mean?':'How do you say this in Korean?',big:k2e?c.k:c.e,bigKo:k2e,audio:k2e?c.k:null,right:k2e?c.e:c.k,wrong:ds.map(x=>k2e?x.e:x.k),ko:!k2e,card:c,why:`${c.k} = ${c.e}`})}
+function gListen(c){const ds=others(c);return mcq({sec:'Listening',head:'Listen, then choose the meaning',audio:c.k,hideBig:true,right:c.e,wrong:ds.map(x=>x.e),card:c,why:`${c.k} = ${c.e}`})}
+function gFillQ(q){return mcq({sec:q.cj?'Verb forms':'Particles & endings',head:q.cj?'Choose the correct form':'Choose what fits the blank',plain:q.s,bigHtml:sent(q,null),filledHtml:sent(q,q.a[0],'right'),cls:'fs',audio:null,
+  right:q.a,wrong:q.o,ko:true,card:q,why:`${q.w} ${q.e}`})}
+function gOrder(c){const tokens=c.k.split(' ');let sh=shuf(tokens),t=0;while(sh.join(' ')===tokens.join(' ')&&t++<9)sh=shuf(tokens);
+  return{kind:'order',sec:'Word order',head:'Put the words in order',big:c.e,cls:'en',audio:null,tokens:sh,answer:tokens,sel:[],card:c,why:c.k,txt:c.k,done:null,ok:false}}
+function gNum(){const t=rnd(6);const fmt=n=>n.toLocaleString('en-US');
+  if(t===0||t===3){const n=500*(1+rnd(99)),c=uq([n+500,n-500,n+1000,n-1000,n*10,n/10].filter(x=>x>0&&x!==n&&Number.isInteger(x)&&x<100000));
+    return t===0?mcq({sec:'Numbers',head:'How do you say this price?',big:fmt(n)+' won',cls:'en',ko:true,right:sino(n)+' 원',wrong:c.map(x=>sino(x)+' 원'),why:`${fmt(n)} won = ${sino(n)} 원`})
+    :mcq({sec:'Numbers',head:'How much is it?',big:sino(n)+' 원',bigKo:true,audio:sino(n)+' 원',right:fmt(n)+' won',wrong:c.map(x=>fmt(x)+' won'),why:`${sino(n)} 원 = ${fmt(n)} won`})}
+  if(t===1){const n=1+rnd(9),[ct,en]=[['개','things'],['명','people'],['권','books'],['잔','cups'],['병','bottles']][rnd(5)],w=[sino(n)+' '+ct,nat(n,false)+' '+ct,...shuf([1,2,3,4,5,6,7,8,9].filter(x=>x!==n)).map(x=>nat(x,true)+' '+ct)];
+    return mcq({sec:'Numbers',head:'Counting: choose the correct form',big:`${n} ${en}`,cls:'en',ko:true,ordered:true,right:nat(n,true)+' '+ct,wrong:w,why:`${n} ${en} = ${nat(n,true)} ${ct}. Native number + counter.`})}
+  const h=1+rnd(12),m=[0,10,20,30,40,50][rnd(6)],r=hm(h,m),
+    w=[sino(h)+' 시'+(m===30?' 반':m?' '+sino(m)+' 분':''),hm(h%12+1,m),hm(h,m===30?10:30),nat(h,true)+' 시 '+(m?nat(m/10,false)+' 분':'')];
+  const ts=`${h}:${String(m).padStart(2,'0')}`;
+  if(t===2)return mcq({sec:'Numbers',head:'How do you say this time?',big:ts,cls:'en',ko:true,ordered:true,right:r,wrong:w,why:`${ts} = ${r}. Native number for the hour, Sino-Korean for minutes.`});
+  const tw=[`${h%12+1}:${String(m).padStart(2,'0')}`,`${h}:${m===30?'10':'30'}`,`${(h+1)%12+1}:${String(m).padStart(2,'0')}`];
+  return mcq({sec:'Numbers',head:'What time is it?',big:r,bigKo:true,audio:r,right:ts,wrong:tw,why:`${r} = ${ts}`})}
+function newQuiz(m){const p=pool(),cards=n=>pickN(p,Math.min(n,p.length)),sents=p.filter(c=>c.t==='s'&&c.k.split(' ').length>=3),fp=fpool(),
+  fl=(n,cj)=>shuf(fp.filter(q=>!!q.cj===cj)).slice(0,n).map(gFillQ),ord=n=>pickN(sents,Math.min(n,sents.length)).map(gOrder),nums=n=>Array.from({length:n},gNum);
+  const mk={mean:()=>cards(10).map(gMean),listen:()=>cards(10).map(gListen),order:()=>ord(8),num:()=>nums(10),read:()=>shuf(readQs()).slice(0,10),
+    mock:()=>[...cards(8).map((c,i)=>i%2?gListen(c):gMean(c)),...fl(8,false),...fl(4,true),...nums(4),...ord(3),...shuf(readQs()).slice(0,4)]};
+  return{mode:m,qs:mk[m](),i:0,ok:0}}
+function renderQuiz(){
+  const v=$('#v-quiz');if(!S.quiz||S.quiz.mode!==S.qm)S.quiz=newQuiz(S.qm);const q=S.quiz;
+  const bar=`<div class="chips" id="qmodes" style="margin-bottom:6px">${QM.map(([k,n])=>`<button class="chip" data-qm="${k}" aria-pressed="${S.qm===k}">${n}</button>`).join('')}</div>
+    <div class="hint" style="font-size:.85rem;color:var(--muted);margin-bottom:12px">${QM.find(m=>m[0]===S.qm)[2]}</div>`;
+  if(!q.qs.length){v.innerHTML=bar+`<div class="empty">Nothing to ask for the lessons you picked. Try another mode or add lessons in the lessons panel.</div>`;return}
+  if(q.i>=q.qs.length){const secs={};q.qs.forEach(x=>{const s=secs[x.sec]||(secs[x.sec]={n:0,ok:0});s.n++;if(x.done)s.ok++});const miss=q.qs.filter(x=>x.done===false);
+    v.innerHTML=bar+`<div class="q"><div class="hint">Score</div><div class="big">${q.ok} / ${q.qs.length}</div></div>
+    ${Object.keys(secs).length>1?`<h2 class="sec">By section</h2>`+Object.entries(secs).map(([k,s])=>`<div class="cust"><span>${esc(k)}</span><b>${s.ok} / ${s.n}</b></div>`).join(''):''}
+    ${miss.length?`<h2 class="sec">Review these</h2>`+miss.map(x=>`<div class="cust"><span style="font-family:var(--display);font-weight:700;overflow-wrap:anywhere">${esc(x.audio&&x.hideBig?x.audio:(x.big||x.head))}</span><span style="text-align:right;overflow-wrap:anywhere">${esc(x.txt)}</span></div>`).join(''):''}
+    <div class="row" style="margin-top:16px"><button class="btn primary grow" id="again">New round</button></div>`;return}
+  const x=q.qs[q.i],bigH=x.hideBig?`<button class="btn sun" data-say="1" style="margin-block:8px">${spk} Play again</button>`
+    :`<div class="${x.cls}">${x.done!==null&&x.filledHtml?x.filledHtml:(x.bigHtml||esc(x.big))}</div>${x.audio?`<button class="btn sm" data-say="1" style="margin-top:8px">${spk} Listen</button>`:''}`;
+  let body='';
+  if(x.kind==='mc'){body=`<div class="opts">${x.opts.map((o,i)=>`<button class="opt ${x.ko?'ko':''}" data-o="${i}" ${x.done!==null?'disabled':''}>${esc(o)}</button>`).join('')}</div>`}
+  else{const used=new Set(x.sel);
+    body=`<div class="ordbox" aria-label="Your sentence">${x.sel.length?x.sel.map(i=>`<button class="tk" data-un="${i}" ${x.done!==null?'disabled':''}>${esc(x.tokens[i])}</button>`).join(''):'<span class="hint" style="color:var(--muted)">Tap the words below in order</span>'}</div>
+    <div class="ordbank">${x.tokens.map((t,i)=>used.has(i)?'':`<button class="tk" data-tk="${i}">${esc(t)}</button>`).join('')}</div>
+    ${x.done===null?`<div class="row" style="margin-top:12px"><button class="btn sm" id="ordReset">Reset</button><span class="grow"></span><button class="btn primary" id="ordCheck" ${x.sel.length===x.tokens.length?'':'disabled'}>Check</button></div>`:''}`}
+  const fb=x.done===null?'':`<div class="why"><b>${x.done?'Correct. ':'Not quite. Answer: '+esc(x.txt)+'. '}</b>${x.kind==='mc'?esc(x.why):esc(x.why)}</div>`;
+  v.innerHTML=bar+`<div class="meta"><span>Question ${q.i+1} of ${q.qs.length} · ${esc(x.sec)}</span><span>${q.ok} correct</span></div>
+  <div class="meter"><i style="width:${q.i/q.qs.length*100}%"></i></div>
+  <div class="q" style="margin-top:14px"><div class="hint">${esc(x.head)}</div>
+   ${x.ctx?`<div class="ctx">${x.ctx.map(l=>`<div>${esc(l)}</div>`).join('')}</div>`:''}${bigH}</div>${body}${fb}
+  <div class="row end" style="margin-top:14px">${x.done===false?'<button class="btn sun" data-explain="quiz">Explain why</button>':''}${x.done===null?'':'<button class="btn primary" id="qNext">'+(q.i+1<q.qs.length?'Next':'See score')+'</button>'}</div>`;
+}
+function firstAudio(){const x=S.quiz&&S.quiz.qs[0];if(x&&x.audio&&x.hideBig)say(x.audio)}
+function qAnswer(x,ok){const q=S.quiz;x.done=ok;if(ok)q.ok++;if(x.card){mark(x.card,ok);renderPanel()}
+  if(x.kind==='order')say(x.txt);else if(x.card&&x.card.k&&!x.card.f&&(x.hideBig||x.ko||!ok))say(x.card.k);else if(x.card&&x.card.f)say(x.card.s.replace('___',x.card.a[0]==='X'?'':x.card.a[0]))}
+$('#v-quiz').onclick=e=>{const q=S.quiz;
+  const md=e.target.closest('[data-qm]');if(md){S.qm=md.dataset.qm;sv('kr.qm',S.qm);S.quiz=null;renderQuiz();firstAudio();return}
+  if(e.target.closest('#again')){S.quiz=null;renderQuiz();firstAudio();return}
+  if(!q||q.i>=q.qs.length)return;const x=q.qs[q.i];
+  if(e.target.closest('[data-say]')){say(x.audio);return}
+  if(e.target.closest('#qNext')){q.i++;renderQuiz();const n=q.qs[q.i];if(n&&n.audio&&(n.hideBig||n.sec==='Listening'))say(n.audio);return}
+  const b=e.target.closest('[data-o]');if(b&&x.done===null){qAnswer(x,x.right.includes(x.opts[+b.dataset.o]));x.pick=x.opts[+b.dataset.o];
+    renderQuiz();$$('#v-quiz .opt').forEach((el,i)=>{el.disabled=true;if(x.right.includes(x.opts[i]))el.classList.add('right');else if(x.opts[i]===x.pick)el.classList.add('wrong')});return}
+  const tk=e.target.closest('[data-tk]');if(tk&&x.done===null){x.sel.push(+tk.dataset.tk);renderQuiz();return}
+  const un=e.target.closest('[data-un]');if(un&&x.done===null){x.sel=x.sel.filter(i=>i!==+un.dataset.un);renderQuiz();return}
+  if(e.target.closest('#ordReset')){x.sel=[];renderQuiz();return}
+  if(e.target.closest('#ordCheck')){qAnswer(x,x.sel.map(i=>x.tokens[i]).join(' ')===x.answer.join(' '));renderQuiz()}};
+
+/* ---------- FILL IN THE BLANK ----------
+   [lesson, sentence with ___, answer (| = also accepted), options (comma list), why, English]  X = no particle needed */
+const F=[
+[1,'저___ 학생이에요.','는','은,는,이,가','저 ends in a vowel, so topic marker 는.','I am a student.'],
+[1,'선생님___ 한국 사람이에요.','은','은,는,이,가','선생님 ends in a consonant (ㅁ), so 은.','The teacher is Korean.'],
+[1,'이름___ 뭐예요?','이','이,가,을,에','이름 ends in a consonant, so subject marker 이.','What is your name?'],
+[1,'저는 학생___.','이에요','이에요,예요,아니에요,입니다','Consonant ending + 이에요 (informal polite).','I am a student.'],
+[1,'저는 의사___.','예요','이에요,예요,입니다,아니에요','Vowel ending + 예요 (informal polite).','I am a doctor.'],
+[1,'학생___? (formal question)','입니까','입니다,입니까,이에요,예요','Formal polite question ending is 입니까.','Are you a student?'],
+[1,'저는 한국 사람이 ___.','아니에요','아니에요,없어요,있어요,이에요','N이/가 아니에요 = is not.','I am not Korean.'],
+[1,'저는 미국 사람___ 아니에요.','이','이,가,은,를','사람 ends in a consonant, so 이 before 아니에요.','I am not American.'],
+[1,'저는 의사___ 아니에요.','가','이,가,은,는','의사 ends in a vowel, so 가 before 아니에요.','I am not a doctor.'],
+[2,'(near me) ___은 책이에요.','이것','이것,그것,저것,여기','이것 = this, near the speaker.','This is a book.'],
+[2,'(far from both of us) ___ 사람은 누구예요?','저','이,그,저,여기','저 = that over there, far from both.','Who is that person over there?'],
+[2,'이것___ 뭐예요?','은|이','은,이,을,도,를','Topic 은 or subject 이 both work after 이것 (ends in a consonant).','What is this?'],
+[2,'이것은 제 가방___ 아니에요.','이','이,가,은,를','가방 ends in a consonant (ㅇ), so 이 before 아니에요.','This is not my bag.'],
+[1,'___ 나라 사람이에요? (which)','어느','어느,무슨,어디,누구','어느 = which (어느 나라 = which country).','Which country are you from?'],
+[2,'저것___ 제 우산이에요.','은|이','은,이,을,도,를','저것 ends in a consonant, so 은 or 이.','That over there is my umbrella.'],
+[2,'이 가방___ 제 거예요.','은','은,는,이,가','가방 ends in a consonant, so topic 은.','This bag is mine.'],
+[2,'이게 ___예요? (what)','뭐','뭐,누구,어디,얼마','뭐 = what.','What is this?'],
+[2,'___ 연필은 제 거예요. (that, near you)','그','이,그,저,여기','그 = that, near the listener.','That pencil is mine.'],
+[4,'도서관 ___에 있어요. (in front of)','앞','앞,뒤,옆,위','앞 = in front of.','It is in front of the library.'],
+[4,'병원은 어디___ 있어요?','에','에,에서,를,도','있다 with a place takes 에.','Where is the hospital?'],
+[4,'지금 학교___ 있어요.','에','에,에서,를,도','Being at a place takes 에.','I am at school now.'],
+[6,'이 사과는 ___. (cheap)','싸요','싸요,비싸요,있어요,없어요','싸다 = cheap. 비싸다 = expensive.','This apple is cheap.'],
+[6,'___ 원이에요. (10,000)','만','만,천,백,십','만 = 10,000.','It is 10,000 won.'],
+[6,'___ 원이에요. (500)','오백','오백,오천,오십,오만','오백 = 500.','It is 500 won.'],
+[3,'커피___ 마셔요.','를','을,를,이,가','Object marker. 커피 ends in a vowel, so 를.','I drink coffee.'],
+[3,'밥___ 먹어요.','을','을,를,이,가','Object marker. 밥 ends in a consonant, so 을.','I eat a meal.'],
+[3,'도서관___ 공부해요.','에서','에,에서,을,도','Place where an action happens takes 에서.','I study at the library.'],
+[3,'식당___ 먹어요. (at the restaurant)','에서','에,에서,를,도','Eating is an action done at a place, so 에서.','I eat at the restaurant.'],
+[3,'저___ 영화를 봐요. (also)','도','도,는,을,에','도 = also, replaces 는/이/가/을/를.','I also watch movies.'],
+[3,'빵___ 우유를 먹어요. (and)','하고','하고,도,에서,에','N하고 N = N and N.','I eat bread and milk.'],
+[3,'저___ 한국어를 공부해요.','는','는,은,가,를','저 ends in a vowel, so topic 는.','I study Korean.'],
+[3,'밥을 ___ 먹어요. (do not)','안','안,못,도,이','안 + verb = do not.','I do not eat.'],
+[3,'운동___. (exercise, polite)','해요','해요,하요,했어요,하다','하다 verbs become 해요.','I exercise.'],
+[4,'학교___ 가요.','에','에,에서,을,가','Destination of 가다 takes 에.','I go to school.'],
+[4,'집___ 있어요.','에','에,에서,를,도','Location of 있다 takes 에.','I am at home.'],
+[4,'책상 위___ 책이 있어요.','에','에,에서,을,도','Position word + 에 + 있다.','There is a book on the desk.'],
+[4,'돈___ 없어요.','이','이,가,을,에','돈 ends in a consonant, so 이.','I have no money.'],
+[4,'친구___ 있어요.','가','이,가,을,를','친구 ends in a vowel, so 가.','I have a friend.'],
+[4,'은행___ 어디에 있어요?','이|은','이,은,를,에서,을','Subject 이 or topic 은 after a consonant.','Where is the bank?'],
+[4,'도서관은 학교 ___에 있어요. (beside)','옆','옆,위,앞,뒤','옆 = beside.','The library is beside the school.'],
+[5,'월요일___ 학교에 갔어요.','에','에,에서,을,도','Day of the week takes 에.','I went to school on Monday.'],
+[5,'어제 ___ 학교에 갔어요. (no particle)','X','에,X,에서,를','어제, 오늘, 내일, 지금 do not take 에.','I went to school yesterday.'],
+[5,'주말___ 친구를 만났어요.','에','에,에서,을,도','Time word takes 에.','I met a friend on the weekend.'],
+[5,'오늘은 ___이에요? (what day)','무슨 요일','무슨 요일,며칠,몇 시,언제','무슨 요일 = which day of the week.','What day is it today?'],
+[5,'오늘은 ___이에요? (what date)','며칠','무슨 요일,며칠,몇 시,뭐','며칠 = which day of the month.','What is the date today?'],
+[5,'삼___ 오일이에요. (March 5)','월','월,일,년,시','월 = month. 일 = day.','It is March 5.'],
+[5,'___ 집에서 먹어요. (usually)','보통','보통,가끔,자주,매일','보통 = usually.','I usually eat at home.'],
+[6,'물 두 ___ 주세요. (bottles)','병','병,잔,권,명','병 counts bottles.','Two bottles of water, please.'],
+[6,'커피 한 ___ 주세요. (cups)','잔','잔,병,개,명','잔 counts cups.','One cup of coffee, please.'],
+[6,'학생이 세 ___ 있어요. (people)','명','명,개,권,병','명 counts people.','There are three students.'],
+[6,'책 두 ___ 있어요. (books)','권','권,개,명,잔','권 counts books.','There are two books.'],
+[6,'사과 ___ 개 주세요. (3, native)','세','세,삼,셋,사','Native number before a counter: 세.','Three apples, please.'],
+[6,'이거 ___? (how much)','얼마예요','얼마예요,뭐예요,어디예요,누구예요','얼마 = how much.','How much is this?'],
+[6,'삼천 ___이에요. (won)','원','원,개,시,분','원 is the currency.','It is 3,000 won.'],
+[6,'사과 두 개 ___. (please give)','주세요','주세요,있어요,없어요,싸요','주세요 = please give me.','Two apples, please.'],
+[7,'날씨___ 좋아요.','가','가,이,를,은','Adjective 좋다 takes 이/가. 날씨 ends in a vowel.','The weather is nice.'],
+[7,'김치___ 맛있어요.','가','가,이,를,은','Subject of an adjective. 김치 ends in a vowel.','Kimchi is delicious.'],
+[7,'한국어___ 어려워요.','가','가,이,를,은','Subject of an adjective. 한국어 ends in a vowel.','Korean is difficult.'],
+[7,'커피___ 좋아해요.','를','를,가,이,에','좋아하다 is a verb, so it takes 을/를.','I like coffee.'],
+[7,'커피___ 좋아요.','가','가,를,을,에','좋다 is an adjective, so it takes 이/가.','Coffee is good.'],
+[7,'날씨가 ___? (how is it)','어때요','어때요,뭐예요,어디예요,얼마예요','어때요 = how is it.','How is the weather?'],
+[7,'비가 ___. (rains)','와요','와요,가요,봐요,해요','비가 오다 = to rain. 오다 → 와요.','It rains.'],
+[8,'같이 영화를 ___? (shall we watch)','볼까요','볼까요,봐요,봤어요,보고','보다 has no final consonant → ㄹ까요: 볼까요.','Shall we watch a movie together?'],
+[8,'뭐 ___? (shall we eat)','먹을까요','먹을까요,먹ㄹ까요,먹어요,먹었어요','먹다 has a final consonant → 을까요.','What shall we eat?'],
+[8,'어디에서 ___? (shall we meet)','만날까요','만날까요,만나을까요,만나요,만났어요','만나다 has no final consonant → 만날까요.','Where shall we meet?'],
+[8,'지금 몇 ___예요?','시','시,분,월,원','몇 시 = what time.','What time is it now?'],
+[8,'세 ___ 십 분이에요. (3:10)','시','시,분,월,명','Hours: 시. Minutes: 분.','It is 3:10.'],
+[8,'세 시 ___이에요. (half past)','반','반,분,시,원','반 = half past.','It is 3:30.'],
+[8,'열 시 십 ___이에요. (minutes)','분','분,시,원,개','분 takes Sino-Korean numbers.','It is 10:10.'],
+[8,'___ 시 십 분이에요. (2, native)','두','두,이,둘,이십','시 takes native numbers: 두.','It is 2:10.'],
+[8,'일곱 시___ 만나요.','에','에,에서,을,도','Specific time takes 에.','Let us meet at seven.']
+].map(([l,s,a,o,w,e])=>({l,k:'F|'+s,s,a:a.split('|'),o:o.split(','),w,e,f:1}));
+/* verb and adjective forms: [dict, english, polite, past, wrong polite, wrong past, lesson (polite), lesson (past)] */
+[['먹다','eat','먹어요','먹었어요','먹아요','먹았어요',3,5],['마시다','drink','마셔요','마셨어요','마시어요','마시었어요',3,5],['보다','see, watch','봐요','봤어요','보어요','보었어요',3,5],
+ ['가다','go','가요','갔어요','가아요','가았어요',4,5],['오다','come','와요','왔어요','오아요','오았어요',4,5],['읽다','read','읽어요','읽었어요','읽아요','읽았어요',3,5],
+ ['쓰다','write','써요','썼어요','쓰어요','쓰었어요',3,5],['만나다','meet','만나요','만났어요','만나아요','만나았어요',3,5],['사다','buy','사요','샀어요','사아요','사았어요',3,5],
+ ['자다','sleep','자요','잤어요','자아요','자았어요',3,5],['공부하다','study','공부해요','공부했어요','공부하요','공부하었어요',3,5],['일하다','work','일해요','일했어요','일하요','일하었어요',3,5],
+ ['좋다','be good','좋아요','좋았어요','좋어요','좋었어요',7,7],['크다','be big','커요','컸어요','크어요','크었어요',7,7],['작다','be small','작아요','작았어요','작어요','작었어요',7,7],
+ ['많다','be many','많아요','많았어요','많어요','많었어요',7,7],['예쁘다','be pretty','예뻐요','예뻤어요','예쁘어요','예쁘었어요',7,7],['재미있다','be fun','재미있어요','재미있었어요','재미있아요','재미있았어요',7,7],
+ ['맛있다','be delicious','맛있어요','맛있었어요','맛있아요','맛있았어요',7,7],['덥다','be hot','더워요','더웠어요','덥어요','덥었어요',7,7],['춥다','be cold','추워요','추웠어요','춥어요','춥었어요',7,7],
+ ['어렵다','be difficult','어려워요','어려웠어요','어렵어요','어렵었어요',7,7],['쉽다','be easy','쉬워요','쉬웠어요','쉽어요','쉽었어요',7,7]
+].forEach(([d,en,po,pa,wp,wa,l1,l2])=>{
+  F.push({l:l1,cj:1,k:'F|'+d+'p',s:`___ (${d}, polite present)`,a:[po],o:[po,wp,pa,d],w:`${d} → ${po}.`,e:`to ${en}`,f:1});
+  F.push({l:l2,cj:1,k:'F|'+d+'q',s:`___ (${d}, polite past)`,a:[pa],o:[pa,wa,po,d],w:`${d} → ${pa}.`,e:`to ${en}, past`,f:1})});
+const CHEAT=[['은 / 는','Topic. 은 after consonant, 는 after vowel.','학생은 · 저는'],['이 / 가','Subject (also before 아니에요, with 있다/없다 and adjectives). 이 after consonant, 가 after vowel.','책이 · 친구가'],
+['을 / 를','Object of a verb. 을 after consonant, 를 after vowel.','밥을 · 커피를'],['에','Destination (가다/오다), location of 있다, time, position words.','학교에 · 세 시에 · 위에'],
+['에서','Place where an action happens.','도서관에서 공부해요'],['도','Also. Replaces 은/는/이/가/을/를.','저도'],['하고','And (between nouns).','빵하고 우유'],
+['이에요 / 예요','To be. 이에요 after consonant, 예요 after vowel.','학생이에요 · 의사예요'],['-아요 / -어요','Present polite. ㅏ/ㅗ → 아요, others → 어요, 하다 → 해요.','가요 · 먹어요 · 해요'],
+['-았어요 / -었어요','Past polite.','갔어요 · 먹었어요 · 했어요'],['-고 싶어요','Want to.','가고 싶어요'],['안','Not (before the verb).','안 먹어요'],['-(으)ㄹ까요?','Shall we? Vowel stem + ㄹ까요, consonant stem + 을까요.','볼까요 · 먹을까요'],['시 / 분','시 takes native numbers, 분 takes Sino-Korean numbers.','세 시 십 분']];
+S.fill={q:null,mode:ld('kr.fmode','choice'),pick:null,shown:false,opts:[]};
+const fpool=()=>F.filter(q=>S.sel.has(q.l));
+function nextFill(){const p=fpool(),f=S.fill;f.pick=null;f.shown=false;
+  if(!p.length){f.q=null;return}
+  f.q=pick(p,f.q&&id(f.q));f.opts=[...f.q.o].sort(()=>Math.random()-.5)}
+const sent=(q,ans,cls)=>esc(q.s).replace('___',ans==null?'<span class="blank">&nbsp;</span>':`<span class="fillin ${cls||''}">${esc(ans==='X'?'—':ans)}</span>`);
+function renderFill(){
+  const v=$('#v-fill'),f=S.fill,p=fpool();
+  if(!p.length){v.innerHTML='<div class="empty">No lessons selected. Open the lessons panel and pick some.</div>';return}
+  if(!f.q||!S.sel.has(f.q.l))nextFill();const q=f.q,m=p.filter(mastered).length;
+  const ok=f.pick!==null&&q.a.includes(f.pick);
+  let ans=null,cls='';if(f.pick!==null){ans=q.a[0];cls='right'}else if(f.shown){ans=q.a.join(' / ');cls='right'}
+  const show=f.pick!==null||f.shown;
+  v.innerHTML=`<div class="meta"><span><span class="tag">Lesson ${q.l}</span> Fill in the blank</span><span>${m} / ${p.length} mastered</span></div>
+  <div class="meter"><i style="width:${m/p.length*100}%"></i></div>
+  <div class="row" style="margin-top:12px"><div class="seg" id="fmode"><button data-m="choice" aria-pressed="${f.mode==='choice'}">Choices</button><button data-m="recall" aria-pressed="${f.mode==='recall'}">Recall</button></div></div>
+  <div class="q" style="margin-top:12px"><div class="fs">${sent(q,show?ans:null,cls)}</div>
+    <div class="en" style="margin-top:6px;color:var(--muted);font-size:1rem;font-weight:400">${esc(q.e)}</div></div>
+  ${f.mode==='choice'?`<div class="opts" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">${f.opts.map((o,i)=>`<button class="opt ko p ${show?(q.a.includes(o)?'right':o===f.pick?'wrong':''):''}" data-o="${i}" ${show?'disabled':''}>${o==='X'?'— none':esc(o)}</button>`).join('')}</div>`
+   :(show?'':`<div class="row" style="margin-top:12px"><button class="btn sun grow" id="freveal">Show answer</button></div>`)}
+  ${show?`<div class="why"><b>${f.pick!==null?(ok?'Correct. ':'Not quite. '):''}</b>${esc(q.w)}</div>
+    <div class="row" style="margin-top:12px"><button class="btn sm" id="flisten">${spk} Listen</button>${(f.pick!==null&&!ok)||f.mode==='recall'?'<button class="btn sm sun" data-explain="fill">Explain</button>':''}<span class="grow"></span>
+    ${f.mode==='recall'&&f.pick===null?'<button class="btn bad" data-fr="0">Missed it</button><button class="btn good" data-fr="1">Got it</button>':'<button class="btn primary" id="fnext">Next</button>'}</div>`:''}
+  <h2 class="sec">Particle and ending cheat sheet</h2>
+  <details class="g"><summary>Open the cheat sheet</summary><div class="body cheatw"><table class="cheat"><tbody>${CHEAT.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}<br><span style="color:var(--muted)">${esc(r[2])}</span></td></tr>`).join('')}</tbody></table></div></details>`;
+}
+$('#v-fill').onclick=e=>{const f=S.fill,q=f.q;
+  const md=e.target.closest('[data-m]');if(md){f.mode=md.dataset.m;sv('kr.fmode',f.mode);f.pick=null;f.shown=false;renderFill();return}
+  if(e.target.closest('#freveal')){f.shown=true;renderFill();return}
+  if(e.target.closest('#flisten')){say(q.s.replace('___',q.a[0]==='X'?'':q.a[0]));return}
+  if(e.target.closest('#fnext')){nextFill();renderFill();return}
+  const fr=e.target.closest('[data-fr]');if(fr){mark(q,fr.dataset.fr==='1');renderPanel();nextFill();renderFill();return}
+  const o=e.target.closest('[data-o]');if(o&&f.pick===null){f.pick=f.opts[+o.dataset.o];mark(q,q.a.includes(f.pick));renderPanel();
+    if(q.a.includes(f.pick))say(q.s.replace('___',q.a[0]==='X'?'':q.a[0]));renderFill()}};
+
+/* ---------- WRITE ---------- */
+const cv=$('#cv'),ctx=cv.getContext('2d'),pad=$('#pad');
+let strokes=[],cur=null,dpr=1,tool='pen',colorKey='ink',inMode='any',lastPen=0,penLocked=false;
+function syncIn(){$$('#inSeg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.i===inMode))}
+function penSeen(){lastPen=Date.now();if(!penLocked){penLocked=true;inMode='pen';syncIn()}
+  if(cur&&cur.t!=='pen'){strokes.pop();cur=null;redraw()}} // a palm landed first: drop it
+const COL={red:'#d93a2f',blue:'#2563eb'};
+const colorOf=k=>COL[k]||getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||'#000';
+function sizeCanvas(){const r=pad.getBoundingClientRect();if(!r.width)return;dpr=Math.max(1,devicePixelRatio||1);
+  cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);redraw();fitGhost()}
+function seg(s,a,b){const W=cv.width/dpr,H=cv.height/dpr;const pr=b.p;
+  ctx.lineWidth=s.er?s.w*5:s.w*(.45+pr*1.1);ctx.beginPath();ctx.moveTo(a.x*W,a.y*H);ctx.lineTo(b.x*W,b.y*H);ctx.stroke()}
+function drawStroke(s){ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap=ctx.lineJoin='round';
+  ctx.globalCompositeOperation=s.er?'destination-out':'source-over';ctx.strokeStyle=s.er?'#000':colorOf(s.c);ctx.fillStyle=ctx.strokeStyle;
+  const p=s.p;if(p.length===1){const W=cv.width/dpr,H=cv.height/dpr;ctx.beginPath();ctx.arc(p[0].x*W,p[0].y*H,(s.er?s.w*2.5:s.w*.8),0,7);ctx.fill()}
+  for(let i=1;i<p.length;i++)seg(s,p[i-1],p[i]);ctx.restore()}
+function redraw(){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);strokes.forEach(drawStroke)}
+function pt(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height,p:e.pointerType==='pen'&&e.pressure>0?e.pressure:.5}}
+cv.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='pen')penSeen();
+  else if(e.pointerType==='touch'&&(inMode==='pen'||Date.now()-lastPen<800))return; // palm rejection
+  e.preventDefault();cv.setPointerCapture(e.pointerId);
+  cur={id:e.pointerId,t:e.pointerType,er:tool==='er',c:colorKey,w:3.2,p:[pt(e)]};strokes.push(cur);drawStroke(cur)});
+cv.addEventListener('pointermove',e=>{if(!cur||e.pointerId!==cur.id)return;e.preventDefault();
+  if(e.pointerType==='pen')lastPen=Date.now();
+  const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap=ctx.lineJoin='round';
+  ctx.globalCompositeOperation=cur.er?'destination-out':'source-over';ctx.strokeStyle=cur.er?'#000':colorOf(cur.c);
+  for(const ev of (evs.length?evs:[e])){const n=pt(ev),a=cur.p[cur.p.length-1];cur.p.push(n);seg(cur,a,n)}ctx.restore()});
+const end=e=>{if(cur&&e.pointerId===cur.id)cur=null};
+cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+function fitGhost(){const g=$('#ghost');if(!S.w.card)return;const t=S.w.card.k.replace(/\s*\(.*?\)/g,'').replace(/\s+/g,' ');const W=pad.clientWidth,H=pad.clientHeight;
+  g.textContent=t;g.style.fontSize=Math.max(28,Math.min(H*.6,W*.92/Math.max(2,t.length*.95)))+'px'}
+new ResizeObserver(()=>{if(S.tab==='write')sizeCanvas()}).observe(pad);
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',redraw);
+
+$('#toolSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;tool=b.dataset.t;$$('#toolSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b))};
+$('#inSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;inMode=b.dataset.i;penLocked=true;syncIn()};
+$$('.sw').forEach(b=>b.onclick=()=>{colorKey=b.dataset.c;tool='pen';$$('#toolSeg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t==='pen'));updSw()});
+function updSw(){$$('.sw').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===colorKey))}updSw();
+$('#undoBtn').onclick=()=>{strokes.pop();redraw()};
+$('#clearBtn').onclick=()=>{strokes=[];redraw()};
+
+function nextWrite(free){
+  const p=pool();strokes=[];redraw();
+  S.w.card=free||(p.length?pick(p,S.w.card&&id(S.w.card)):null);S.w.shown=!!(free&&free.free);renderWrite();if(S.w.hear&&S.w.card&&!S.w.card.free)say(S.w.card.k)}
+function renderWrite(){
+  const c=S.w.card,p=pool();$('#wCount').textContent=c&&c.free?'':`${p.filter(mastered).length} / ${p.length} mastered`;
+  if(!c){$('#wTag').innerHTML='';$('#wPrompt').innerHTML='<div class="en">No cards match. Pick a lesson in the lessons panel.</div>';$('#wActions').innerHTML='';$('#ghost').hidden=true;return}
+  $('#wTag').innerHTML=c.free?'<span class="tag">Tracing</span>':`<span class="tag">Lesson ${c.l}</span> ${esc(LT[c.l]||'')}`;
+  $('#wPrompt').innerHTML=c.free?`<div class="ko">${esc(c.k)}</div><div class="en">${esc(c.e)}</div>`
+    :(S.w.hear&&!S.w.shown?`<div class="hint" style="font-size:.8rem;color:var(--muted)">Listen, then write what you hear</div><button class="btn sun" data-w="listen" style="margin-top:8px">${spk} Play again</button>`
+     :`<div class="hint" style="font-size:.8rem;color:var(--muted)">${S.w.hear?'You heard':'Write this in Korean'}</div><div style="font-size:1.4rem;font-weight:700;overflow-wrap:anywhere">${esc(c.e)}</div>`)+
+     (S.w.shown?`<div class="ko" style="margin-top:6px">${esc(c.k)}</div>`:'');
+  $$('#wmode button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.wm==='hear')===S.w.hear));
+  $('#ghost').hidden=!(S.w.shown&&S.w.trace);fitGhost();
+  $('#wActions').innerHTML=(S.w.shown?
+    (c.free?'':`<button class="btn bad grow" data-w="miss">Missed it</button><button class="btn good grow" data-w="ok">Got it</button>`)
+    +`<button class="btn sm" data-w="listen">${spk} Listen</button>${c.free?'':'<button class="btn sm sun" data-explain="write">Explain</button>'}<button class="btn sm" data-w="trace">${S.w.trace?'Hide guide':'Show guide'}</button>`
+    :`<button class="btn sun grow" data-w="show">Show answer</button>`)+`<button class="btn sm" data-w="skip">${c.free?'Next card':'Skip'}</button>`}
+$('#wmode').onclick=e=>{const b=e.target.closest('[data-wm]');if(!b)return;S.w.hear=b.dataset.wm==='hear';sv('kr.hear',S.w.hear);nextWrite()};
+$('#wPrompt').onclick=e=>{if(e.target.closest('[data-w="listen"]'))say(S.w.card.k)};
+$('#wActions').onclick=e=>{const b=e.target.closest('[data-w]');if(!b)return;const a=b.dataset.w,c=S.w.card;
+  if(a==='show'){S.w.shown=true;S.w.trace=true;renderWrite()}
+  else if(a==='trace'){S.w.trace=!S.w.trace;renderWrite()}
+  else if(a==='listen')say(c.k);
+  else if(a==='ok'||a==='miss'){mark(c,a==='ok');renderPanel();nextWrite()}
+  else if(a==='skip')nextWrite()};
+
+/* ---------- GRAMMAR ---------- */
+function renderGrammar(){
+  const gs=G.filter(g=>S.sel.has(g.l));
+  $('#v-grammar').innerHTML=gs.length?gs.map(g=>`<details class="g"><summary><span class="tag">L${g.l}</span>${esc(g.t)}</summary><div class="body"><span class="form">${esc(g.f)}</span><div>${esc(g.n)}</div>
+    ${g.x.map(([k,e])=>`<div class="ex"><b>${esc(k)}</b><span>${esc(e)}</span></div>`).join('')}</div></details>`).join('')
+    :`<div class="empty">No lessons selected.</div>`}
+$('#v-grammar').onclick=null;
+
+/* ---------- HANGUL ---------- */
+function renderHangul(){
+  const grp=(t,list,mk)=>`<h2 class="sec">${t}</h2><div class="hg">${list.map(c=>{const s=mk(c);return`<button data-h="${c}" data-s="${s}">${c}<small>${s}</small></button>`}).join('')}</div>`;
+  $('#v-hangul').innerHTML=`<div class="meta"><span>Tap a letter to hear it, then trace it on the Write tab.</span></div>
+  <div class="row" id="hSel" style="margin-bottom:6px"><span class="grow" id="hCur">Pick a letter</span><button class="btn sm sun" id="hTrace" disabled>Trace it</button></div>`+
+  grp('Consonants',CONS,c=>syl(c,'ㅏ'))+grp('Double consonants',TENSE,c=>syl(c,'ㅏ'))+grp('Vowels',VOW,v=>syl('ㅇ',v))+grp('Compound vowels',VOW2,v=>syl('ㅇ',v))}
+let hSel=null;
+$('#v-hangul').onclick=e=>{const b=e.target.closest('[data-h]');
+  if(b){hSel=b.dataset.h;say(b.dataset.s);$('#hCur').innerHTML=`<b style="font-family:var(--display);font-size:1.4rem">${hSel}</b> ${b.dataset.s}`;$('#hTrace').disabled=false;return}
+  if(e.target.closest('#hTrace')&&hSel){const s=$$('[data-h]').find(x=>x.dataset.h===hSel).dataset.s;go('write');nextWrite({free:true,l:0,k:hSel,e:'Trace this letter ('+s+')',t:'w'})}};
+
+/* ---------- EXPLAIN MY MISTAKE ---------- */
+let SAMPLE=null,exAbort=null,exMsgs=[],exQuick='';
+(async()=>{try{SAMPLE=(await window.claude?.use?.('sample'))||null}catch(e){SAMPLE=null}})();
+const clean=t=>String(t).replace(/<[^>]+>/g,'');
+function infoFor(k){
+  if(k==='quiz'){const q=S.quiz,x=q&&q.qs[q.i];if(!x)return null;
+    const yours=x.kind==='order'?x.sel.map(i=>x.tokens[i]).join(' '):(x.pick||'');
+    return{what:'a quiz question ('+x.sec+')',q:[x.head,x.ctx?'Dialogue:\n'+x.ctx.join('\n'):'',x.plain||x.big||'',x.audio&&x.hideBig?'The student heard (audio): '+x.audio:''].filter(Boolean).join('\n'),
+      opts:x.kind==='mc'?x.opts.join(' | '):'Words to order: '+x.tokens.join(' | '),yours,right:x.txt,note:x.why}}
+  if(k==='fill'){const f=S.fill,q=f.q;if(!q)return null;
+    return{what:'a fill-in-the-blank question',q:q.s+'\n(English: '+q.e+')',opts:q.o.join(' | '),yours:f.pick!==null?f.pick:'(did not know, used Recall mode)',right:q.a.join(' or '),note:q.w}}
+  if(k==='write'||k==='card'){const c=k==='write'?S.w.card:S.card;if(!c)return null;
+    return{what:'a vocabulary or sentence card',q:'Korean: '+c.k+'\nEnglish: '+c.e+'\nLesson '+c.l+' ('+(LT[c.l]||'')+')',opts:'',yours:'(could not recall or write it correctly)',right:c.k+' = '+c.e,note:''}}
+  return null}
+function exPrompt(i){return `You are a patient Korean tutor helping a beginner who studies from the Seoul National University Korean 1A textbook (lessons 1 to 8, so keep to beginner grammar). The student got ${i.what} wrong.
+
+Question:
+${i.q}
+${i.opts?'Choices: '+i.opts+'\n':''}Student's answer: ${i.yours||'(none)'}
+Correct answer: ${i.right}
+${i.note?'Rule from the app: '+i.note+'\n':''}
+Reply in plain English, under 130 words, in this order: (1) why the correct answer is right, (2) the most likely reason the student's answer is wrong, (3) one short rule or trick to remember it, (4) one more example sentence in Korean with an English translation. Use short paragraphs and no markdown headings.`}
+const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split(/\n{2,}/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+function exRender(txt,state){$('#sheetBody').innerHTML=(exQuick?`<div class="why" style="margin-top:0"><b>Quick rule.</b> ${esc(exQuick)}</div>`:'')+
+  (txt?`<div class="exa">${md(txt)}</div>`:'')+(state?`<div class="hint" style="color:var(--muted);margin-top:8px">${state}</div>`:'')}
+async function exAsk(){if(!SAMPLE){exRender('','Detailed explanations from Claude work in the published app. Open it from your claude.ai link.');return}
+  if(exAbort)exAbort.abort();exAbort=new AbortController();exRender('','Thinking…');$('#sheetQ').disabled=true;
+  try{const r=await SAMPLE(exMsgs,{signal:exAbort.signal,modelTier:'default',cache:false,onText:({text})=>exRender(text,'')});
+    exMsgs.push({role:'assistant',content:r.text});exRender(r.text,'')}
+  catch(err){if(err&&err.code==='cancelled')return;exRender('',err&&err.code==='not_granted'?'Claude was not allowed to answer. Tap Explain again and accept the prompt.':err&&err.code==='rate_limited'?'Too many requests. Wait a moment and try again.':'Could not get an explanation. Check your connection and try again.')}
+  finally{$('#sheetQ').disabled=false}}
+function openExplain(k){const i=infoFor(k);if(!i)return;exQuick=i.note||'';exMsgs=[{role:'user',content:exPrompt(i)}];$('#sheet').hidden=false;$('#sheetQ').value='';exAsk()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-explain]');if(b){e.preventDefault();openExplain(b.dataset.explain)}});
+$('#sheetClose').onclick=()=>{if(exAbort)exAbort.abort();$('#sheet').hidden=true};
+$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheetClose').click()};
+$('#sheetForm').onsubmit=e=>{e.preventDefault();const q=$('#sheetQ').value.trim();if(!q||!SAMPLE)return;exMsgs.push({role:'user',content:q});$('#sheetQ').value='';exAsk()};
+
+/* ---------- BOOT ---------- */
+rebuild();renderPanel();go('cards');
+</script>
+
+</body></html>
