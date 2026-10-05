@@ -23,7 +23,7 @@ window.SE_I18N = {
     hint: "Scroll to open",
     seeCamps: "See camps",
     campsH2: "2027 winter camps",
-    campsLede: "Winter camps in Chiang Mai, Phuket and Bangkok. Dates, fees and inclusions are all listed, with sources.",
+    campsLede: "Winter camps in Chiang Mai, Phuket, Bangkok, Kuala Lumpur and Penang. Dates, fees and inclusions are all listed, with sources.",
     aboutEyebrow: "About us",
     aboutH2: "Information before service.",
     quote: "“Recommended from experience.<br>Evaluated in person.”",
