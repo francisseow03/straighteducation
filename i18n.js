@@ -28,7 +28,7 @@ window.SE_I18N = {
     aboutH2: "Information before service.",
     quote: "“Recommended from experience.<br>Evaluated in person.”",
     aboutP1: "<strong>Straight Education</strong> helps Chinese families make sense of the schools and camps that are taking off in Malaysia and Thailand. For now we focus on winter camps, summer camps and short-term school placements across several cities, types and age groups. Every child is different, so we match to the child instead of pushing one “standard answer”.",
-    aboutP2: "Most parents are doing this for the first time. They need clear, specific information, not a sales pitch, so we put the information first and cite our sources. Whether you then want our help is up to you.",
+    aboutP2: "Most parents are doing this for the first time. They need clear, specific information, not a sales pitch, so we put the information first and cite our sources. No pressure, no obligations. We’re simply here when you need us.",
     regSoon2: "More regions coming gradually",
     does1h: "Camp registration",
     does1p: "Needs assessment, matching by your child's age and level, and booking places directly with the camp. Dates, fees and inclusions are listed together, and the camp's fees and our service fee are shown separately.",
