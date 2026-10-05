@@ -127,6 +127,12 @@ h2.sec{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(
 select.sel{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;min-height:40px}
 .row>.btn.grow{flex:1 1 130px;white-space:nowrap}
 #toast{pointer-events:none;position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:9;background:var(--fg);color:var(--bg);border-radius:12px;padding:12px 16px;max-width:560px;margin-inline:auto;font-size:.92rem;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+#sheet{position:fixed;inset:0;z-index:10;background:rgba(10,12,30,.55);display:flex;align-items:flex-end;justify-content:center}
+#sheet[hidden]{display:none!important}
+.sheetbox{background:var(--bg);color:var(--fg);width:100%;max-width:640px;max-height:82%;overflow:auto;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:12px}
+.exa p{margin:0 0 10px}
+.exa{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 14px 4px}
+#toast{z-index:11}
 </style>
 
 <div class="wrap">
@@ -173,6 +179,11 @@ select.sel{border:1.5px solid var(--line);background:var(--surface);border-radiu
   </main>
 </div>
 
+<div id="sheet" hidden role="dialog" aria-modal="true" aria-label="Explanation"><div class="sheetbox">
+  <div class="row"><b class="grow" style="font-family:var(--display);font-size:1.15rem">Why was it wrong?</b><button class="btn sm" id="sheetClose">Close</button></div>
+  <div id="sheetBody"></div>
+  <form class="field" id="sheetForm"><input id="sheetQ" placeholder="Ask a follow-up question" autocomplete="off"><button class="btn primary sm" type="submit">Ask</button></form>
+</div></div>
 <nav class="tabs" aria-label="Sections"><div role="tablist" id="tabs"></div></nav>
 
 <script>
@@ -360,7 +371,7 @@ function renderCards(){
     ${!S.flip?`<div class="${cls}">${esc(front)}</div><div class="hint">Tap to flip</div>`
     :`<div class="${S.side==='ko'?'en':'ko'+(c.t==='s'?' s':'')}">${esc(back)}</div><div class="hint">${esc(front)}</div>`}
   </div>
-  <div class="row"><button class="btn sm" id="sideBtn">${S.side==='ko'?'Korean first':'English first'}</button><button class="btn sm" id="listenBtn">${spk} Listen</button>
+  <div class="row"><button class="btn sm" id="sideBtn">${S.side==='ko'?'Korean first':'English first'}</button><button class="btn sm" id="listenBtn">${spk} Listen</button>${S.flip?'<button class="btn sm sun" data-explain="card">Explain</button>':''}
    <span class="grow"></span><label style="font-size:.8rem;color:var(--muted)">Lesson <select class="sel" id="fixL">${[1,2,3,4,5,6,7,8].map(l=>`<option ${l===c.l?'selected':''}>${l}</option>`).join('')}</select></label><button class="btn sm" id="hideBtn">Hide</button></div>
   <div class="row" style="margin-top:12px"><button class="btn bad grow" data-r="0">Again</button><button class="btn good grow" data-r="1">Got it</button></div>`;
 }
@@ -407,14 +418,14 @@ const QM=[['mean','Meaning','10 vocabulary questions, Korean and English.'],['li
  ['num','Numbers','Prices, counters and clock times.'],['read','Reading','Short dialogues with questions.'],['mock','Mock test','About 30 mixed questions in test order, with a score for each section.']];
 S.qm=ld('kr.qm','mean');
 function mcq(o){const right=[].concat(o.right),wr=uq(o.wrong.filter(w=>!right.includes(w)));
-  return{kind:'mc',sec:o.sec,head:o.head,big:o.big||'',bigHtml:o.bigHtml||null,filledHtml:o.filledHtml||null,cls:o.cls||(o.bigKo?'ko':'en'),audio:o.audio||null,hideBig:!!o.hideBig,ctx:o.ctx||null,
+  return{kind:'mc',plain:o.plain||'',sec:o.sec,head:o.head,big:o.big||'',bigHtml:o.bigHtml||null,filledHtml:o.filledHtml||null,cls:o.cls||(o.bigKo?'ko':'en'),audio:o.audio||null,hideBig:!!o.hideBig,ctx:o.ctx||null,
     opts:shuf([right[0],...(o.ordered?wr:shuf(wr)).slice(0,3)]),right,ko:!!o.ko,card:o.card||null,why:o.why||'',txt:right[0],done:null}}
 function pickN(p,n){const out=[],left=[...p];while(out.length<n&&left.length){const c=pick(left);out.push(c);left.splice(left.findIndex(x=>id(x)===id(c)),1)}return out}
 function others(c){const same=all().filter(x=>x.t===c.t&&x.k!==c.k&&x.e!==c.e),near=same.filter(x=>S.sel.has(x.l));return shuf(near.length>=3?near:same).slice(0,6)}
 function gMean(c){const k2e=Math.random()<.5,ds=others(c);
   return mcq({sec:'Vocabulary',head:k2e?'What does this mean?':'How do you say this in Korean?',big:k2e?c.k:c.e,bigKo:k2e,audio:k2e?c.k:null,right:k2e?c.e:c.k,wrong:ds.map(x=>k2e?x.e:x.k),ko:!k2e,card:c,why:`${c.k} = ${c.e}`})}
 function gListen(c){const ds=others(c);return mcq({sec:'Listening',head:'Listen, then choose the meaning',audio:c.k,hideBig:true,right:c.e,wrong:ds.map(x=>x.e),card:c,why:`${c.k} = ${c.e}`})}
-function gFillQ(q){return mcq({sec:q.cj?'Verb forms':'Particles & endings',head:q.cj?'Choose the correct form':'Choose what fits the blank',bigHtml:sent(q,null),filledHtml:sent(q,q.a[0],'right'),cls:'fs',audio:null,
+function gFillQ(q){return mcq({sec:q.cj?'Verb forms':'Particles & endings',head:q.cj?'Choose the correct form':'Choose what fits the blank',plain:q.s,bigHtml:sent(q,null),filledHtml:sent(q,q.a[0],'right'),cls:'fs',audio:null,
   right:q.a,wrong:q.o,ko:true,card:q,why:`${q.w} ${q.e}`})}
 function gOrder(c){const tokens=c.k.split(' ');let sh=shuf(tokens),t=0;while(sh.join(' ')===tokens.join(' ')&&t++<9)sh=shuf(tokens);
   return{kind:'order',sec:'Word order',head:'Put the words in order',big:c.e,cls:'en',audio:null,tokens:sh,answer:tokens,sel:[],card:c,why:c.k,txt:c.k,done:null,ok:false}}
@@ -458,7 +469,7 @@ function renderQuiz(){
   <div class="meter"><i style="width:${q.i/q.qs.length*100}%"></i></div>
   <div class="q" style="margin-top:14px"><div class="hint">${esc(x.head)}</div>
    ${x.ctx?`<div class="ctx">${x.ctx.map(l=>`<div>${esc(l)}</div>`).join('')}</div>`:''}${bigH}</div>${body}${fb}
-  <div class="row end" style="margin-top:14px">${x.done===null?'':'<button class="btn primary" id="qNext">'+(q.i+1<q.qs.length?'Next':'See score')+'</button>'}</div>`;
+  <div class="row end" style="margin-top:14px">${x.done===false?'<button class="btn sun" data-explain="quiz">Explain why</button>':''}${x.done===null?'':'<button class="btn primary" id="qNext">'+(q.i+1<q.qs.length?'Next':'See score')+'</button>'}</div>`;
 }
 function firstAudio(){const x=S.quiz&&S.quiz.qs[0];if(x&&x.audio&&x.hideBig)say(x.audio)}
 function qAnswer(x,ok){const q=S.quiz;x.done=ok;if(ok)q.ok++;if(x.card){mark(x.card,ok);renderPanel()}
@@ -589,7 +600,7 @@ function renderFill(){
   ${f.mode==='choice'?`<div class="opts" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">${f.opts.map((o,i)=>`<button class="opt ko p ${show?(q.a.includes(o)?'right':o===f.pick?'wrong':''):''}" data-o="${i}" ${show?'disabled':''}>${o==='X'?'— none':esc(o)}</button>`).join('')}</div>`
    :(show?'':`<div class="row" style="margin-top:12px"><button class="btn sun grow" id="freveal">Show answer</button></div>`)}
   ${show?`<div class="why"><b>${f.pick!==null?(ok?'Correct. ':'Not quite. '):''}</b>${esc(q.w)}</div>
-    <div class="row" style="margin-top:12px"><button class="btn sm" id="flisten">${spk} Listen</button><span class="grow"></span>
+    <div class="row" style="margin-top:12px"><button class="btn sm" id="flisten">${spk} Listen</button>${(f.pick!==null&&!ok)||f.mode==='recall'?'<button class="btn sm sun" data-explain="fill">Explain</button>':''}<span class="grow"></span>
     ${f.mode==='recall'&&f.pick===null?'<button class="btn bad" data-fr="0">Missed it</button><button class="btn good" data-fr="1">Got it</button>':'<button class="btn primary" id="fnext">Next</button>'}</div>`:''}
   <h2 class="sec">Particle and ending cheat sheet</h2>
   <details class="g"><summary>Open the cheat sheet</summary><div class="body cheatw"><table class="cheat"><tbody>${CHEAT.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}<br><span style="color:var(--muted)">${esc(r[2])}</span></td></tr>`).join('')}</tbody></table></div></details>`;
@@ -662,7 +673,7 @@ function renderWrite(){
   $('#ghost').hidden=!(S.w.shown&&S.w.trace);fitGhost();
   $('#wActions').innerHTML=(S.w.shown?
     (c.free?'':`<button class="btn bad grow" data-w="miss">Missed it</button><button class="btn good grow" data-w="ok">Got it</button>`)
-    +`<button class="btn sm" data-w="listen">${spk} Listen</button><button class="btn sm" data-w="trace">${S.w.trace?'Hide guide':'Show guide'}</button>`
+    +`<button class="btn sm" data-w="listen">${spk} Listen</button>${c.free?'':'<button class="btn sm sun" data-explain="write">Explain</button>'}<button class="btn sm" data-w="trace">${S.w.trace?'Hide guide':'Show guide'}</button>`
     :`<button class="btn sun grow" data-w="show">Show answer</button>`)+`<button class="btn sm" data-w="skip">${c.free?'Next card':'Skip'}</button>`}
 $('#wmode').onclick=e=>{const b=e.target.closest('[data-wm]');if(!b)return;S.w.hear=b.dataset.wm==='hear';sv('kr.hear',S.w.hear);nextWrite()};
 $('#wPrompt').onclick=e=>{if(e.target.closest('[data-w="listen"]'))say(S.w.card.k)};
@@ -691,6 +702,43 @@ let hSel=null;
 $('#v-hangul').onclick=e=>{const b=e.target.closest('[data-h]');
   if(b){hSel=b.dataset.h;say(b.dataset.s);$('#hCur').innerHTML=`<b style="font-family:var(--display);font-size:1.4rem">${hSel}</b> ${b.dataset.s}`;$('#hTrace').disabled=false;return}
   if(e.target.closest('#hTrace')&&hSel){const s=$$('[data-h]').find(x=>x.dataset.h===hSel).dataset.s;go('write');nextWrite({free:true,l:0,k:hSel,e:'Trace this letter ('+s+')',t:'w'})}};
+
+/* ---------- EXPLAIN MY MISTAKE ---------- */
+let SAMPLE=null,exAbort=null,exMsgs=[],exQuick='';
+(async()=>{try{SAMPLE=(await window.claude?.use?.('sample'))||null}catch(e){SAMPLE=null}})();
+const clean=t=>String(t).replace(/<[^>]+>/g,'');
+function infoFor(k){
+  if(k==='quiz'){const q=S.quiz,x=q&&q.qs[q.i];if(!x)return null;
+    const yours=x.kind==='order'?x.sel.map(i=>x.tokens[i]).join(' '):(x.pick||'');
+    return{what:'a quiz question ('+x.sec+')',q:[x.head,x.ctx?'Dialogue:\n'+x.ctx.join('\n'):'',x.plain||x.big||'',x.audio&&x.hideBig?'The student heard (audio): '+x.audio:''].filter(Boolean).join('\n'),
+      opts:x.kind==='mc'?x.opts.join(' | '):'Words to order: '+x.tokens.join(' | '),yours,right:x.txt,note:x.why}}
+  if(k==='fill'){const f=S.fill,q=f.q;if(!q)return null;
+    return{what:'a fill-in-the-blank question',q:q.s+'\n(English: '+q.e+')',opts:q.o.join(' | '),yours:f.pick!==null?f.pick:'(did not know, used Recall mode)',right:q.a.join(' or '),note:q.w}}
+  if(k==='write'||k==='card'){const c=k==='write'?S.w.card:S.card;if(!c)return null;
+    return{what:'a vocabulary or sentence card',q:'Korean: '+c.k+'\nEnglish: '+c.e+'\nLesson '+c.l+' ('+(LT[c.l]||'')+')',opts:'',yours:'(could not recall or write it correctly)',right:c.k+' = '+c.e,note:''}}
+  return null}
+function exPrompt(i){return `You are a patient Korean tutor helping a beginner who studies from the Seoul National University Korean 1A textbook (lessons 1 to 8, so keep to beginner grammar). The student got ${i.what} wrong.
+
+Question:
+${i.q}
+${i.opts?'Choices: '+i.opts+'\n':''}Student's answer: ${i.yours||'(none)'}
+Correct answer: ${i.right}
+${i.note?'Rule from the app: '+i.note+'\n':''}
+Reply in plain English, under 130 words, in this order: (1) why the correct answer is right, (2) the most likely reason the student's answer is wrong, (3) one short rule or trick to remember it, (4) one more example sentence in Korean with an English translation. Use short paragraphs and no markdown headings.`}
+const md=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split(/\n{2,}/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+function exRender(txt,state){$('#sheetBody').innerHTML=(exQuick?`<div class="why" style="margin-top:0"><b>Quick rule.</b> ${esc(exQuick)}</div>`:'')+
+  (txt?`<div class="exa">${md(txt)}</div>`:'')+(state?`<div class="hint" style="color:var(--muted);margin-top:8px">${state}</div>`:'')}
+async function exAsk(){if(!SAMPLE){exRender('','Detailed explanations from Claude work in the published app. Open it from your claude.ai link.');return}
+  if(exAbort)exAbort.abort();exAbort=new AbortController();exRender('','Thinking…');$('#sheetQ').disabled=true;
+  try{const r=await SAMPLE(exMsgs,{signal:exAbort.signal,modelTier:'default',cache:false,onText:({text})=>exRender(text,'')});
+    exMsgs.push({role:'assistant',content:r.text});exRender(r.text,'')}
+  catch(err){if(err&&err.code==='cancelled')return;exRender('',err&&err.code==='not_granted'?'Claude was not allowed to answer. Tap Explain again and accept the prompt.':err&&err.code==='rate_limited'?'Too many requests. Wait a moment and try again.':'Could not get an explanation. Check your connection and try again.')}
+  finally{$('#sheetQ').disabled=false}}
+function openExplain(k){const i=infoFor(k);if(!i)return;exQuick=i.note||'';exMsgs=[{role:'user',content:exPrompt(i)}];$('#sheet').hidden=false;$('#sheetQ').value='';exAsk()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-explain]');if(b){e.preventDefault();openExplain(b.dataset.explain)}});
+$('#sheetClose').onclick=()=>{if(exAbort)exAbort.abort();$('#sheet').hidden=true};
+$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheetClose').click()};
+$('#sheetForm').onsubmit=e=>{e.preventDefault();const q=$('#sheetQ').value.trim();if(!q||!SAMPLE)return;exMsgs.push({role:'user',content:q});$('#sheetQ').value='';exAsk()};
 
 /* ---------- BOOT ---------- */
 rebuild();renderPanel();go('cards');
