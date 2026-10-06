@@ -135,7 +135,7 @@
     const upcoming = camps.filter((c) => !isPast(c));
     const root = $("#campRoot");
     if (!loaded) {
-      root.innerHTML = `<p class="muted">${T.loading}</p>`;
+      if (!root.querySelector("[data-static]")) root.innerHTML = `<p class="muted">${T.loading}</p>`;
     } else if (!camps.length) {
       root.innerHTML = `<div class="reveal"><h3 class="h2" style="margin-bottom:12px">${T.emptyH}</h3><p class="lede" style="margin-bottom:28px">${T.emptyP}</p><button class="btn" data-copy-wechat>${T.copyWx}</button></div>`;
     } else {
@@ -216,8 +216,8 @@
     document.title = T.title;
     if (metaDesc) metaDesc.setAttribute("content", T.desc);
     const dark = $(".brand .on-dark"), light = $(".brand .on-light");
-    if (dark) dark.src = isEn() ? "assets/logo-en-dark.png" : "assets/logo-cn-dark.png";
-    if (light) light.src = isEn() ? "assets/logo-en-light.png" : "assets/logo-cn-light.png";
+    if (dark) dark.src = isEn() ? "/assets/logo-en-dark.png" : "/assets/logo-cn-dark.png";
+    if (light) light.src = isEn() ? "/assets/logo-en-light.png" : "/assets/logo-cn-light.png";
     $(".brand").setAttribute("aria-label", T.logoAlt);
     const cover = $(".front img");
     if (cover) cover.alt = T.logoAlt;
@@ -235,7 +235,14 @@
     renderCamps();
     if (settings) renderContact(settings);
   }
-  $("#langBtn").addEventListener("click", () => setLang(isEn() ? "zh" : "en", true));
+  // English has its own URL (/en/) so search engines can index both languages
+  const onEnPage = window.__static === "en";
+  $("#langBtn").addEventListener("click", () => {
+    const to = isEn() ? "zh" : "en";
+    if (to === "en" && !onEnPage) { try { localStorage.setItem("se_lang", "en"); } catch {} location.href = "/en/"; }
+    else if (to === "zh" && onEnPage) { try { localStorage.setItem("se_lang", "zh"); } catch {} location.href = "/?lang=zh"; }
+    else setLang(to, true);
+  });
   try { const q = new URLSearchParams(location.search).get("lang"); if (q === "en" || q === "zh") { try { localStorage.setItem("se_lang", q); } catch {} } } catch {}
   applyStatic();
 
@@ -256,7 +263,7 @@
     const t = setTimeout(() => ctl && ctl.abort(), ms);
     return fetch(url, ctl ? { signal: ctl.signal, cache: "no-store" } : { cache: "no-store" }).then((r) => { clearTimeout(t); if (!r.ok) throw new Error(r.status); return r.json(); });
   };
-  withTimeout("data.json?t=" + Math.floor(Date.now() / 60000), 8000)
+  withTimeout("/data.json?t=" + Math.floor(Date.now() / 60000), 8000)
     .then((d) => { if (!live) { apply(d); painted = true; } })
     .catch(() => {});
   withTimeout(API, 10000)

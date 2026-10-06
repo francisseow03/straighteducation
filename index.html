@@ -8,8 +8,11 @@
 <meta name="theme-color" content="#2F2B28">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
-<script>(function(){try{var q=new URLSearchParams(location.search).get("lang");var v=null;try{v=localStorage.getItem("se_lang")}catch(e){}var l=(q==="en"||q==="zh")?q:((v==="en"||v==="zh")?v:null);if(!l){var n=(navigator.languages&&navigator.languages[0])||navigator.language||"";l=(!n||/^zh/i.test(n))?"zh":"en"}window.__lang=l;document.documentElement.lang=l==="en"?"en":"zh-CN";if(l==="en"){document.documentElement.className+=" pre-en";setTimeout(function(){document.documentElement.className=document.documentElement.className.replace(" pre-en","")},2500)}}catch(e){}})();</script>
+<script>(function(){try{var q=new URLSearchParams(location.search).get("lang");var v=null;try{v=localStorage.getItem("se_lang")}catch(e){}var l=(q==="en"||q==="zh")?q:((v==="en"||v==="zh")?v:null);if(!l&&/bot|spider|crawl|slurp/i.test(navigator.userAgent))l="zh";if(!l){var n=(navigator.languages&&navigator.languages[0])||navigator.language||"";l=(!n||/^zh/i.test(n))?"zh":"en"}window.__lang=l;document.documentElement.lang=l==="en"?"en":"zh-CN";if(l==="en"){document.documentElement.className+=" pre-en";setTimeout(function(){document.documentElement.className=document.documentElement.className.replace(" pre-en","")},2500)}}catch(e){}})();</script>
 <link rel="canonical" href="https://straighteducation.com/">
+<link rel="alternate" hreflang="zh-CN" href="https://straighteducation.com/">
+<link rel="alternate" hreflang="en" href="https://straighteducation.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://straighteducation.com/">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://straighteducation.com/">
@@ -27,7 +30,7 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <!-- CJK web fonts load without blocking; phones fall back to PingFang / YaHei instantly (Google may be slow or blocked in mainland China) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600&display=swap" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="styles.css?v=202610061200">
+<link rel="stylesheet" href="styles.css?v=202610061500">
 <style>
   :root { color-scheme: only light; }
   html.pre-en body { visibility: hidden; }
@@ -35,6 +38,9 @@
   .dark { --body: rgba(250, 241, 228, .78); }
   p { color: var(--body); }
   [hidden] { display: none !important; }
+  .seo-camps { list-style: none; margin: 0; padding: 0; }
+  .seo-camps li { padding: 18px 0; border-bottom: 1px solid var(--ink-14); color: var(--body); line-height: 1.6 }
+  .seo-camps strong { color: var(--ink) }
 
 
   /* language switch + English typography */
@@ -431,7 +437,7 @@
             <!-- the right-hand page (revealed once the cover opens) -->
             <div class="pg base pgc">
               <p class="lbl"><span data-i18n="latestCamps">最新营期</span> <span class="chip gold" id="hStatus">报名中</span></p>
-              <h2 id="bkTitle">2027 寒假营期 · 冬令营与游学营</h2>
+              <h2 id="bkTitle">2027 寒假营期</h2>
               <p class="sub" id="bkMeta">泰国清迈 · 普吉岛 · 曼谷</p>
               <div class="btns">
                 <a class="btn" href="#camp"><span data-i18n="seeLatest">查看最新营期</span> <span class="arrow">↓</span></a>
@@ -473,7 +479,7 @@
     <a class="next-bar stagger" href="#camp" id="hNext">
       <span class="wrap" style="--k:4">
         <span class="nb-label"><span data-i18n="latestCamps">最新营期</span> <span class="chip gold" id="hStatus2">报名中</span></span>
-        <span class="nb-title" id="hNextTitle">2027 寒假营期 · 冬令营与游学营</span>
+        <span class="nb-title" id="hNextTitle">2027 寒假营期</span>
         <span class="nb-meta" id="hNextMeta">清迈 / 普吉岛 / 曼谷</span>
         <span class="nb-go"><span data-i18n="seeCamps">查看营期</span> <span class="arrow">→</span></span>
       </span>
@@ -488,7 +494,7 @@
         <h2 class="split"><span class="ln"><span data-i18n="campsH2">2027 寒假营期</span></span></h2>
         <p class="lede reveal" style="--d:.1s" data-i18n="campsLede">泰国清迈、普吉岛、曼谷，马来西亚吉隆坡、槟城，以及新加坡的冬令营，日期、费用、包含项目全部列清，注明来源。</p>
       </div>
-      <div id="campRoot"><p class="muted">正在载入营期…</p></div>
+      <div id="campRoot"><!--SE-CAMPS--><ul class="seo-camps" data-static><li><strong>Traidhos 冬季英语营 · 泰国清迈</strong> — 泰国清迈 Chiang Mai · 2027-01-04 – 2027-01-29 · 6–12 岁 · THB 15,000 / 期</li><li><strong>曼谷德威国际学校冬令营 · 泰国曼谷</strong> — 泰国曼谷 Bangkok · 2027-01-04 – 2027-01-08 · 4–12 岁（Reception – Year 7） · THB 19,500 / 周（约 ¥3,982）</li><li><strong>蒙特国际学校冬令营 · 泰国清迈</strong> — 泰国清迈 Hang Dong · 2027-01-04 – 2027-02-26 · 3–16 岁（分 3–6 / 7–9 / 10–16 岁三组） · THB 11,000 / 周起（早鸟）</li><li><strong>丽晶国际学校冬令营 · 泰国曼谷</strong> — 泰国曼谷 Bangkok（寄宿校区） · 2027-01-11 – 2027-02-19 · 3–12 岁 · THB 23,920 / 周起（约 ¥4,884，早鸟）</li><li><strong>NES 英语冬令营 · 泰国清迈</strong> — 泰国清迈 · 2027-01-18 – 2027-02-26 · 4–15 岁（按年龄分班） · THB 5,999.99 / 周起</li><li><strong>香柏树国际学校冬令营 · 泰国清迈</strong> — 泰国清迈 · 2027-01-18 – 2027-02-12 · 6–18 岁（小学组 / 中学组） · THB 10,000 / 周（约 ¥2,042，早鸟）</li><li><strong>普吉岛 PGIS 国际学校冬令营 · 泰国普吉岛</strong> — 泰国普吉岛 Phuket · 2027-01-25 – 2027-02-12 · 主营队 6–8 岁（仅 20 席），插班 3–5 岁（限 4 名） · THB 18,000 / 周起（约 ¥3,830，早鸟）</li><li><strong>清迈森林营地冬令营 · 泰国清迈</strong> — 泰国清迈 · 2027-01-25 – 2027-02-19 · 4–13 岁（按年龄与英语能力分组，师生比约 1:5–1:7） · THB 19,790 / 周起</li><li><strong>SILK 幼儿园寒假插班 · 泰国普吉岛</strong> — 泰国普吉岛 Phuket（乐古浪度假区） · 幼幼班 Nursery ＋ 幼儿园 K1–K3 · THB 5,750 / 周起</li><li><strong>阿德科特国际学校冬令营 · 马来西亚</strong> — 马来西亚 · 阿德科特校区（校内寄宿） · 2027-01-25 – 2027-02-03 · 10–14 岁 · RM 4,750（早鸟，10 月 31 日前付费），之后 RM 4,980</li><li><strong>曼切斯特学习中心冬令营 · 马来西亚吉隆坡</strong> — 马来西亚吉隆坡 · 满家乐 Mont Kiara · 2026-12-14 · 精品班 2–6 人 / 团体班 8–15 人；另设 17 岁以上成人班 / 家长陪读班 · 团体班 2 周 RM 2,680 起；精品班 2 周 RM 4,380 起（早鸟）</li><li><strong>California 语言学校冬令营 · 马来西亚吉隆坡</strong> — 马来西亚吉隆坡 · 双子塔下（市中心） · 2027-01-04 – 2027-02-26 · 6–12 岁、13 岁以上分班 · 强化英语 1 周 USD 417 起；1 个月 USD 1,295</li><li><strong>ERICAN 英语集训冬令营 · 马来西亚吉隆坡</strong> — 马来西亚吉隆坡 · 武吉免登 Bukit Bintang · 2027-01-04 – 2027-02-26 · 6–15 岁（少年探索者 6–11 岁 / 未来领袖 12–15 岁） · USD 548.2 / 2 周起（约 ¥3,678）</li><li><strong>The Forest Penang 冬令营 · 马来西亚槟城</strong> — 马来西亚槟城 Penang · 按 CEFR 分班（Foundation / Emerging / Progressive） · 学费 RM 950 / 周（另付书本费 RM 120，午餐 RM 25 / 餐）</li><li><strong>BCIS 普吉岛国际学校假期营 · 泰国普吉岛</strong> — 泰国普吉岛 Phuket · 2026-10-12 – 2027-04-23 · 综合运动营、专项营均 6 岁以上（初级游泳营 5–8 岁） · 综合运动营 THB 15,000 / 周；专项营 THB 6,000 / 周</li><li><strong>新加坡 HWA 国际学校 IB 冬令营</strong> — 新加坡 HWA 国际学校 · 2027-01-04 – 2027-02-26 · 6–17 岁，一至十一年级 · 1 周 S$1,490 起（约 ¥7,800）；2 周 S$2,850 起（约 ¥14,920）</li><li><strong>Cambright 语言学校 · 马来西亚吉隆坡</strong> — 马来西亚吉隆坡 · KLCC · 语言课程（强化英语 / 口语 / 雅思），主要面向青少年与成人 · 强化英语 1 个月 RM 1,625；口语 1 个月 RM 1,219</li></ul><!--/SE-CAMPS--></div>
     </div>
   </section>
 
@@ -584,8 +590,8 @@
   <div id="dlgBody"></div>
 </dialog>
 
-<script src="i18n.js?v=202610061200"></script>
-<script src="config.js?v=202610061200"></script>
-<script src="main.js?v=202610061200"></script>
+<script src="i18n.js?v=202610061500"></script>
+<script src="config.js?v=202610061500"></script>
+<script src="main.js?v=202610061500"></script>
 </body>
 </html>
