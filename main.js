@@ -168,7 +168,8 @@
 
   // ---------- contact ----------
   let wechat = ($("#wxId").textContent || "").trim(); // static fallback until data arrives
-  const ICON = { rednote: "i-rednote", instagram: "i-ig", facebook: "i-fb", email: "i-mail" };
+  const WA = { show: "+60 11-4390 4896", num: "601143904896" }; // WhatsApp Business
+  const ICON = { whatsapp: "i-wa", rednote: "i-rednote", instagram: "i-ig", facebook: "i-fb", email: "i-mail" };
   function handleOf(kind, v) {
     if (!/^https?:\/\//i.test(v)) return v;
     try {
@@ -190,6 +191,7 @@
     const rnUrl = safeUrl(s.rednote_url) || (s.rednote_id ? "https://www.xiaohongshu.com/search_result?keyword=" + encodeURIComponent(s.rednote_id) : "");
     const items = [
       ["rednote", T.rednote, s.rednote_id, rnUrl, T.follow],
+      ["whatsapp", "WhatsApp", WA.show, "https://wa.me/" + WA.num, T.chat],
       ["email", T.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email || "") ? s.email : "", "mailto:" + (s.email || ""), T.sendMail],
       ["instagram", "Instagram", s.instagram, safeUrl(s.instagram) || "https://www.instagram.com/" + encodeURIComponent(String(s.instagram || "").replace(/^@/, "")) + "/", T.open],
       ["facebook", "Facebook", s.facebook, safeUrl(s.facebook) || "https://www.facebook.com/" + encodeURIComponent(String(s.facebook || "").replace(/^@/, "")), T.open],
